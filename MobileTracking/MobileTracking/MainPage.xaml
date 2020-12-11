@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="MobileTracking.MainPage">
+    <StackLayout VerticalOptions="Center">
+        <StackLayout>
+            <Button x:Name="calibrate_button" Text="Calibrar posição" Clicked="calibrate_btn_clicked" />
+            <Label FontAttributes="Bold" x:Name="lblOrigin" Text="Origin:(      )" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" Text="Retorna a Geolocalização Atual" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="lblLongitude" Text="Longitude :" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="lblLatitude" Text="Latitude :" VerticalOptions="Center" HorizontalOptions="Center"/>
+            
+            <Button x:Name="btnclick" Text="Retornar Coordenadas" Clicked="btn_clicked"/>
+            <Label FontAttributes="Bold" x:Name="comodo" Text="Cômodo :" VerticalOptions="Center" HorizontalOptions="Center"/>
+        </StackLayout>
+        <StackLayout>
+            <Label FontAttributes="Bold" Text="Acelerômetro" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="aclX" Text="vx:" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="aclY" Text="vy:" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="aclZ" Text="vz:" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Button x:Name="acl_btn" Text="Lig/Dslg. Acelerômetro" Clicked="acl_btn_clicked"/>
+        </StackLayout>
+        <ContentView x:Name="CanvasView" HeightRequest="500" WidthRequest="500"/>
+    </StackLayout>
+</ContentPage>
