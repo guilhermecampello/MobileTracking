@@ -17,11 +17,8 @@
             <Label FontAttributes="Bold" x:Name="comodo" Text="Cômodo :" VerticalOptions="Center" HorizontalOptions="Center"/>
         </StackLayout>
         <StackLayout>
-            <Label FontAttributes="Bold" Text="Acelerômetro" VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" x:Name="aclX" Text="vx:" VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" x:Name="aclY" Text="vy:" VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" x:Name="aclZ" Text="vz:" VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Button x:Name="acl_btn" Text="Lig/Dslg. Acelerômetro" Clicked="acl_btn_clicked"/>
+            <Button x:Name="addMarker_btn" Text="Adicionar Marcador" Clicked="add_marker_clicked"/>
+            <ActivityIndicator x:Name="activityIndicator" IsRunning="False"/>
         </StackLayout>
         <ContentView x:Name="CanvasView" HeightRequest="500" WidthRequest="500"/>
     </StackLayout>

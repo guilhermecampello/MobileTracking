@@ -15,10 +15,14 @@ namespace MobileTracking
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
-        SensorSpeed speed = SensorSpeed.UI;
         Canvas Canvas = new Canvas();
+        
         public double OriginLatitude;
+        
         public double OriginLongitude;
+
+        public List<Marker> Markers { get; set; } = new List<Marker>();
+        
         HttpClient Client = new HttpClient(new HttpClientHandler()
         {
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
@@ -30,7 +34,6 @@ namespace MobileTracking
         public MainPage()
         {
             InitializeComponent();
-            Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
             this.CanvasView.Content = this.Canvas;
             CalibrateOrigin();
         }
@@ -43,7 +46,7 @@ namespace MobileTracking
             while (n < 10)
             {
                 calibrate_button.Text = $"Calibrar posição ({n})";
-                var localization = await Geolocation.GetLocationAsync();
+                var localization = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.High));
                 latitudes.Add(localization.Latitude);
                 longitudes.Add(localization.Longitude);
                 var stringContent = new StringContent($"{DateTime.Now},{localization.Longitude},{localization.Latitude}");
@@ -59,8 +62,6 @@ namespace MobileTracking
                 n += 1;
             }
 
-            calibrate_button.Text = $"Calibrar posição";
-
             latitudes.Sort();
             longitudes.Sort();
 
@@ -72,6 +73,8 @@ namespace MobileTracking
 
             OriginLongitude = longitudes.Sum() / 8;
             OriginLatitude = latitudes.Sum() / 8;
+
+            calibrate_button.Text = $"Calibrar posição";
             lblOrigin.Text = $"Origin ({OriginLongitude}, {OriginLatitude})";
         }
 
@@ -84,50 +87,40 @@ namespace MobileTracking
         {
             try
             {
-                var radius = 6371;
                 var localizacao = await Geolocation.GetLocationAsync();
-                if (OriginLatitude == 0 || OriginLongitude == 0)
-                {
-                    CalibrateOrigin();
-                }
                 if (localizacao != null)
                 {
+                    var point = TranslationFromOrigin(localizacao.Longitude, localizacao.Latitude);
+                                        
+                    lblLongitude.Text = point.X.ToString();
+                    lblLatitude.Text = point.Y.ToString();
 
-                    var dlong = -DgToRadians(OriginLongitude - localizacao.Longitude) * radius * 1000;
-                    var dlat = DgToRadians(OriginLatitude - localizacao.Latitude)*radius*1000;
-                    var rot = Math.Sqrt(2) / 2;
-                    var rdlong = rot * dlong - rot * dlat;
-                    var rdlat = rot * dlong + rot * dlat;
-                    
-                    lblLongitude.Text = rdlong.ToString();
-                    lblLatitude.Text = rdlat.ToString();
-
-                    if (rdlat > 2 && rdlong < 1)
+                    if (point.Y > 2 && point.X < 1)
                     {
                         comodo.Text = "Quarto Guilherme";
                     }
 
-                    if ((Math.Abs(rdlat) < 1 && Math.Abs(rdlong) < 1) || rdlat < 0)
+                    if ((Math.Abs(point.Y) < 1 && Math.Abs(point.X) < 1) || point.Y < 0)
                     {
                         comodo.Text = "Sala";
                     }
 
-                    if (rdlat > 1 && rdlong > 1)
+                    if (point.Y > 1 && point.X > 1)
                     {
                         comodo.Text = "Corredor";
                     }
 
-                    if (rdlat > 2 && rdlong > 2)
+                    if (point.Y > 2 && point.X > 2)
                     {
                         comodo.Text = "Cozinha";
                     }
 
-                    if (rdlat > 4)
+                    if (point.Y > 4)
                     {
                         comodo.Text = "Quarto Daniel";
                     }
 
-                    this.Canvas.SetCoordinates(rdlong, rdlat);
+                    this.Canvas.SetCoordinates(point.X, point.Y);
                     this.CanvasView.Content = this.Canvas;
                 }
             }
@@ -148,43 +141,66 @@ namespace MobileTracking
             }
         }
 
-        void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
-        {
-            var data = e.Reading;
-            aclX.Text = data.Acceleration.X.ToString();
-            aclY.Text = data.Acceleration.Y.ToString();
-            aclZ.Text = data.Acceleration.Z.ToString();
-        }
-
-        public async void acl_btn_clicked(object sender, System.EventArgs e)
-        {
-            ToggleAccelerometer();
-        }
-
-        public void ToggleAccelerometer()
-        {
-            try
-            {
-                if (Accelerometer.IsMonitoring)
-                    Accelerometer.Stop();
-                else
-                    Accelerometer.Start(speed);
-            }
-            catch (FeatureNotSupportedException)
-            {
-                // Feature not supported on device
-                DisplayAlert("Acelerometro nao suportado", "", "");
-            }
-            catch (Exception ex)
-            {
-                // Other error has occurred.
-                DisplayAlert(ex.Message, "", "");
-            }
-        }
-
         private double DgToRadians(double angle)
         {
             return (Math.PI / 180) * angle;
+        }
+
+        private Point TranslationFromOrigin(double longitude, double latitude)
+        {
+            var radius = 6371;
+            var dlong = -DgToRadians(OriginLongitude - longitude) * radius * 1000;
+            var dlat = DgToRadians(OriginLatitude - latitude) * radius * 1000;
+            var rot = Math.Sqrt(2) / 2;
+            var rdlong = rot * dlong - rot * dlat;
+            var rdlat = rot * dlong + rot * dlat;
+
+            return new Point(rdlong, rdlat);
+        }
+
+        public async void add_marker_clicked(object sender, EventArgs e)
+        {
+           await AddMarker();
+        }
+
+        private async Task AddMarker()
+        {
+            var name = await DisplayPromptAsync("New marker", "Input marker name:");
+            if (!string.IsNullOrEmpty(name))
+            {
+                activityIndicator.IsRunning = true;
+                var point = await CalibrateCoordinate();
+                activityIndicator.IsRunning = false;
+                point = TranslationFromOrigin(point.X, point.Y);
+                var marker = new Marker(name, point.X, point.Y);
+                Markers.Add(marker);
+                Canvas.SetMarkers(Markers);
+            }
+        }
+
+        private async Task<Point> CalibrateCoordinate()
+        {
+            var n = 0;
+            List<double> latitudes = new List<double>();
+            List<double> longitudes = new List<double>();
+            while (n < 10)
+            {
+                var localization = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.High));
+                latitudes.Add(localization.Latitude);
+                longitudes.Add(localization.Longitude);
+                n += 1;
+            }
+
+            latitudes.Sort();
+            longitudes.Sort();
+
+            longitudes.RemoveAt(0);
+            longitudes.RemoveAt(8);
+
+            latitudes.RemoveAt(0);
+            latitudes.RemoveAt(8);
+
+            return new Point(longitudes.Sum() / 8, latitudes.Sum() / 8);
         }
     }
 }
