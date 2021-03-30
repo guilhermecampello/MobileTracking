@@ -11,3 +11,11 @@ def calibrations_collection():
       file.write(request.data.decode('ascii') + "\n")
       file.close()
     return "Ok", 200
+
+@app.route('/experiment', methods=['POST'])
+def experiments_collection():
+  if request.method == 'POST':
+    with open("experiments.csv","a+") as file:
+      file.write(request.data.decode('ascii') + "\n")
+      file.close()
+    return "Ok", 200

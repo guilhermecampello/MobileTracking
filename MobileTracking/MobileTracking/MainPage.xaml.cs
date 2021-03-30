@@ -5,8 +5,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
+using Android.Net.Wifi;
+using Xamarin.Essentials;
+using MobileTracking.Services.Bluetooth;
+using System.Threading;
+using Android.App;
+using MobileTracking.Services.MagneticField;
 
 namespace MobileTracking
 {
@@ -16,13 +21,29 @@ namespace MobileTracking
     public partial class MainPage : ContentPage
     {
         Canvas Canvas = new Canvas();
-        
-        public double OriginLatitude;
-        
-        public double OriginLongitude;
 
         public List<Marker> Markers { get; set; } = new List<Marker>();
-        
+
+        public IWifiConnector wifiConnector = DependencyService.Get<IWifiConnector>();
+
+        private Dictionary<string, decimal> wifiResults = new Dictionary<string, decimal>();
+
+        private Thread bluetoothThread;
+
+        private Thread wifiThread;
+
+        private Timer timer;
+
+        private MagneticFieldSensor magneticFieldSensor = new MagneticFieldSensor();
+
+        //public IBluetoothConnector bluetoothConnector = DependencyService.Get<IBluetoothConnector>();
+
+        private Dictionary<string, BluetoothScanResult> bluetoothResults = new Dictionary<string, BluetoothScanResult>();
+
+        private string position = string.Empty;
+
+        private int count = 0;
+
         HttpClient Client = new HttpClient(new HttpClientHandler()
         {
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
@@ -31,136 +52,153 @@ namespace MobileTracking
             },
         });
 
+
+
         public MainPage()
         {
             InitializeComponent();
             this.CanvasView.Content = this.Canvas;
-            CalibrateOrigin();
+            bluetoothThread = new Thread(StartBluetoothScan);
+            wifiThread = new Thread(StartWifiScan);
+            magneticFieldSensor.Start();
         }
 
-        public async void CalibrateOrigin()
+        public void StartBluetoothScan()
         {
-            var n = 0;
-            List<double> latitudes = new List<double>();
-            List<double> longitudes = new List<double>();
-            while (n < 10)
+            //bluetoothConnector.StartScanning(bluetoothResults);
+        }
+
+        public void StartWifiScan()
+        {
+            wifiConnector.StartScanning(wifiResults);
+        }
+
+        private async Task SendPositionData()
+        {
+            var wifiRssi = wifiResults.GetValueOrDefault("Campello ");
+            var bluetoothRssi = 0;
+            if (bluetoothResults.ContainsKey("MLT-BT05"))
             {
-                calibrate_button.Text = $"Calibrar posição ({n})";
-                var localization = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.High));
-                latitudes.Add(localization.Latitude);
-                longitudes.Add(localization.Longitude);
-                var stringContent = new StringContent($"{DateTime.Now},{localization.Longitude},{localization.Latitude}");
-                try
-                {
-                    await Client.PostAsync("http://192.168.15.10:5000/origin", stringContent);
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                
-                n += 1;
+                bluetoothRssi = bluetoothResults.GetValueOrDefault("MLT-BT05").Rssi;
             }
-
-            latitudes.Sort();
-            longitudes.Sort();
-
-            longitudes.RemoveAt(0);
-            longitudes.RemoveAt(8);
-
-            latitudes.RemoveAt(0);
-            latitudes.RemoveAt(8);
-
-            OriginLongitude = longitudes.Sum() / 8;
-            OriginLatitude = latitudes.Sum() / 8;
-
-            calibrate_button.Text = $"Calibrar posição";
-            lblOrigin.Text = $"Origin ({OriginLongitude}, {OriginLatitude})";
+            var content = new StringContent($"{position},{wifiRssi},{bluetoothRssi}", Encoding.ASCII);
+            try
+            {
+                var response = await Client.PostAsync("http://192.168.15.7:5000/experiment", content);
+                Console.WriteLine(response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            count++;
+            Device.BeginInvokeOnMainThread(() => UpdateCounter());
         }
 
-        public void calibrate_btn_clicked(object sender, System.EventArgs e)
+        private void UpdateSignalStrengths(object state)
         {
-            CalibrateOrigin();
+            try
+            {
+                Device.BeginInvokeOnMainThread(() => UpdateMagneticField());
+                if (wifiResults.ContainsKey("Campello "))
+                {
+                    Device.BeginInvokeOnMainThread(() => UpdateWifi());
+                }
+                var expiredResults = this.bluetoothResults.Values
+                    .Where(bluetoothResult => DateTime.Now.Subtract(bluetoothResult.CreatedAt).TotalSeconds > 5)
+                    .ToList();
+                expiredResults.ForEach(expiredResult => this.bluetoothResults.Remove(expiredResult.Name));
+                if (bluetoothResults.ContainsKey("MLT-BT05"))
+                {
+                    Device.BeginInvokeOnMainThread(() => UpdateBluetooth());
+                }
+
+                SendPositionData().Wait();
+
+                if (count >= 30)
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        count = 0;
+                        UpdateCounter();
+                    }
+                    );
+                    timer.Dispose();
+                    timer = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                //await DisplayAlert("Connection Error", ex.Message, "OK");
+            }
+        }
+
+        public async void calibrate_btn_clicked(object sender, System.EventArgs e)
+        {
+            try
+            {
+                position = await DisplayPromptAsync("Insira a posição", "");
+                var permission = await Permissions.RequestAsync<Permissions.LocationAlways>();
+                if (permission == PermissionStatus.Granted)
+                {
+                    if (!wifiThread.IsAlive)
+                    {
+                        wifiThread.Start();
+                    }
+                    if (!bluetoothThread.IsAlive)
+                    {
+                        bluetoothThread.Start();
+                    }
+                    count = 0;
+                    Device.BeginInvokeOnMainThread(() => UpdateCounter());
+                    if (timer != null)
+                    {
+                        timer.Dispose();
+                        timer = null;
+                    }
+                    timer = new Timer(UpdateSignalStrengths);
+                    timer.Change(1000, 3000);
+                }
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+            }
+        }
+
+        public void UpdateWifi()
+        {
+            var value = wifiResults.GetValueOrDefault("Campello ");
+            wifi.Text = $"WIFI: {value}";
+        }
+
+        public void UpdateBluetooth()
+        {
+            var value = bluetoothResults.GetValueOrDefault("MLT-BT05").Rssi;
+            bluetooth.Text = $"Bluetooth: {value}";
+        }
+
+        public void UpdateCounter()
+        {
+            counter.Text = $"{count}/30";
+        }
+
+        public void UpdateMagneticField()
+        {
+            var magneticField = magneticFieldSensor.MagneticFieldVector;
+            magX.Text = $"X: {magneticField.X:0.00}";
+            magY.Text = $"Y: {magneticField.Y:0.00}";
+            magZ.Text = $"Z: {magneticField.Z:0.00}";
         }
 
         public async void btn_clicked(object sender, System.EventArgs e)
         {
-            try
-            {
-                var localizacao = await Geolocation.GetLocationAsync();
-                if (localizacao != null)
-                {
-                    var point = TranslationFromOrigin(localizacao.Longitude, localizacao.Latitude);
-                                        
-                    lblLongitude.Text = point.X.ToString();
-                    lblLatitude.Text = point.Y.ToString();
 
-                    if (point.Y > 2 && point.X < 1)
-                    {
-                        comodo.Text = "Quarto Guilherme";
-                    }
-
-                    if ((Math.Abs(point.Y) < 1 && Math.Abs(point.X) < 1) || point.Y < 0)
-                    {
-                        comodo.Text = "Sala";
-                    }
-
-                    if (point.Y > 1 && point.X > 1)
-                    {
-                        comodo.Text = "Corredor";
-                    }
-
-                    if (point.Y > 2 && point.X > 2)
-                    {
-                        comodo.Text = "Cozinha";
-                    }
-
-                    if (point.Y > 4)
-                    {
-                        comodo.Text = "Quarto Daniel";
-                    }
-
-                    this.Canvas.SetCoordinates(point.X, point.Y);
-                    this.CanvasView.Content = this.Canvas;
-                }
-            }
-            catch (FeatureNotSupportedException fnsEx)
-            {
-                // Recurso não suportado no device
-                await DisplayAlert("Erro ", fnsEx.Message, "Ok");
-            }
-            catch (PermissionException pEx)
-            {
-                // Tratando erro de permissão
-                await DisplayAlert("Erro: ", pEx.Message, "Ok");
-            }
-            catch (Exception ex)
-            {
-                // Não foi possivel obter localização
-                await DisplayAlert("Erro : ", ex.Message, "Ok");
-            }
-        }
-
-        private double DgToRadians(double angle)
-        {
-            return (Math.PI / 180) * angle;
-        }
-
-        private Point TranslationFromOrigin(double longitude, double latitude)
-        {
-            var radius = 6371;
-            var dlong = -DgToRadians(OriginLongitude - longitude) * radius * 1000;
-            var dlat = DgToRadians(OriginLatitude - latitude) * radius * 1000;
-            var rot = Math.Sqrt(2) / 2;
-            var rdlong = rot * dlong - rot * dlat;
-            var rdlat = rot * dlong + rot * dlat;
-
-            return new Point(rdlong, rdlat);
         }
 
         public async void add_marker_clicked(object sender, EventArgs e)
         {
-           await AddMarker();
+            await AddMarker();
         }
 
         private async Task AddMarker()
@@ -168,39 +206,7 @@ namespace MobileTracking
             var name = await DisplayPromptAsync("New marker", "Input marker name:");
             if (!string.IsNullOrEmpty(name))
             {
-                activityIndicator.IsRunning = true;
-                var point = await CalibrateCoordinate();
-                activityIndicator.IsRunning = false;
-                point = TranslationFromOrigin(point.X, point.Y);
-                var marker = new Marker(name, point.X, point.Y);
-                Markers.Add(marker);
-                Canvas.SetMarkers(Markers);
             }
-        }
-
-        private async Task<Point> CalibrateCoordinate()
-        {
-            var n = 0;
-            List<double> latitudes = new List<double>();
-            List<double> longitudes = new List<double>();
-            while (n < 10)
-            {
-                var localization = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.High));
-                latitudes.Add(localization.Latitude);
-                longitudes.Add(localization.Longitude);
-                n += 1;
-            }
-
-            latitudes.Sort();
-            longitudes.Sort();
-
-            longitudes.RemoveAt(0);
-            longitudes.RemoveAt(8);
-
-            latitudes.RemoveAt(0);
-            latitudes.RemoveAt(8);
-
-            return new Point(longitudes.Sum() / 8, latitudes.Sum() / 8);
         }
     }
 }

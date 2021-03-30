@@ -7,14 +7,16 @@
              x:Class="MobileTracking.MainPage">
     <StackLayout VerticalOptions="Center">
         <StackLayout>
-            <Button x:Name="calibrate_button" Text="Calibrar posição" Clicked="calibrate_btn_clicked" />
-            <Label FontAttributes="Bold" x:Name="lblOrigin" Text="Origin:(      )" VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" Text="Retorna a Geolocalização Atual" VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" x:Name="lblLongitude" Text="Longitude :" VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" x:Name="lblLatitude" Text="Latitude :" VerticalOptions="Center" HorizontalOptions="Center"/>
-            
-            <Button x:Name="btnclick" Text="Retornar Coordenadas" Clicked="btn_clicked"/>
-            <Label FontAttributes="Bold" x:Name="comodo" Text="Cômodo :" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Button x:Name="calibrate_button" Text="Iniciar scan" Clicked="calibrate_btn_clicked" />
+            <Label FontAttributes="Bold" x:Name="wifi" Text="Wifi: " VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="bluetooth" Text="Bluetooth: " VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="counter" Text="0/30" VerticalOptions="Center" HorizontalOptions="Center"/>
+        </StackLayout>
+        <StackLayout>
+            <Label FontAttributes="Bold" Text="Campo Magnético" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="magX" Text="X: " VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="magY" Text="Y: " VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="magZ" Text="Z: " VerticalOptions="Center" HorizontalOptions="Center"/>
         </StackLayout>
         <StackLayout>
             <Button x:Name="addMarker_btn" Text="Adicionar Marcador" Clicked="add_marker_clicked"/>
