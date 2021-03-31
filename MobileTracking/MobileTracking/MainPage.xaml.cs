@@ -12,6 +12,7 @@ using MobileTracking.Services.Bluetooth;
 using System.Threading;
 using Android.App;
 using MobileTracking.Services.MagneticField;
+using System.Net;
 
 namespace MobileTracking
 {
@@ -61,6 +62,7 @@ namespace MobileTracking
             bluetoothThread = new Thread(StartBluetoothScan);
             wifiThread = new Thread(StartWifiScan);
             magneticFieldSensor.Start();
+            Client.Timeout = TimeSpan.FromSeconds(3);
         }
 
         public void StartBluetoothScan()
@@ -81,9 +83,20 @@ namespace MobileTracking
             {
                 bluetoothRssi = bluetoothResults.GetValueOrDefault("MLT-BT05").Rssi;
             }
-            var content = new StringContent($"{position},{wifiRssi},{bluetoothRssi}", Encoding.ASCII);
+            var magneticField = magneticFieldSensor.MagneticFieldVector;
+            var content = new StringContent($"{position}," +
+                $"{wifiRssi}," +
+                $"{bluetoothRssi}," +
+                $"{magneticField.X.ToString().Replace(",",".")}," +
+                $"{magneticField.Y.ToString().Replace(",",".")}," +
+                $"{magneticField.Z.ToString().Replace(",",".")}",
+                Encoding.ASCII);
             try
             {
+                foreach (IPAddress adress in Dns.GetHostAddresses(Dns.GetHostName()))
+                {
+                    Console.WriteLine("IP Adress: " + adress.ToString());
+                }
                 var response = await Client.PostAsync("http://192.168.15.7:5000/experiment", content);
                 Console.WriteLine(response.StatusCode);
             }
