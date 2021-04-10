@@ -37,7 +37,7 @@ namespace MobileTracking
 
         private MagneticFieldSensor magneticFieldSensor = new MagneticFieldSensor();
 
-        //public IBluetoothConnector bluetoothConnector = DependencyService.Get<IBluetoothConnector>();
+        public IBluetoothConnector bluetoothConnector = DependencyService.Get<IBluetoothConnector>();
 
         private Dictionary<string, BluetoothScanResult> bluetoothResults = new Dictionary<string, BluetoothScanResult>();
 
@@ -67,7 +67,7 @@ namespace MobileTracking
 
         public void StartBluetoothScan()
         {
-            //bluetoothConnector.StartScanning(bluetoothResults);
+            bluetoothConnector.StartScanning(bluetoothResults);
         }
 
         public void StartWifiScan()
@@ -128,7 +128,7 @@ namespace MobileTracking
 
                 SendPositionData().Wait();
 
-                if (count >= 30)
+                if (count >= 10)
                 {
                     Device.BeginInvokeOnMainThread(() =>
                     {
@@ -193,7 +193,7 @@ namespace MobileTracking
 
         public void UpdateCounter()
         {
-            counter.Text = $"{count}/30";
+            counter.Text = $"{count}/10";
         }
 
         public void UpdateMagneticField()

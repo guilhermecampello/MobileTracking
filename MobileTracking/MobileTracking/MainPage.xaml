@@ -10,7 +10,7 @@
             <Button x:Name="calibrate_button" Text="Iniciar scan" Clicked="calibrate_btn_clicked" />
             <Label FontAttributes="Bold" x:Name="wifi" Text="Wifi: " VerticalOptions="Center" HorizontalOptions="Center"/>
             <Label FontAttributes="Bold" x:Name="bluetooth" Text="Bluetooth: " VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" x:Name="counter" Text="0/30" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label FontAttributes="Bold" x:Name="counter" Text="0/10" VerticalOptions="Center" HorizontalOptions="Center"/>
         </StackLayout>
         <StackLayout>
             <Label FontAttributes="Bold" Text="Campo Magnético" VerticalOptions="Center" HorizontalOptions="Center"/>

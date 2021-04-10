@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Numerics;
 using System.Text;
 using Xamarin.Essentials;
@@ -13,7 +14,13 @@ namespace MobileTracking.Services.MagneticField
 
         private List<(Quaternion, DateTime)> OrientationSensorData { get; set; } = new List<(Quaternion, DateTime)>();
 
-        int count = 0;
+        HttpClient Client = new HttpClient(new HttpClientHandler()
+        {
+            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+            {
+                return true;
+            },
+        });
 
         public MagneticFieldSensor()
         {
@@ -21,9 +28,9 @@ namespace MobileTracking.Services.MagneticField
 
         public void Start()
         {
-            OrientationSensor.Start(SensorSpeed.Game);
+            OrientationSensor.Start(SensorSpeed.Fastest);
             OrientationSensor.ReadingChanged += OrientationSensor_ReadingChanged;
-            Magnetometer.Start(SensorSpeed.Game);
+            Magnetometer.Start(SensorSpeed.Fastest);
             Magnetometer.ReadingChanged += Magnetometer_ReadingChanged;
         }
 
@@ -65,26 +72,24 @@ namespace MobileTracking.Services.MagneticField
 
         public Vector3 Transform(Vector3 value, Quaternion rotation)
         {
-            Vector3 vector;
-            float num12 = rotation.X + rotation.X;
-            float num2 = rotation.Y + rotation.Y;
-            float num = rotation.Z + rotation.Z;
-            float num11 = rotation.W * num12;
-            float num10 = rotation.W * num2;
-            float num9 = rotation.W * num;
-            float num8 = rotation.X * num12;
-            float num7 = rotation.X * num2;
-            float num6 = rotation.X * num;
-            float num5 = rotation.Y * num2;
-            float num4 = rotation.Y * num;
-            float num3 = rotation.Z * num;
-            float num15 = ((value.X * ((1f - num5) - num3)) + (value.Y * (num7 - num9))) + (value.Z * (num6 + num10));
-            float num14 = ((value.X * (num7 + num9)) + (value.Y * ((1f - num8) - num3))) + (value.Z * (num4 - num11));
-            float num13 = ((value.X * (num6 - num10)) + (value.Y * (num4 + num11))) + (value.Z * ((1f - num8) - num5));
-            vector.X = num15;
-            vector.Y = num14;
-            vector.Z = num13;
-            return vector;
+            float x2 = rotation.X + rotation.X;
+            float y2 = rotation.Y + rotation.Y;
+            float z2 = rotation.Z + rotation.Z;
+
+            float wx2 = rotation.W * x2;
+            float wy2 = rotation.W * y2;
+            float wz2 = rotation.W * z2;
+            float xx2 = rotation.X * x2;
+            float xy2 = rotation.X * y2;
+            float xz2 = rotation.X * z2;
+            float yy2 = rotation.Y * y2;
+            float yz2 = rotation.Y * z2;
+            float zz2 = rotation.Z * z2;
+
+            return new Vector3(
+                value.X * (1.0f - yy2 - zz2) + value.Y * (xy2 - wz2) + value.Z * (xz2 + wy2),
+                value.X * (xy2 + wz2) + value.Y * (1.0f - xx2 - zz2) + value.Z * (yz2 - wx2),
+                value.X * (xz2 - wy2) + value.Y * (yz2 + wx2) + value.Z * (1.0f - xx2 - yy2));
         }
 
         private void OrientationSensor_ReadingChanged(object sender, OrientationSensorChangedEventArgs e)
@@ -95,31 +100,29 @@ namespace MobileTracking.Services.MagneticField
             }
 
             OrientationSensorData.Add((e.Reading.Orientation, DateTime.Now));
-            var orientation = e.Reading.Orientation;
-            if (count == 20)
-            {
-                //Console.WriteLine($"{orientation.X.ToString("0.00")}    {orientation.Y.ToString("0.00")}   {orientation.Z.ToString("0.00")}    {orientation.W.ToString("0.00")}");
-                var vector = MagneticFieldVector;
-                Console.WriteLine($"{vector.X.ToString("0.00")}    {vector.Y.ToString("0.00")}   {vector.Z.ToString("0.00")}");
-                count = 0;
-            }
-
-            count++;
         }
 
         private void Magnetometer_ReadingChanged(object sender, MagnetometerChangedEventArgs e)
         {
             if (MagnetometerData.Count >= 100)
             {
-                MagnetometerData.RemoveAt(0);
+                var data = "";
+                try
+                {
+                    MagnetometerData.ForEach(sample => {
+                        var orientation = OrientationSensorData.Last().Item1;
+                        sample.Item1 = Transform(sample.Item1, orientation);
+                        data += $"{sample.Item2.Ticks}; {sample.Item1.X}; {sample.Item1.Y}; {sample.Item1.Z} \n";
+                        });
+                    Client.PostAsync("http://192.168.1.5:5000/magneticfield-timeline", new StringContent(data, Encoding.ASCII));
+                    MagnetometerData.Clear();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
-
             MagnetometerData.Add((e.Reading.MagneticField, DateTime.Now));
-            var magnetic = e.Reading.MagneticField;
-            if(count == 9)
-            {
-                //Console.WriteLine($"{magnetic.X.ToString("0.00")}     {magnetic.Y.ToString("0.00")}     {magnetic.Z.ToString("0.00")}");
-            }
         }
     }
 }
