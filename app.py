@@ -16,6 +16,18 @@ def calibrations_collection():
 def experiments_collection():
   if request.method == 'POST':
     with open("experiments.csv","a+") as file:
-      file.write(request.data.decode('ascii') + "\n")
+      data = request.data.decode('ascii')
+      print(data)
+      file.write(data + "\n")
+      file.close()
+    return "Ok", 200
+
+@app.route('/magneticfield-timeline', methods=['POST'])
+def magneticfield_timeline():
+  if request.method == 'POST':
+    with open("magnetic-field-timeline.csv","a+") as file:
+      data = request.data.decode('ascii')
+      print(data)
+      file.write(data + "\n")
       file.close()
     return "Ok", 200
