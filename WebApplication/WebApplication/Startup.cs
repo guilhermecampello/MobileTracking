@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using WebApplication.Infrastructure;
-using WebApplication.Services;
+using WebApplication.Middlewares;
+using WebApplication.Application;
 
 namespace WebApplication
 {
@@ -22,7 +24,16 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             this.AddDatabaseContext(services);
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(options =>
+            {
+                // System.Text.Json does not have an option to ignore reference loop handling
+                // In .NET 5 we may use the native System.Text.Json instead of NewtonsoftJson
+                options.SerializerSettings.ReferenceLoopHandling =
+                    ReferenceLoopHandling.Ignore;
+
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+            });
             this.AddApplicationServices(services);
         }
 
@@ -39,16 +50,20 @@ namespace WebApplication
 
             app.UseAuthorization();
 
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
 
         private void AddApplicationServices(IServiceCollection services)
         {
             services.AddHttpContextAccessor();
             services.AddScoped<ILocaleService, LocaleService>();
+            services.AddScoped<IZoneService, ZoneService>();
         }
 
         private void AddDatabaseContext(

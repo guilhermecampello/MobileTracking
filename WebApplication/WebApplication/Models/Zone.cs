@@ -7,6 +7,14 @@ namespace WebApplication.Models
 {
     public class Zone
     {
+        public Zone(int localeId, string name, string? description, int floor)
+        {
+            this.LocaleId = localeId;
+            this.Name = name;
+            this.Description = description;
+            this.Floor = floor;
+        }
+
         public int Id { get; set; }
 
         public int LocaleId { get; set; }

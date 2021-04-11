@@ -1,50 +1,45 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using WebApplication.Models;
-using WebApplication.Services;
+using WebApplication.Application;
 
 namespace WebApplication.Controllers
 {
     [ApiController]
-    [Route("locales")]
+    [Route("api/locales")]
     public class LocalesController : ControllerBase
     {
         [HttpGet("{localeId}")]
-        public Locale GetLocaleById(
+        public async Task<ActionResult<Locale>> GetLocaleById(
             [FromServices] ILocaleService localeService,
             [FromRoute] int localeId)
         {
-            return localeService.FindById(localeId);
+            return await localeService.FindLocaleById(localeId);
         }
 
         [HttpDelete("{localeId}")]
-        public bool DeleteLocale(
+        public async Task<ActionResult<bool>> DeleteLocale(
             [FromServices] ILocaleService localeService,
             [FromRoute] int localeId)
         {
-            return localeService.DeleteLocale(localeId);
+            return await localeService.DeleteLocale(localeId);
         }
 
         [HttpPatch("{localeId}")]
-        public Locale CreateLocale(
+        public async Task<ActionResult<Locale>> CreateLocale(
             [FromServices] ILocaleService localeService,
             [FromRoute] int localeId,
-            [FromBody] string? name,
-            [FromBody] string? description,
-            [FromBody] float? latitude,
-            [FromBody] float? longitude)
+            [FromBody] CreateOrUpdateLocaleCommand command)
         {
-            return localeService.UpdateLocale(localeId, name, description, latitude, longitude);
+            return await localeService.UpdateLocale(localeId, command);
         }
 
         [HttpPost]
-        public Locale CreateLocale(
+        public async Task<ActionResult<Locale>> CreateLocale(
             [FromServices] ILocaleService localeService,
-            [FromBody] string name,
-            [FromBody] string description,
-            [FromBody] float latitude,
-            [FromBody] float longitude)
+            [FromBody] CreateOrUpdateLocaleCommand command)
         {
-            return localeService.CreateLocale(name, description, latitude, longitude);
+            return await localeService.CreateLocale(command);
         }
     }
 }
