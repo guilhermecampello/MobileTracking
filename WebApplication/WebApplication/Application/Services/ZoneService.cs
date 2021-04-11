@@ -17,9 +17,19 @@ namespace WebApplication.Application
             this.databaseContext = databaseContext;
         }
 
-        public async Task<Zone> FindZoneById(int zoneId)
+        public async Task<Zone> FindZoneById(int zoneId, ZoneQuery? query = null)
         {
-            return await this.databaseContext.Zones.FindAsync(zoneId) ?? throw NotFoundException<Zone>.ById(zoneId);
+            if (query == null)
+            {
+                query = new ZoneQuery();
+            }
+
+            return await this.databaseContext.Zones
+                .Include(query.IncludePositions, zone => zone.Positions)
+                .Include(query.IncludePositionsCalibrations, zone => zone.Positions!, positions => positions.Calibrations!)
+                .Include(query.IncludePositionsData, zone => zone.Positions!, position => position.PositionData!)
+                .FirstOrDefaultAsync(zone => zone.Id == zoneId)
+                ?? throw NotFoundException<Zone>.ById(zoneId);
         }
 
         public async Task<List<Zone>> GetZones(ZoneQuery query)
@@ -31,6 +41,7 @@ namespace WebApplication.Application
                 .Where(query.Floor, floor => zone => zone.Floor == floor)
                 .Include(query.IncludePositions, zone => zone.Positions)
                 .Include(query.IncludePositionsCalibrations, zone => zone.Positions!, positions => positions.Calibrations!)
+                .Include(query.IncludePositionsData, zone => zone.Positions!, position => position.PositionData!)
                 .ToListAsync();
         }
 

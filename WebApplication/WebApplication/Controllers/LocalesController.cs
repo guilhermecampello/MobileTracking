@@ -26,7 +26,7 @@ namespace WebApplication.Controllers
         }
 
         [HttpPatch("{localeId}")]
-        public async Task<ActionResult<Locale>> CreateLocale(
+        public async Task<ActionResult<Locale>> UpdateLocale(
             [FromServices] ILocaleService localeService,
             [FromRoute] int localeId,
             [FromBody] CreateOrUpdateLocaleCommand command)

@@ -35,7 +35,7 @@ namespace WebApplication.Controllers
         }
 
         [HttpPatch("{zoneId}")]
-        public async Task<ActionResult<Zone>> CreateZone(
+        public async Task<ActionResult<Zone>> UpdateZone(
             [FromServices] IZoneService zoneService,
             [FromRoute] int zoneId,
             [FromBody] CreateOrUpdateZoneCommand command)

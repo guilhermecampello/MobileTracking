@@ -7,6 +7,15 @@ namespace WebApplication.Models
 {
     public class Position
     {
+        public Position(int zoneId, string name, int x, int y, int z)
+        {
+            this.ZoneId = zoneId;
+            this.Name = name;
+            this.XCoordinate = x;
+            this.YCoordinate = y;
+            this.ZCoordinate = z;
+        }
+
         public int Id { get; set; }
 
         public int ZoneId { get; set; }

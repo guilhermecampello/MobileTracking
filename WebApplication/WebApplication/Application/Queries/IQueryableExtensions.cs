@@ -40,6 +40,7 @@ namespace WebApplication.Application
         public static IQueryable<T> Include<T, T2>(
             this IQueryable<T> query, bool include, Expression<Func<T, T2>> expression)
             where T : class
+            where T2 : class?
         {
             if (include)
             {
@@ -55,6 +56,8 @@ namespace WebApplication.Application
             Expression<Func<T1, IEnumerable<T2>>> expression,
             Expression<Func<T2, IEnumerable<T3>>> secondExpression)
             where T1 : class
+            where T2 : class?
+            where T3 : class?
         {
             if (include)
             {
@@ -71,6 +74,8 @@ namespace WebApplication.Application
             Expression<Func<T1, T2>> expression,
             Expression<Func<T2, IEnumerable<T3>>> secondExpression)
             where T1 : class
+            where T2 : class?
+            where T3 : class?
         {
             if (include)
             {
@@ -87,6 +92,8 @@ namespace WebApplication.Application
             Expression<Func<T1, T2>> expression,
             Expression<Func<T2, T3>> secondExpression)
             where T1 : class
+            where T2 : class?
+            where T3 : class?
         {
             if (include)
             {

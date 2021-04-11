@@ -6,7 +6,7 @@ namespace WebApplication.Application
 {
     public interface IZoneService
     {
-        Task<Zone> FindZoneById(int zoneId);
+        Task<Zone> FindZoneById(int zoneId, ZoneQuery query = null);
 
         Task<List<Zone>> GetZones(ZoneQuery query);
 
