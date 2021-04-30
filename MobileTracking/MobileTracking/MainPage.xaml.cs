@@ -33,7 +33,7 @@ namespace MobileTracking
 
         private Thread wifiThread;
 
-        private Timer timer;
+        private Timer? timer;
 
         private MagneticFieldSensor magneticFieldSensor = new MagneticFieldSensor();
 
@@ -136,7 +136,7 @@ namespace MobileTracking
                         UpdateCounter();
                     }
                     );
-                    timer.Dispose();
+                    timer?.Dispose();
                     timer = null;
                 }
             }

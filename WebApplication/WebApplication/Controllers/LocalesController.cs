@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication.Models;
-using WebApplication.Application;
+using MobileTracking.Core.Application;
+using MobileTracking.Core.Models;
 
 namespace WebApplication.Controllers
 {

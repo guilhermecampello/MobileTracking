@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MobileTracking.Core.Application;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using WebApplication.Infrastructure;
 using WebApplication.Middlewares;
-using WebApplication.Application;
 
 namespace WebApplication
 {
@@ -51,12 +51,11 @@ namespace WebApplication
             app.UseAuthorization();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
         }
 
         private void AddApplicationServices(IServiceCollection services)

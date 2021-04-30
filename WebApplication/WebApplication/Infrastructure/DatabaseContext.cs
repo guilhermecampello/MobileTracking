@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplication.Models;
+using MobileTracking.Core.Models;
 
 namespace WebApplication.Infrastructure
 {

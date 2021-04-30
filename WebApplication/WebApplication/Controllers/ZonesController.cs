@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication.Models;
-using WebApplication.Application;
-using System.Collections.Generic;
+using MobileTracking.Core.Application;
+using MobileTracking.Core.Models;
 
 namespace WebApplication.Controllers
 {

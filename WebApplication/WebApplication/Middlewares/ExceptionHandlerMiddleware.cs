@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using MobileTracking.Core.Application;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using WebApplication.Application;
 
 namespace WebApplication.Middlewares
 {
