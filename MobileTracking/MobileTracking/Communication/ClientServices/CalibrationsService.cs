@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using MobileTracking.Core.Application;
 using MobileTracking.Core.Models;
 
 namespace MobileTracking.Communication.Services
 {
-    class CalibrationsClient : ICalibrationService
+    class CalibrationsService : ICalibrationService
     {
         private readonly Client client;
 
         private string calibrationsController = "calibrations";
 
-        public CalibrationsClient(Client client)
+        public CalibrationsService(Client client)
         {
             this.client = client;
         }

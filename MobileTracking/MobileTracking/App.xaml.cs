@@ -1,5 +1,4 @@
 ﻿using System;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -10,8 +9,8 @@ namespace MobileTracking
         public App()
         {
             InitializeComponent();
-
-            MainPage = new MainPage();
+            Startup.ConfigureServices();
+            MainPage = Startup.ServiceProvider.GetService<MainPage>();
         }
 
         protected override void OnStart()

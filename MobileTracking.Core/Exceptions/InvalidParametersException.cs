@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebApplication.Application
+namespace MobileTracking.Core.Application
 {
     public class InvalidParametersException : Exception
     {

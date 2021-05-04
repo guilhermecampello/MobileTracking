@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using MobileTracking.Communication.Services;
 using Newtonsoft.Json;
 
 namespace MobileTracking.Communication
 {
-    class Client
+    public class Client
     {
         private HttpClient _httpClient;
 
@@ -51,6 +52,30 @@ namespace MobileTracking.Communication
             var request = await _httpClient.DeleteAsync($"{BaseAddress}/{controller}/{path}");
             return await GetResponse<T>(request);
         }
+        
+        public string ConvertQuery(object? query)
+        {
+            if (query == null)
+            {
+                return "";
+            }
+
+            var queryString = "?";
+            foreach (var property in query.GetType().GetProperties())
+            {
+                if (property.GetValue(query) != null)
+                {
+                    if (queryString.Length > 1)
+                    {
+                        queryString += "&";
+                    }
+                    var propertyName = property.Name[0].ToString().ToLower() + property.Name.Substring(1);
+                    queryString += $"{propertyName}={property.GetValue(query)}";
+                }
+            }
+
+            return queryString;
+        }
 
         private async Task<T> GetResponse<T>(HttpResponseMessage response)
         {
@@ -63,22 +88,6 @@ namespace MobileTracking.Communication
                 var details = await response.Content.ReadAsStringAsync();
                 throw new Exception(details);
             }
-        }
-
-        private string ConvertQuery(object? query)
-        {
-            if( query == null)
-            {
-                return "";
-            }
-
-            var queryString = "?";
-            foreach (var property in query.GetType().GetProperties())
-            {
-                queryString += $"{property.Name}={property.GetValue(query)}";
-            }
-
-            return queryString;
         }
     }
 }

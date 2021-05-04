@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApplication.Application
+namespace MobileTracking.Core.Application
 {
     public class CreateOrUpdatePositionCommand
     {

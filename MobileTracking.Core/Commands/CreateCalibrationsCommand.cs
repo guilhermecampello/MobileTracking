@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using WebApplication.Models;
+using MobileTracking.Core.Models;
 
-namespace WebApplication.Application
+namespace MobileTracking.Core.Application
 {
     public class CreateCalibrationsCommand
     {

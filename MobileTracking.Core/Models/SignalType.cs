@@ -1,4 +1,4 @@
-﻿namespace WebApplication.Models
+﻿namespace MobileTracking.Core.Models
 {
     public enum SignalType
     {

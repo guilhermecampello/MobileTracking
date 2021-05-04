@@ -27,9 +27,5 @@
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\MobileTracking.Core2\MobileTracking.Core.csproj" />
-  </ItemGroup>
-
 
 </Project>

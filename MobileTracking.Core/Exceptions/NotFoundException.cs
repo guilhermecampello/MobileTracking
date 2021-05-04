@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace WebApplication.Application
+namespace MobileTracking.Core.Application
 {
     public class NotFoundException : Exception
     {

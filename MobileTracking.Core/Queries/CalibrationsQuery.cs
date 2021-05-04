@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApplication.Models;
+using MobileTracking.Core.Models;
 
-namespace WebApplication.Application
+namespace MobileTracking.Core.Application
 {
     public class CalibrationsQuery
     {
@@ -16,6 +16,6 @@ namespace WebApplication.Application
 
         public SignalType? SignalType { get; set; }
 
-        public string? SignalId { get; set; } = string.Empty;
+        public string? SignalId { get; set; }
     }
 }

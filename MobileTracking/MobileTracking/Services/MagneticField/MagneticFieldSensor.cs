@@ -14,14 +14,6 @@ namespace MobileTracking.Services.MagneticField
 
         private List<(Quaternion, DateTime)> OrientationSensorData { get; set; } = new List<(Quaternion, DateTime)>();
 
-        HttpClient Client = new HttpClient(new HttpClientHandler()
-        {
-            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-            {
-                return true;
-            },
-        });
-
         public MagneticFieldSensor()
         {
         }
@@ -114,7 +106,7 @@ namespace MobileTracking.Services.MagneticField
                         sample.Item1 = Transform(sample.Item1, orientation);
                         data += $"{sample.Item2.Ticks}; {sample.Item1.X}; {sample.Item1.Y}; {sample.Item1.Z} \n";
                         });
-                    Client.PostAsync("http://192.168.1.5:5000/magneticfield-timeline", new StringContent(data, Encoding.ASCII));
+         
                     MagnetometerData.Clear();
                 }
                 catch(Exception ex)

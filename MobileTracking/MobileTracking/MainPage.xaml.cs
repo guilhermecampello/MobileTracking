@@ -21,48 +21,39 @@ namespace MobileTracking
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
-        Canvas Canvas = new Canvas();
+        private readonly IWifiConnector wifiConnector;
 
-        public List<Marker> Markers { get; set; } = new List<Marker>();
-
-        public IWifiConnector wifiConnector = DependencyService.Get<IWifiConnector>();
-
+        private readonly MagneticFieldSensor magneticFieldSensor;
+        
+        private readonly IBluetoothConnector bluetoothConnector;
+        
         private Dictionary<string, decimal> wifiResults = new Dictionary<string, decimal>();
 
+        private Dictionary<string, BluetoothScanResult> bluetoothResults = new Dictionary<string, BluetoothScanResult>();
+        
         private Thread bluetoothThread;
 
         private Thread wifiThread;
 
         private Timer? timer;
 
-        private MagneticFieldSensor magneticFieldSensor = new MagneticFieldSensor();
-
-        public IBluetoothConnector bluetoothConnector = DependencyService.Get<IBluetoothConnector>();
-
-        private Dictionary<string, BluetoothScanResult> bluetoothResults = new Dictionary<string, BluetoothScanResult>();
-
         private string position = string.Empty;
 
         private int count = 0;
 
-        HttpClient Client = new HttpClient(new HttpClientHandler()
-        {
-            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-            {
-                return true;
-            },
-        });
 
-
-
-        public MainPage()
+        public MainPage(
+            IWifiConnector wifiConnector,
+            MagneticFieldSensor magneticFieldSensor,
+            IBluetoothConnector bluetoothConnector)
         {
             InitializeComponent();
-            this.CanvasView.Content = this.Canvas;
+            this.wifiConnector = wifiConnector;
+            this.magneticFieldSensor = magneticFieldSensor;
+            this.bluetoothConnector = bluetoothConnector;
             bluetoothThread = new Thread(StartBluetoothScan);
             wifiThread = new Thread(StartWifiScan);
             magneticFieldSensor.Start();
-            Client.Timeout = TimeSpan.FromSeconds(3);
         }
 
         public void StartBluetoothScan()
@@ -73,39 +64,6 @@ namespace MobileTracking
         public void StartWifiScan()
         {
             wifiConnector.StartScanning(wifiResults);
-        }
-
-        private async Task SendPositionData()
-        {
-            var wifiRssi = wifiResults.GetValueOrDefault("Campello ");
-            var bluetoothRssi = 0;
-            if (bluetoothResults.ContainsKey("MLT-BT05"))
-            {
-                bluetoothRssi = bluetoothResults.GetValueOrDefault("MLT-BT05").Rssi;
-            }
-            var magneticField = magneticFieldSensor.MagneticFieldVector;
-            var content = new StringContent($"{position}," +
-                $"{wifiRssi}," +
-                $"{bluetoothRssi}," +
-                $"{magneticField.X.ToString().Replace(",",".")}," +
-                $"{magneticField.Y.ToString().Replace(",",".")}," +
-                $"{magneticField.Z.ToString().Replace(",",".")}",
-                Encoding.ASCII);
-            try
-            {
-                foreach (IPAddress adress in Dns.GetHostAddresses(Dns.GetHostName()))
-                {
-                    Console.WriteLine("IP Adress: " + adress.ToString());
-                }
-                var response = await Client.PostAsync("http://192.168.15.7:5000/experiment", content);
-                Console.WriteLine(response.StatusCode);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            count++;
-            Device.BeginInvokeOnMainThread(() => UpdateCounter());
         }
 
         private void UpdateSignalStrengths(object state)
@@ -125,22 +83,8 @@ namespace MobileTracking
                 {
                     Device.BeginInvokeOnMainThread(() => UpdateBluetooth());
                 }
-
-                SendPositionData().Wait();
-
-                if (count >= 10)
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        count = 0;
-                        UpdateCounter();
-                    }
-                    );
-                    timer?.Dispose();
-                    timer = null;
-                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //await DisplayAlert("Connection Error", ex.Message, "OK");
             }
@@ -162,7 +106,6 @@ namespace MobileTracking
                     {
                         bluetoothThread.Start();
                     }
-                    count = 0;
                     Device.BeginInvokeOnMainThread(() => UpdateCounter());
                     if (timer != null)
                     {
@@ -182,13 +125,13 @@ namespace MobileTracking
         public void UpdateWifi()
         {
             var value = wifiResults.GetValueOrDefault("Campello ");
-            wifi.Text = $"WIFI: {value}";
+            //wifi.Text = $"WIFI: {value}";
         }
 
         public void UpdateBluetooth()
         {
             var value = bluetoothResults.GetValueOrDefault("MLT-BT05").Rssi;
-            bluetooth.Text = $"Bluetooth: {value}";
+            //bluetooth.Text = $"Bluetooth: {value}";
         }
 
         public void UpdateCounter()
@@ -198,28 +141,6 @@ namespace MobileTracking
 
         public void UpdateMagneticField()
         {
-            var magneticField = magneticFieldSensor.MagneticFieldVector;
-            magX.Text = $"X: {magneticField.X:0.00}";
-            magY.Text = $"Y: {magneticField.Y:0.00}";
-            magZ.Text = $"Z: {magneticField.Z:0.00}";
-        }
-
-        public async void btn_clicked(object sender, System.EventArgs e)
-        {
-
-        }
-
-        public async void add_marker_clicked(object sender, EventArgs e)
-        {
-            await AddMarker();
-        }
-
-        private async Task AddMarker()
-        {
-            var name = await DisplayPromptAsync("New marker", "Input marker name:");
-            if (!string.IsNullOrEmpty(name))
-            {
-            }
         }
     }
 }

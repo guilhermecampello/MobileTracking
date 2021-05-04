@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebApplication.Models;
+using MobileTracking.Core.Models;
 
-namespace WebApplication.Application
+namespace MobileTracking.Core.Application
 {
     public interface IZoneService
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApplication.Models
+namespace MobileTracking.Core.Models
 {
     public class Locale
     {

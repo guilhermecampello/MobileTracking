@@ -35,13 +35,13 @@ namespace MobileTracking.Droid.Services
         public BluetoothConnector()
         {
             this.context = Android.App.Application.Context;
-            bluetoothManager = (BluetoothManager)context.GetSystemService(Context.BluetoothService);
-            bluetoothAdapter = bluetoothManager.Adapter;
-            bluetoothScanner = bluetoothManager.Adapter.BluetoothLeScanner;
         }
 
         public void StartScanning(Dictionary<string, BluetoothScanResult> devicesResults)
         {
+            bluetoothManager = (BluetoothManager)context.GetSystemService(Context.BluetoothService);
+            bluetoothAdapter = bluetoothManager.Adapter;
+            bluetoothScanner = bluetoothManager.Adapter.BluetoothLeScanner;
             this.devicesResults = devicesResults;
             if (!bluetoothAdapter.IsEnabled)
             {

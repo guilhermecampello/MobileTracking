@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebApplication.Models
+namespace MobileTracking.Core.Models
 {
     public class PositionData : Measurement
     {

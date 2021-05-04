@@ -7,11 +7,11 @@ namespace MobileTracking.Services.Bluetooth
     {
         public BluetoothScanResult(ScanResult scanResult)
         {
-            this.Name = scanResult.Device.Name ?? scanResult.Device.Address;
+            this.Name = scanResult.Device!.Name ?? scanResult.Device.Address ?? string.Empty;
             this.Rssi = scanResult.Rssi;
         }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public int Rssi { get; set; }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApplication.Application
+namespace MobileTracking.Core.Application
 {
     public class ZoneQuery
     {
@@ -11,10 +11,10 @@ namespace WebApplication.Application
 
         public int? Floor { get; set; }
 
-        public bool IncludePositions { get; set; }
+        public bool? IncludePositions { get; set; }
 
-        public bool IncludePositionsData { get; set; }
+        public bool? IncludePositionsData { get; set; }
 
-        public bool IncludePositionsCalibrations { get; set; }
+        public bool? IncludePositionsCalibrations { get; set; }
     }
 }
