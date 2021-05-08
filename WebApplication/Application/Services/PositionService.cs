@@ -84,9 +84,9 @@ namespace MobileTracking.Core.Application
             var position = await this.FindPositionById(positionId);
             position.ZoneId = command.ZoneId ?? position.ZoneId;
             position.Name = command.Name ?? position.Name;
-            position.XCoordinate = command.X ?? position.XCoordinate;
-            position.YCoordinate = command.X ?? position.YCoordinate;
-            position.ZCoordinate = command.X ?? position.ZCoordinate;
+            position.X = command.X ?? position.X;
+            position.Y = command.X ?? position.Y;
+            position.Z = command.X ?? position.Z;
 
             await this.databaseContext.SaveChangesAsync();
             return position;

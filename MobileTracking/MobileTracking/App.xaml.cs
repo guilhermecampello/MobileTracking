@@ -10,7 +10,7 @@ namespace MobileTracking
         {
             InitializeComponent();
             Startup.ConfigureServices();
-            MainPage = Startup.ServiceProvider.GetService<MainPage>();
+            MainPage = new NavigationPage(Startup.ServiceProvider.GetService<MainPage>());
         }
 
         protected override void OnStart()

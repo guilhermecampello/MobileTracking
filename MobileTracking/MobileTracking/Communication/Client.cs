@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using MobileTracking.Communication.Services;
 using Newtonsoft.Json;
 
 namespace MobileTracking.Communication
@@ -28,6 +26,12 @@ namespace MobileTracking.Communication
         public async Task<T> Get<T>(string controller, object? query)
         {
             var request = await _httpClient.GetAsync($"{BaseAddress}/{controller}/{ConvertQuery(query)}");
+            return await GetResponse<T>(request);
+        }
+
+        public async Task<T> Get<T>(string controller, string path, object? query)
+        {
+            var request = await _httpClient.GetAsync($"{BaseAddress}/{controller}/{path}{ConvertQuery(query)}");
             return await GetResponse<T>(request);
         }
 

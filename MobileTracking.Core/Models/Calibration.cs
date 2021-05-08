@@ -7,6 +7,8 @@ namespace MobileTracking.Core.Models
 {
     public class Calibration : Measurement
     {
+        public Calibration() { }
+
         public Calibration(int positionId, Measurement measurement)
         {
             this.PositionId = positionId;

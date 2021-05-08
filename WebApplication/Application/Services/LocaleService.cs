@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MobileTracking.Core.Models;
 using WebApplication.Infrastructure;
 
@@ -14,15 +17,28 @@ namespace MobileTracking.Core.Application
             this.databaseContext = databaseContext;
         }
 
+        public async Task<List<Locale>> GetLocales(LocaleQuery query)
+        {
+            return await this.databaseContext.Locales
+                .Include(query.IncludeZones, locale => locale.Zones)
+                .Include(query.IncludePositions, locale => locale.Zones!, zones => zones.Positions!)
+                .Include(query.IncludePositionsCalibrations, locale => locale.Zones!, zones => zones.Positions!, positions => positions.Calibrations!)
+                .Include(query.IncludePositionsData, locale => locale.Zones!, zones => zones.Positions!, positions => positions.PositionData!)
+                .ToListAsync();
+        }
+
         public async Task<Locale> FindLocaleById(int localeId)
         {
             return await this.databaseContext.Locales.FindAsync(localeId)
                 ?? throw NotFoundException<Locale>.ById(localeId);
         }
 
-        public async Task<Locale> FindLocaleByCoordinates(float latitude, float longitude)
+        public async Task<List<Locale>> FindLocalesByCoordinates(float latitude, float longitude)
         {
-            throw new NotImplementedException();
+            return await this.databaseContext.Locales
+                .OrderBy(locale => Math.Pow(locale.Latitude - latitude, 2) + Math.Pow(locale.Longitude - longitude, 2))
+                .Take(5)
+                .ToListAsync();
         }
 
         public async Task<bool> DeleteLocale(int localeId)

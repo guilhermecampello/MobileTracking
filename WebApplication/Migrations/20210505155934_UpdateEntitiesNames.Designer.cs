@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApplication.Infrastructure;
@@ -9,9 +10,10 @@ using WebApplication.Infrastructure;
 namespace WebApplication.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210505155934_UpdateEntitiesNames")]
+    partial class UpdateEntitiesNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,7 +21,7 @@ namespace WebApplication.Migrations
                 .HasAnnotation("ProductVersion", "5.0.5")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("WebApplication.Models.Calibration", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Calibration", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -58,7 +60,7 @@ namespace WebApplication.Migrations
                     b.ToTable("Calibrations");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Locale", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Locale", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,7 +88,7 @@ namespace WebApplication.Migrations
                     b.ToTable("Locales");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.LocalizationMeasurement", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.LocalizationMeasurement", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -125,7 +127,7 @@ namespace WebApplication.Migrations
                     b.ToTable("LocalizationMeasurements");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Position", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Position", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,13 +138,13 @@ namespace WebApplication.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<float>("XCoordinate")
+                    b.Property<float>("X")
                         .HasColumnType("real");
 
-                    b.Property<float>("YCoordinate")
+                    b.Property<float>("Y")
                         .HasColumnType("real");
 
-                    b.Property<float>("ZCoordinate")
+                    b.Property<float>("Z")
                         .HasColumnType("real");
 
                     b.Property<int>("ZoneId")
@@ -155,7 +157,7 @@ namespace WebApplication.Migrations
                     b.ToTable("Positions");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.PositionData", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.PositionData", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,7 +199,7 @@ namespace WebApplication.Migrations
                     b.ToTable("PositionsData");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.UserLocalization", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.UserLocalization", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -220,7 +222,7 @@ namespace WebApplication.Migrations
                     b.ToTable("UserLocalizations");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Zone", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Zone", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -247,27 +249,29 @@ namespace WebApplication.Migrations
                     b.ToTable("Zones");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Calibration", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Calibration", b =>
                 {
-                    b.HasOne("WebApplication.Models.Position", null)
+                    b.HasOne("MobileTracking.Core.Models.Position", "Position")
                         .WithMany("Calibrations")
                         .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Position");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.LocalizationMeasurement", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.LocalizationMeasurement", b =>
                 {
-                    b.HasOne("WebApplication.Models.UserLocalization", null)
+                    b.HasOne("MobileTracking.Core.Models.UserLocalization", null)
                         .WithMany("LocalizationMeasurements")
                         .HasForeignKey("UserLocalizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Position", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Position", b =>
                 {
-                    b.HasOne("WebApplication.Models.Zone", "Zone")
+                    b.HasOne("MobileTracking.Core.Models.Zone", "Zone")
                         .WithMany("Positions")
                         .HasForeignKey("ZoneId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -276,9 +280,9 @@ namespace WebApplication.Migrations
                     b.Navigation("Zone");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.PositionData", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.PositionData", b =>
                 {
-                    b.HasOne("WebApplication.Models.Position", "Position")
+                    b.HasOne("MobileTracking.Core.Models.Position", "Position")
                         .WithMany("PositionData")
                         .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -287,9 +291,9 @@ namespace WebApplication.Migrations
                     b.Navigation("Position");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.UserLocalization", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.UserLocalization", b =>
                 {
-                    b.HasOne("WebApplication.Models.Position", "CalculatedPosition")
+                    b.HasOne("MobileTracking.Core.Models.Position", "CalculatedPosition")
                         .WithMany()
                         .HasForeignKey("CalculatedPositionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -298,9 +302,9 @@ namespace WebApplication.Migrations
                     b.Navigation("CalculatedPosition");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Zone", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Zone", b =>
                 {
-                    b.HasOne("WebApplication.Models.Locale", "Locale")
+                    b.HasOne("MobileTracking.Core.Models.Locale", "Locale")
                         .WithMany("Zones")
                         .HasForeignKey("LocaleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -309,24 +313,24 @@ namespace WebApplication.Migrations
                     b.Navigation("Locale");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Locale", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Locale", b =>
                 {
                     b.Navigation("Zones");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Position", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Position", b =>
                 {
                     b.Navigation("Calibrations");
 
                     b.Navigation("PositionData");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.UserLocalization", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.UserLocalization", b =>
                 {
                     b.Navigation("LocalizationMeasurements");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Zone", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.Zone", b =>
                 {
                     b.Navigation("Positions");
                 });

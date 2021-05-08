@@ -24,6 +24,7 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             this.AddDatabaseContext(services);
+            services.AddCors();
             services.AddControllers()
                 .AddNewtonsoftJson(options =>
             {
@@ -44,14 +45,20 @@ namespace WebApplication
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
+            //app.UseHttpsRedirection();
+            app.UseHsts();
+            app.UseCors(builder =>
+            {
+                builder
+                    .AllowCredentials()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

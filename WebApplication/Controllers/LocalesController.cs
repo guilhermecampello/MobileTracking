@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MobileTracking.Core.Application;
 using MobileTracking.Core.Models;
@@ -9,6 +10,23 @@ namespace WebApplication.Controllers
     [Route("api/locales")]
     public class LocalesController : ControllerBase
     {
+        [HttpGet]
+        public async Task<ActionResult<List<Locale>>> GetLocales(
+            [FromServices] ILocaleService localeService,
+            [FromQuery] LocaleQuery query)
+        {
+            return await localeService.GetLocales(query);
+        }
+
+        [HttpGet("coordinates")]
+        public async Task<ActionResult<List<Locale>>> GetLocalesByCoordinates(
+            [FromServices] ILocaleService localeService,
+            [FromQuery] float latitude,
+            [FromQuery] float longitude)
+        {
+            return await localeService.FindLocalesByCoordinates(latitude, longitude);
+        }
+
         [HttpGet("{localeId}")]
         public async Task<ActionResult<Locale>> GetLocaleById(
             [FromServices] ILocaleService localeService,

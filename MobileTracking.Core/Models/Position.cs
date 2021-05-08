@@ -7,13 +7,15 @@ namespace MobileTracking.Core.Models
 {
     public class Position
     {
+        public Position() { }
+
         public Position(int zoneId, string name, int x, int y, int z)
         {
             this.ZoneId = zoneId;
             this.Name = name;
-            this.XCoordinate = x;
-            this.YCoordinate = y;
-            this.ZCoordinate = z;
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
         }
 
         public int Id { get; set; }
@@ -22,11 +24,11 @@ namespace MobileTracking.Core.Models
 
         public string Name { get; set; } = string.Empty;
 
-        public float XCoordinate { get; set; }
+        public float X { get; set; }
 
-        public float YCoordinate { get; set; }
+        public float Y { get; set; }
 
-        public float ZCoordinate { get; set; }
+        public float Z { get; set; }
 
         public Zone? Zone { get; set; }
 

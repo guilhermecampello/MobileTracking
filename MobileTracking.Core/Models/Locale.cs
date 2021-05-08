@@ -5,6 +5,8 @@ namespace MobileTracking.Core.Models
 {
     public class Locale
     {
+        public Locale() { }
+
         public Locale(string name, string? description, float latitude, float longitude)
         {
             this.Name = name;

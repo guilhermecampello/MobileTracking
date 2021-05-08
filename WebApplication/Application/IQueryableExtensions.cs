@@ -37,11 +37,11 @@ namespace MobileTracking.Core.Application
         }
 
         public static IQueryable<T> Include<T, T2>(
-            this IQueryable<T> query, bool include, Expression<Func<T, T2>> expression)
+            this IQueryable<T> query, bool? include, Expression<Func<T, T2>> expression)
             where T : class
             where T2 : class?
         {
-            if (include)
+            if (include.GetValueOrDefault())
             {
                 query = query.Include(expression);
             }
@@ -51,14 +51,14 @@ namespace MobileTracking.Core.Application
 
         public static IQueryable<T1> Include<T1, T2, T3>(
             this IQueryable<T1> query,
-            bool include,
+            bool? include,
             Expression<Func<T1, IEnumerable<T2>>> expression,
             Expression<Func<T2, IEnumerable<T3>>> secondExpression)
             where T1 : class
-            where T2 : class?
-            where T3 : class?
+            where T2 : class
+            where T3 : class
         {
-            if (include)
+            if (include.GetValueOrDefault())
             {
                 query = query.Include(expression)
                     .ThenInclude(secondExpression);
@@ -69,14 +69,14 @@ namespace MobileTracking.Core.Application
 
         public static IQueryable<T1> Include<T1, T2, T3>(
             this IQueryable<T1> query,
-            bool include,
+            bool? include,
             Expression<Func<T1, T2>> expression,
             Expression<Func<T2, IEnumerable<T3>>> secondExpression)
             where T1 : class
-            where T2 : class?
-            where T3 : class?
+            where T2 : class
+            where T3 : class
         {
-            if (include)
+            if (include.GetValueOrDefault())
             {
                 query = query.Include(expression)
                     .ThenInclude(secondExpression);
@@ -87,17 +87,38 @@ namespace MobileTracking.Core.Application
 
         public static IQueryable<T1> Include<T1, T2, T3>(
             this IQueryable<T1> query,
-            bool include,
+            bool? include,
             Expression<Func<T1, T2>> expression,
             Expression<Func<T2, T3>> secondExpression)
             where T1 : class
-            where T2 : class?
-            where T3 : class?
+            where T2 : class
+            where T3 : class
         {
-            if (include)
+            if (include.GetValueOrDefault())
             {
                 query = query.Include(expression)
                     .ThenInclude(secondExpression);
+            }
+
+            return query;
+        }
+
+        public static IQueryable<T1> Include<T1, T2, T3, T4>(
+            this IQueryable<T1> query,
+            bool? include,
+            Expression<Func<T1, IEnumerable<T2>>> expression,
+            Expression<Func<T2, IEnumerable<T3>>> secondExpression,
+            Expression<Func<T3, IEnumerable<T4>>> thirdExpression)
+            where T1 : class
+            where T2 : class
+            where T3 : class
+            where T4 : class
+        {
+            if (include.GetValueOrDefault())
+            {
+                query = query.Include(expression)
+                    .ThenInclude(secondExpression)
+                        .ThenInclude(thirdExpression);
             }
 
             return query;

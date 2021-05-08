@@ -1,13 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MobileTracking.Core.Models;
 
 namespace MobileTracking.Core.Application
 {
     public interface ILocaleService
     {
+        Task<List<Locale>> GetLocales(LocaleQuery query);
+
         Task<Locale> FindLocaleById(int localeId);
 
-        Task<Locale> FindLocaleByCoordinates(float latitude, float longitude);
+        Task<List<Locale>> FindLocalesByCoordinates(float latitude, float longitude);
 
         Task<Locale> CreateLocale(CreateOrUpdateLocaleCommand command);
 

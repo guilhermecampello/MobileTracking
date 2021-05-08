@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
-using Android.Net.Wifi;
+using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
 using MobileTracking.Services.Bluetooth;
 using System.Threading;
-using Android.App;
 using MobileTracking.Services.MagneticField;
-using System.Net;
+using MobileTracking.Services;
 
 namespace MobileTracking
 {
@@ -26,6 +22,8 @@ namespace MobileTracking
         private readonly MagneticFieldSensor magneticFieldSensor;
         
         private readonly IBluetoothConnector bluetoothConnector;
+
+        private readonly LocaleProvider localeProvider;
         
         private Dictionary<string, decimal> wifiResults = new Dictionary<string, decimal>();
 
@@ -45,12 +43,15 @@ namespace MobileTracking
         public MainPage(
             IWifiConnector wifiConnector,
             MagneticFieldSensor magneticFieldSensor,
-            IBluetoothConnector bluetoothConnector)
+            IBluetoothConnector bluetoothConnector,
+            LocaleProvider localeProvider)
         {
             InitializeComponent();
             this.wifiConnector = wifiConnector;
             this.magneticFieldSensor = magneticFieldSensor;
             this.bluetoothConnector = bluetoothConnector;
+            this.localeProvider = localeProvider;
+
             bluetoothThread = new Thread(StartBluetoothScan);
             wifiThread = new Thread(StartWifiScan);
             magneticFieldSensor.Start();
@@ -141,6 +142,12 @@ namespace MobileTracking
 
         public void UpdateMagneticField()
         {
+        }
+
+        private void Configuration_Clicked(object sender, EventArgs e)
+        {
+            var configurationsPage = Startup.ServiceProvider.GetService<ConfigurationPage>();
+            Navigation.PushAsync(configurationsPage);
         }
     }
 }
