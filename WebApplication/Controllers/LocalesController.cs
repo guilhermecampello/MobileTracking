@@ -21,18 +21,18 @@ namespace WebApplication.Controllers
         [HttpGet("coordinates")]
         public async Task<ActionResult<List<Locale>>> GetLocalesByCoordinates(
             [FromServices] ILocaleService localeService,
-            [FromQuery] float latitude,
-            [FromQuery] float longitude)
+            [FromQuery] LocaleQuery query)
         {
-            return await localeService.FindLocalesByCoordinates(latitude, longitude);
+            return await localeService.FindLocalesByCoordinates(query);
         }
 
         [HttpGet("{localeId}")]
         public async Task<ActionResult<Locale>> GetLocaleById(
             [FromServices] ILocaleService localeService,
+            [FromQuery] LocaleQuery query,
             [FromRoute] int localeId)
         {
-            return await localeService.FindLocaleById(localeId);
+            return await localeService.FindLocaleById(localeId, query);
         }
 
         [HttpDelete("{localeId}")]

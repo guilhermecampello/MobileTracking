@@ -10,6 +10,8 @@ namespace MobileTracking.Services.MagneticField
 {
     public class MagneticFieldSensor
     {
+        public MonitoringState State { get => Magnetometer.IsMonitoring ? MonitoringState.Monitoring : MonitoringState.Available; }
+
         private List<(Vector3, DateTime)> MagnetometerData { get; set; } = new List<(Vector3, DateTime)>();
 
         private List<(Quaternion, DateTime)> OrientationSensorData { get; set; } = new List<(Quaternion, DateTime)>();
@@ -20,10 +22,13 @@ namespace MobileTracking.Services.MagneticField
 
         public void Start()
         {
-            OrientationSensor.Start(SensorSpeed.Fastest);
-            OrientationSensor.ReadingChanged += OrientationSensor_ReadingChanged;
-            Magnetometer.Start(SensorSpeed.Fastest);
-            Magnetometer.ReadingChanged += Magnetometer_ReadingChanged;
+            if (!Magnetometer.IsMonitoring)
+            {
+                OrientationSensor.Start(SensorSpeed.Fastest);
+                OrientationSensor.ReadingChanged += OrientationSensor_ReadingChanged;
+                Magnetometer.Start(SensorSpeed.Fastest);
+                Magnetometer.ReadingChanged += Magnetometer_ReadingChanged;
+            }
         }
 
         public Vector3 MagneticFieldVector

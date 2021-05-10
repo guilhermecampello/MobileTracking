@@ -27,16 +27,23 @@ namespace MobileTracking.Core.Application
                 .ToListAsync();
         }
 
-        public async Task<Locale> FindLocaleById(int localeId)
+        public async Task<Locale> FindLocaleById(int localeId, LocaleQuery? query)
         {
-            return await this.databaseContext.Locales.FindAsync(localeId)
+            return await this.databaseContext.Locales
+                .Include(query?.IncludeZones, locale => locale.Zones)
+                .Include(query?.IncludePositions, locale => locale.Zones!, zones => zones.Positions!)
+                .Include(query?.IncludePositionsCalibrations, locale => locale.Zones!, zones => zones.Positions!, positions => positions.Calibrations!)
+                .Include(query?.IncludePositionsData, locale => locale.Zones!, zones => zones.Positions!, positions => positions.PositionData!)
+                .FirstOrDefaultAsync(locale => locale.Id == localeId)
                 ?? throw NotFoundException<Locale>.ById(localeId);
         }
 
-        public async Task<List<Locale>> FindLocalesByCoordinates(float latitude, float longitude)
+        public async Task<List<Locale>> FindLocalesByCoordinates(LocaleQuery query)
         {
             return await this.databaseContext.Locales
-                .OrderBy(locale => Math.Pow(locale.Latitude - latitude, 2) + Math.Pow(locale.Longitude - longitude, 2))
+                .Include(query.IncludeZones, locale => locale.Zones)
+                .Include(query.IncludePositions, locale => locale.Zones!, zone => zone.Positions!)
+                .OrderBy(locale => Math.Pow(locale.Latitude - query.Latitude.GetValueOrDefault(), 2) + Math.Pow(locale.Longitude - query.Longitude.GetValueOrDefault(), 2))
                 .Take(5)
                 .ToListAsync();
         }
@@ -45,7 +52,7 @@ namespace MobileTracking.Core.Application
         {
             try
             {
-                var locale = await this.FindLocaleById(localeId);
+                var locale = await this.FindLocaleById(localeId, null);
                 this.databaseContext.Remove(locale);
                 await this.databaseContext.SaveChangesAsync();
                 return true;
@@ -82,7 +89,7 @@ namespace MobileTracking.Core.Application
 
         public async Task<Locale> UpdateLocale(int localeId, CreateOrUpdateLocaleCommand command)
         {
-            var locale = await this.FindLocaleById(localeId);
+            var locale = await this.FindLocaleById(localeId, null);
             locale.Name = command.Name ?? locale.Name;
             locale.Description = command.Description ?? locale.Description;
             locale.Latitude = command.Latitude ?? locale.Latitude;

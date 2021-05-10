@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MobileTracking.Pages.Locales.AddZoneForm"
+             xmlns:resources="clr-namespace:MobileTracking">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="{x:Static resources:AppResources.Add_zone}"
+                   FontSize="Large"
+                   FontAttributes="Bold"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand" />
+            <StackLayout Margin="10">
+                <Label Text="{x:Static resources:AppResources.Name}" FontSize="Medium" FontAttributes="Bold"/>
+                <Editor x:Name="name" Placeholder="{x:Static resources:AppResources.Name}" />
+            </StackLayout>
+            <StackLayout Margin="10">
+                <Label Text="{x:Static resources:AppResources.Description}" FontSize="Medium" FontAttributes="Bold"/>
+                <Editor x:Name="description" Placeholder="{x:Static resources:AppResources.Description}" />
+            </StackLayout>
+            <StackLayout Margin="10">
+                <Label Text="{x:Static resources:AppResources.Floor}" FontSize="Medium" FontAttributes="Bold"/>
+                <Editor x:Name="floor" Placeholder="{x:Static resources:AppResources.Floor}" Keyboard="Numeric"/>
+            </StackLayout>
+            <ActivityIndicator x:Name="activityIndicator" IsRunning="False"/>
+            <Button Text="{x:Static resources:AppResources.Add}" Clicked="Button_Clicked"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

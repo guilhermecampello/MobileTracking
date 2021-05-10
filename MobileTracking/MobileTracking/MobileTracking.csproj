@@ -12,8 +12,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\fa-regular-400.ttf" />
+    <None Remove="Fonts\fa-solid-900.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Fonts\fa-solid-900.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Plugin.Toast" Version="2.2.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
@@ -30,13 +40,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Fonts\fa-regular-400.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="AppResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="LocaleSummaryPage.xaml.cs">
-      <DependentUpon>LocaleSummaryPage.xaml</DependentUpon>
+    <Compile Update="Pages\Locales\AddPositionForm.xaml.cs">
+      <DependentUpon>AddPositionForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Pages\Locales\AddLocaleForm.xaml.cs">
+      <DependentUpon>AddLocaleForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Pages\Locales\LocaleZonesPage.xaml.cs">
+      <DependentUpon>LocaleZonesPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -45,13 +65,19 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="ConfigurationPage.xaml">
+    <EmbeddedResource Update="Pages\Configuration\ConfigurationPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="LocalesPage.xaml">
+    <EmbeddedResource Update="Pages\Locales\AddZoneForm.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="LocaleSummaryPage.xaml">
+    <EmbeddedResource Update="Pages\Locales\LocalesPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Pages\Locales\LocaleZonesPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Pages\PositionPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

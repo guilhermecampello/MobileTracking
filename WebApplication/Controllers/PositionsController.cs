@@ -12,9 +12,10 @@ namespace WebApplication.Controllers
         [HttpGet("{positionId}")]
         public async Task<ActionResult<Position>> GetPositionById(
             [FromServices] IPositionService positionService,
+            [FromQuery] PositionQuery query,
             [FromRoute] int positionId)
         {
-            return await positionService.FindPositionById(positionId);
+            return await positionService.FindPositionById(positionId, query);
         }
 
         [HttpDelete("{positionId}")]

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MobileTracking.Communication.ClientServices
 {
-    class ZonesService : IZoneService
+    public class ZonesService : IZoneService
     {
         private readonly Client client;
 
@@ -18,14 +18,14 @@ namespace MobileTracking.Communication.ClientServices
             this.client = client;
         }
 
-        public Task<Zone> CreateZone(CreateOrUpdateZoneCommand command)
+        public async Task<Zone> CreateZone(CreateOrUpdateZoneCommand command)
         {
-            throw new NotImplementedException();
+            return await this.client.Post<Zone>(zonesController, command);
         }
 
-        public Task<bool> DeleteZone(int positionId)
+        public async Task<bool> DeleteZone(int zoneId)
         {
-            throw new NotImplementedException();
+            return await this.client.Delete<bool>(zonesController, zoneId.ToString());
         }
 
         public Task<Zone> FindZoneById(int zoneId, ZoneQuery query)
@@ -38,7 +38,7 @@ namespace MobileTracking.Communication.ClientServices
             return await this.client.Get<List<Zone>>(zonesController, query);
         }
 
-        public Task<Zone> UpdateZone(int positionId, CreateOrUpdateZoneCommand command)
+        public Task<Zone> UpdateZone(int zoneId, CreateOrUpdateZoneCommand command)
         {
             throw new NotImplementedException();
         }

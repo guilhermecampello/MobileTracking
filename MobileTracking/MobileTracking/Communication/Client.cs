@@ -10,7 +10,6 @@ namespace MobileTracking.Communication
     {
         private HttpClient _httpClient;
 
-        public string BaseAddress { get; set; } = "https://localhost:5001/api/";
 
         public Client()
         {
@@ -22,22 +21,28 @@ namespace MobileTracking.Communication
                 }
             });
         }
+
+        private string apiAddress { get => $"https://{Hostname}:5001/api"; }
+
+        public string Hostname { get; set; } = "192.168.1.6";
+
+        public bool IsHealthy { get; set; }
         
         public async Task<T> Get<T>(string controller, object? query)
         {
-            var request = await _httpClient.GetAsync($"{BaseAddress}/{controller}/{ConvertQuery(query)}");
+            var request = await _httpClient.GetAsync($"{apiAddress}/{controller}/{ConvertQuery(query)}");
             return await GetResponse<T>(request);
         }
 
         public async Task<T> Get<T>(string controller, string path, object? query)
         {
-            var request = await _httpClient.GetAsync($"{BaseAddress}/{controller}/{path}{ConvertQuery(query)}");
+            var request = await _httpClient.GetAsync($"{apiAddress}/{controller}/{path}{ConvertQuery(query)}");
             return await GetResponse<T>(request);
         }
 
         public async Task<T> Put<T>(string controller, string path, object body)
         {
-            var request =  await _httpClient.PutAsync($"{BaseAddress}/{controller}/{path}",
+            var request =  await _httpClient.PutAsync($"{apiAddress}/{controller}/{path}",
                     new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8)
                );
             return await GetResponse<T>(request);
@@ -45,18 +50,34 @@ namespace MobileTracking.Communication
 
         public async Task<T> Post<T>(string controller, object body, string path = "")
         {
-            var request = await _httpClient.PostAsync($"{BaseAddress}/{controller}/{path}",
-                    new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8)
+            var request = await _httpClient.PostAsync($"{apiAddress}/{controller}/{path}",
+                    new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")
                 );
             return await GetResponse<T>(request);
         }
 
         public async Task<T> Delete<T>(string controller, string path)
         {
-            var request = await _httpClient.DeleteAsync($"{BaseAddress}/{controller}/{path}");
+            var request = await _httpClient.DeleteAsync($"{apiAddress}/{controller}/{path}");
             return await GetResponse<T>(request);
         }
         
+        public async Task<bool> CheckHealth()
+        {
+            var request = await _httpClient.GetAsync($"{apiAddress}/health");
+            if (request.IsSuccessStatusCode)
+            {
+                var response = await request.Content.ReadAsStringAsync();
+                if (response == "Healthy")
+                {
+                    this.IsHealthy = true;
+                    return true;
+                }
+            }
+            this.IsHealthy = false;
+            return false;
+        }
+
         public string ConvertQuery(object? query)
         {
             if (query == null)
@@ -90,6 +111,14 @@ namespace MobileTracking.Communication
             else
             {
                 var details = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != System.Net.HttpStatusCode.InternalServerError)
+                {
+                    var problemDetails = JsonConvert.DeserializeObject<ProblemDetails>(details);
+                    if (problemDetails != null)
+                    {
+                        throw new Exception(problemDetails.Title, new Exception(problemDetails.Detail));
+                    }
+                }
                 throw new Exception(details);
             }
         }

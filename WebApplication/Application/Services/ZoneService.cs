@@ -70,7 +70,7 @@ namespace MobileTracking.Core.Application
         {
             try
             {
-                var zone = this.FindZoneById(zoneId);
+                var zone = await this.FindZoneById(zoneId);
                 this.databaseContext.Remove(zone);
                 await this.databaseContext.SaveChangesAsync();
                 return true;

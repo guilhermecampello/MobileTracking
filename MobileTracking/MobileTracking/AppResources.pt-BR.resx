@@ -117,10 +117,103 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Add" xml:space="preserve">
+    <value>Adicionar</value>
+  </data>
+  <data name="Add position" xml:space="preserve">
+    <value>Adicionar posição</value>
+  </data>
+  <data name="Add zone" xml:space="preserve">
+    <value>Adicionar zona</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Disponível</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Voltar</value>
+  </data>
+  <data name="Calibrate position" xml:space="preserve">
+    <value>Calibrar posição</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
   <data name="Configurations" xml:space="preserve">
     <value>Configurações</value>
   </data>
+  <data name="Confirm delete zone" xml:space="preserve">
+    <value>Você tem certeza que deseja deletar a zona</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Criar</value>
+  </data>
+  <data name="Create new locale" xml:space="preserve">
+    <value>Criar nova localidade</value>
+  </data>
+  <data name="Current locale" xml:space="preserve">
+    <value>Localização atual</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Deletar</value>
+  </data>
+  <data name="Delete zone" xml:space="preserve">
+    <value>Deletar zona</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Deletada</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descrição</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Edit Hostname" xml:space="preserve">
+    <value>Alterar o endereço do servidor</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Erro</value>
+  </data>
+  <data name="Floor" xml:space="preserve">
+    <value>Andar</value>
+  </data>
+  <data name="Hostname" xml:space="preserve">
+    <value>Endereço do servidor</value>
+  </data>
+  <data name="Invalid Hostname" xml:space="preserve">
+    <value>Endereço inválido</value>
+  </data>
+  <data name="Locales" xml:space="preserve">
+    <value>Localidades</value>
+  </data>
   <data name="Magnetic field" xml:space="preserve">
     <value>Campo magnético</value>
+  </data>
+  <data name="Monitoring" xml:space="preserve">
+    <value>Monitorando</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="No_zones_message" xml:space="preserve">
+    <value>Nenhuma zona configurada. Adicione uma zona clicando no botão "+".</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Posição</value>
+  </data>
+  <data name="Server not available" xml:space="preserve">
+    <value>Servidor indisponível</value>
+  </data>
+  <data name="Start calibration" xml:space="preserve">
+    <value>Iniciar calibração</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Indisponível</value>
+  </data>
+  <data name="View data" xml:space="preserve">
+    <value>Visualizar dados</value>
+  </data>
+  <data name="Zone" xml:space="preserve">
+    <value>Zona</value>
   </data>
 </root>

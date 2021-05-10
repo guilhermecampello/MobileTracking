@@ -11,6 +11,8 @@ namespace MobileTracking.Core.Application
 
         public int? ZoneId { get; set; }
 
+        public bool? IncludeZone { get; set; }
+
         public bool? IncludeData { get; set; }
 
         public bool? IncludeCalibrations { get; set; }

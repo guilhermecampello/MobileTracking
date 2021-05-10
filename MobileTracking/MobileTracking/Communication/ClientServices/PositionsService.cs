@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MobileTracking.Communication.ClientServices
 {
-    class PositionsService : IPositionService
+    public class PositionsService : IPositionService
     {
         private readonly Client client;
 
@@ -18,9 +18,9 @@ namespace MobileTracking.Communication.ClientServices
             this.client = client;
         }
 
-        public Task<Position> CreatePosition(CreateOrUpdatePositionCommand command)
+        public async Task<Position> CreatePosition(CreateOrUpdatePositionCommand command)
         {
-            throw new NotImplementedException();
+            return await client.Post<Position>(positionsController, command);
         }
 
         public Task<bool> DeletePosition(int positionId)
@@ -28,9 +28,9 @@ namespace MobileTracking.Communication.ClientServices
             throw new NotImplementedException();
         }
 
-        public Task<Position> FindPositionById(int zoneId, PositionQuery query)
+        public async Task<Position> FindPositionById(int positionId, PositionQuery query)
         {
-            throw new NotImplementedException();
+            return await client.Get<Position>(positionsController, positionId.ToString() ,query);
         }
 
         public async Task<List<Position>> GetPositions(PositionQuery query)

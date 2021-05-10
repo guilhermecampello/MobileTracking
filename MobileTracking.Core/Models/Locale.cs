@@ -7,7 +7,7 @@ namespace MobileTracking.Core.Models
     {
         public Locale() { }
 
-        public Locale(string name, string? description, float latitude, float longitude)
+        public Locale(string name, string? description, double latitude, double longitude)
         {
             this.Name = name;
             this.Description = description;
@@ -21,9 +21,9 @@ namespace MobileTracking.Core.Models
 
         public string? Description { get; set; }
 
-        public float Latitude { get; set; }
+        public double Latitude { get; set; }
 
-        public float Longitude { get; set; }
+        public double Longitude { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

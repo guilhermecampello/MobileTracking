@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MobileTracking.Core.Application;
+using MobileTracking.Core.Application.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using WebApplication.Infrastructure;
@@ -25,6 +26,7 @@ namespace WebApplication
         {
             this.AddDatabaseContext(services);
             services.AddCors();
+            services.AddHealthChecks();
             services.AddControllers()
                 .AddNewtonsoftJson(options =>
             {
@@ -55,12 +57,12 @@ namespace WebApplication
                     .AllowAnyMethod();
             });
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/api/health");
                 endpoints.MapControllers();
             });
         }
@@ -70,6 +72,8 @@ namespace WebApplication
             services.AddHttpContextAccessor();
             services.AddScoped<ILocaleService, LocaleService>();
             services.AddScoped<IZoneService, ZoneService>();
+            services.AddScoped<IPositionService, PositionService>();
+            services.AddScoped<ICalibrationService, CalibrationService>();
         }
 
         private void AddDatabaseContext(

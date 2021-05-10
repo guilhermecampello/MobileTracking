@@ -18,9 +18,9 @@ namespace MobileTracking.Communication.ClientServices
             this.client = client;
         }
 
-        public Task<Locale> CreateLocale(CreateOrUpdateLocaleCommand command)
+        public async Task<Locale> CreateLocale(CreateOrUpdateLocaleCommand command)
         {
-            throw new NotImplementedException();
+            return await this.client.Post<Locale>(localesController, command);
         }
 
         public Task<bool> DeleteLocale(int localeId)
@@ -28,21 +28,17 @@ namespace MobileTracking.Communication.ClientServices
             throw new NotImplementedException();
         }
 
-        public Task<List<Locale>> FindLocalesByCoordinates(float latitude, float longitude)
+        public Task<List<Locale>> FindLocalesByCoordinates(LocaleQuery query)
         {
-            var query = new LocaleQuery()
-            {
-                Latitude = latitude,
-                Longitude = longitude,
-                IncludeZones = true,
-                IncludePositions = true
-            };
+            query.IncludeZones = true;
+            query.IncludePositions = true;
+            
             return client.Get<List<Locale>>(localesController, "coordinates", query);
         }
 
-        public Task<Locale> FindLocaleById(int localeId)
+        public Task<Locale> FindLocaleById(int localeId, LocaleQuery? query)
         {
-            throw new NotImplementedException();
+            return client.Get<Locale>(localesController, localeId.ToString(), query);
         }
 
         public async Task<List<Locale>> GetLocales(LocaleQuery query)

@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:MobileTracking"
+             x:Class="MobileTracking.Pages.PositionPage"
+             Visual="Material">
+    <NavigationPage.TitleView>
+        <Label TextColor="White" FontSize="Title" VerticalTextAlignment="Center">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="{Binding Position.Zone.Name}" />
+                    <Span Text=" - " />
+                    <Span Text="{Binding Position.Name}"/>
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+    </NavigationPage.TitleView>
+    <ContentPage.Content>
+        <StackLayout Margin="10">
+            <Frame HasShadow="True">
+                <StackLayout>
+                    <Label Text="{x:Static resources:AppResources.Calibrate_position}" FontSize="Medium" FontAttributes="Bold" TextTransform="Uppercase"/>
+                    <Grid Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Text="Wifi" FontAttributes="Bold"/>
+                        <StackLayout  Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                            <BoxView VerticalOptions="Center" CornerRadius="20" HeightRequest="15" WidthRequest="15" BackgroundColor="{Binding WifiStateColor}" />
+                            <Label Text="{Binding WifiState}" FontSize="Caption" VerticalOptions="Center"/>
+                        </StackLayout>
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="Bluetooth" FontAttributes="Bold"/>
+                        <StackLayout  Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                            <BoxView VerticalOptions="Center" CornerRadius="20" HeightRequest="15" WidthRequest="15" BackgroundColor="{Binding BluetoothStateColor}" />
+                            <Label Text="{Binding BluetoothState}" FontSize="Caption" VerticalOptions="Center"/>
+                        </StackLayout>
+
+                        <Label Grid.Row="2" Grid.Column="0" Text="Magnetometer" FontAttributes="Bold"/>
+                        <StackLayout  Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                            <BoxView VerticalOptions="Center" CornerRadius="20" HeightRequest="15" WidthRequest="15" BackgroundColor="{Binding MagnetometerStateColor}" />
+                            <Label Text="{Binding MagnetometerState}" FontSize="Caption" VerticalOptions="Center"/>
+                        </StackLayout>
+                    </Grid>
+                    <Button Text="{x:Static resources:AppResources.Start_calibration}" />
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

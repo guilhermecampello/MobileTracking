@@ -25,6 +25,7 @@ namespace MobileTracking.Core.Application
             }
 
             return await this.databaseContext.Positions
+                .Include(query.IncludeZone, position => position.Zone)
                 .Include(query.IncludeCalibrations, positions => positions.Calibrations!)
                 .Include(query.IncludeData, position => position.PositionData!)
                 .FirstOrDefaultAsync(position => position.Id == positionId)
@@ -38,6 +39,7 @@ namespace MobileTracking.Core.Application
                 .AsQueryable()
                 .Where(query.LocaleId, localeId => position => position.Zone!.LocaleId == localeId)
                 .Where(query.ZoneId, zoneId => position => position.ZoneId == zoneId)
+                .Include(query.IncludeZone, position => position.Zone)
                 .Include(query.IncludeCalibrations, positions => positions.Calibrations!)
                 .Include(query.IncludeData, position => position.PositionData!)
                 .ToListAsync();
@@ -45,7 +47,7 @@ namespace MobileTracking.Core.Application
 
         public async Task<Position> CreatePosition(CreateOrUpdatePositionCommand command)
         {
-            var zone = await this.databaseContext.Locales.FindAsync(command.ZoneId);
+            var zone = await this.databaseContext.Zones.FindAsync(command.ZoneId);
             if (zone == null)
             {
                 throw new InvalidParametersException("ZoneId", command.ZoneId, "An existing zoneId must be provided for position");
@@ -68,7 +70,7 @@ namespace MobileTracking.Core.Application
         {
             try
             {
-                var position = this.FindPositionById(positionId);
+                var position = await this.FindPositionById(positionId);
                 this.databaseContext.Remove(position);
                 await this.databaseContext.SaveChangesAsync();
                 return true;

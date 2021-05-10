@@ -8,9 +8,9 @@ namespace MobileTracking.Core.Application
     {
         Task<List<Locale>> GetLocales(LocaleQuery query);
 
-        Task<Locale> FindLocaleById(int localeId);
+        Task<Locale> FindLocaleById(int localeId, LocaleQuery? query);
 
-        Task<List<Locale>> FindLocalesByCoordinates(float latitude, float longitude);
+        Task<List<Locale>> FindLocalesByCoordinates(LocaleQuery query);
 
         Task<Locale> CreateLocale(CreateOrUpdateLocaleCommand command);
 

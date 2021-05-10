@@ -1,18 +1,12 @@
-﻿using Android.App;
-using Android.Bluetooth;
+﻿using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
-using Android.Net.Wifi;
-using Android.Net.Wifi.Rtt;
-using Android.OS;
 using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+using MobileTracking.Services;
 using MobileTracking.Services.Bluetooth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using ScanResult = Android.Bluetooth.LE.ScanResult;
@@ -24,7 +18,7 @@ namespace MobileTracking.Droid.Services
     {
         private Context context = null;
 
-        private Dictionary<string, BluetoothScanResult> devicesResults;
+        private Dictionary<string, BluetoothScanResult> devicesResults { get; set; } = new Dictionary<string, BluetoothScanResult>();
 
         private BluetoothManager bluetoothManager;
 
@@ -35,14 +29,33 @@ namespace MobileTracking.Droid.Services
         public BluetoothConnector()
         {
             this.context = Android.App.Application.Context;
-        }
-
-        public void StartScanning(Dictionary<string, BluetoothScanResult> devicesResults)
-        {
             bluetoothManager = (BluetoothManager)context.GetSystemService(Context.BluetoothService);
             bluetoothAdapter = bluetoothManager.Adapter;
             bluetoothScanner = bluetoothManager.Adapter.BluetoothLeScanner;
-            this.devicesResults = devicesResults;
+        }
+
+        public Dictionary<string, BluetoothScanResult> DevicesResults { get => devicesResults; }
+
+        public MonitoringState State
+        {
+            get
+            {
+                if (bluetoothAdapter != null && bluetoothAdapter.IsDiscovering)
+                {
+                    return MonitoringState.Monitoring;
+                }
+
+                if (bluetoothAdapter != null && bluetoothAdapter.IsEnabled)
+                {
+                    return MonitoringState.Available;
+                }
+
+                return MonitoringState.Unavailable;
+            }
+        }
+
+        public void StartScanning()
+        {
             if (!bluetoothAdapter.IsEnabled)
             {
                 throw new Exception("Please enable Bluetooth");
@@ -53,7 +66,7 @@ namespace MobileTracking.Droid.Services
                 try
                 {
                     bluetoothScanner.StartScan(scanCallback);
-                    Task.Delay(5000).Wait();
+                    Task.Delay(3000).Wait();
                     bluetoothScanner.StopScan(scanCallback);
                 }
                 catch(Exception e)

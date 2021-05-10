@@ -24,10 +24,10 @@ namespace MobileTracking
         private readonly IBluetoothConnector bluetoothConnector;
 
         private readonly LocaleProvider localeProvider;
-        
-        private Dictionary<string, decimal> wifiResults = new Dictionary<string, decimal>();
 
-        private Dictionary<string, BluetoothScanResult> bluetoothResults = new Dictionary<string, BluetoothScanResult>();
+        private Dictionary<string, decimal> wifiResults => wifiConnector.ScanResults;
+
+        private Dictionary<string, BluetoothScanResult> bluetoothResults => bluetoothConnector.DevicesResults;
         
         private Thread bluetoothThread;
 
@@ -59,12 +59,12 @@ namespace MobileTracking
 
         public void StartBluetoothScan()
         {
-            bluetoothConnector.StartScanning(bluetoothResults);
+            bluetoothConnector.StartScanning();
         }
 
         public void StartWifiScan()
         {
-            wifiConnector.StartScanning(wifiResults);
+            wifiConnector.StartScanning();
         }
 
         private void UpdateSignalStrengths(object state)

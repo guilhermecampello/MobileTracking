@@ -19,6 +19,8 @@ namespace MobileTracking
             var serviceProvider = new ServiceCollection()
                 .AddSingleton<Client>()
                 .AddSingleton<LocalesService>()
+                .AddSingleton<ZonesService>()
+                .AddSingleton<PositionsService>()
                 .AddSingleton<CalibrationsService>()
                 .AddSingleton(DependencyService.Get<IWifiConnector>())
                 .AddSingleton(DependencyService.Get<IBluetoothConnector>())

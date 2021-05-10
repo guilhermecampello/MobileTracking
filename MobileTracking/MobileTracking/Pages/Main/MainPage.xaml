@@ -4,7 +4,9 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="MobileTracking.MainPage">
+             xmlns:resources="clr-namespace:MobileTracking"
+             x:Class="MobileTracking.MainPage"
+             Visual="Material">
     <NavigationPage.TitleView>
         <Label TextColor="White" FontSize="Title">Mobile Indoor Localization</Label>
     </NavigationPage.TitleView>

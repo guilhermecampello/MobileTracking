@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MobileTracking.LocaleZonesPage"
+             xmlns:resources="clr-namespace:MobileTracking"
+             Visual="Material">
+        <NavigationPage.TitleView>
+            <Label TextColor="White" Text="{Binding Name}" FontSize="Title" />
+    </NavigationPage.TitleView>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Clicked="ToolbarAddItem_Clicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FA" Glyph="&#xf067;" Size="Medium"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+
+        <ListView x:Name="MyListView"
+                        SelectionMode="None"
+                        ItemsSource="{Binding Zones}"
+                        HasUnevenRows="True"
+                        ItemTapped="Zone_ItemTapped"
+                        CachingStrategy="RetainElement"
+                        IsPullToRefreshEnabled="True"
+                        Margin="10">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" Padding="3">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                <StackLayout Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="StartAndExpand">
+                                    <Frame HorizontalOptions="Start" VerticalOptions="Start" Padding="0" Margin="0"  BackgroundColor="#FF4081" CornerRadius="15" WidthRequest="30" HeightRequest="30">
+                                        <Label TextColor="White" FontAttributes="Bold" Text="{Binding Id}" FontSize="Small" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                                    </Frame>
+                                    <Label VerticalOptions="Center" Text="{Binding Name}" FontSize="Medium" FontAttributes="Bold" />
+                                </StackLayout>
+                                <Button VerticalOptions="Center" HorizontalOptions="EndAndExpand" Text="{x:Static resources:AppResources.Add_position}" BindingContext="{Binding}" FontSize="Caption" Clicked="Button_Clicked" BackgroundColor="Transparent"/>
+                            </StackLayout>
+                            <ListView
+                                ItemsSource="{Binding Positions}"
+                                RowHeight="50"
+                                VerticalScrollBarVisibility="Never"
+                                SelectionMode="None"
+                                SeparatorVisibility="None"
+                                ItemTapped="Position_ItemTapped"
+                                CachingStrategy="RetainElement"
+                                VerticalOptions="Start">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <ViewCell>
+                                            <Label Text="{Binding Name}" />
+                                        </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</ContentPage>

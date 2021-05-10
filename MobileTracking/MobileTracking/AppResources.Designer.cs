@@ -61,6 +61,69 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Adicionar.
+        /// </summary>
+        internal static string Add {
+            get {
+                return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Add position.
+        /// </summary>
+        internal static string Add_position {
+            get {
+                return ResourceManager.GetString("Add position", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Add zone.
+        /// </summary>
+        internal static string Add_zone {
+            get {
+                return ResourceManager.GetString("Add zone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Available.
+        /// </summary>
+        internal static string Available {
+            get {
+                return ResourceManager.GetString("Available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Voltar.
+        /// </summary>
+        internal static string Back {
+            get {
+                return ResourceManager.GetString("Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Calibrate position.
+        /// </summary>
+        internal static string Calibrate_position {
+            get {
+                return ResourceManager.GetString("Calibrate position", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cancelar.
+        /// </summary>
+        internal static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Configurations.
         /// </summary>
         internal static string Configurations {
@@ -70,11 +133,227 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Are you sure you want to delete zone.
+        /// </summary>
+        internal static string Confirm_delete_zone {
+            get {
+                return ResourceManager.GetString("Confirm delete zone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Create.
+        /// </summary>
+        internal static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Create new locale.
+        /// </summary>
+        internal static string Create_new_locale {
+            get {
+                return ResourceManager.GetString("Create new locale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Current locale.
+        /// </summary>
+        internal static string Current_locale {
+            get {
+                return ResourceManager.GetString("Current locale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Delete.
+        /// </summary>
+        internal static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Delete zone.
+        /// </summary>
+        internal static string Delete_zone {
+            get {
+                return ResourceManager.GetString("Delete zone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Deleted.
+        /// </summary>
+        internal static string Deleted {
+            get {
+                return ResourceManager.GetString("Deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description.
+        /// </summary>
+        internal static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Edit.
+        /// </summary>
+        internal static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Edit Hostname.
+        /// </summary>
+        internal static string Edit_Hostname {
+            get {
+                return ResourceManager.GetString("Edit Hostname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Error.
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Andar.
+        /// </summary>
+        internal static string Floor {
+            get {
+                return ResourceManager.GetString("Floor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hostname.
+        /// </summary>
+        internal static string Hostname {
+            get {
+                return ResourceManager.GetString("Hostname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Invalid Hostname.
+        /// </summary>
+        internal static string Invalid_Hostname {
+            get {
+                return ResourceManager.GetString("Invalid Hostname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Locales.
+        /// </summary>
+        internal static string Locales {
+            get {
+                return ResourceManager.GetString("Locales", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Magnetic field.
         /// </summary>
         internal static string Magnetic_field {
             get {
                 return ResourceManager.GetString("Magnetic field", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Monitoring.
+        /// </summary>
+        internal static string Monitoring {
+            get {
+                return ResourceManager.GetString("Monitoring", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name.
+        /// </summary>
+        internal static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No zones configured. Add zones by clicking on the &quot;+&quot; icon..
+        /// </summary>
+        internal static string No_zones_message {
+            get {
+                return ResourceManager.GetString("No_zones_message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Position.
+        /// </summary>
+        internal static string Position {
+            get {
+                return ResourceManager.GetString("Position", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Server not available.
+        /// </summary>
+        internal static string Server_not_available {
+            get {
+                return ResourceManager.GetString("Server not available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Iniciar calibração.
+        /// </summary>
+        internal static string Start_calibration {
+            get {
+                return ResourceManager.GetString("Start calibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Unavailable.
+        /// </summary>
+        internal static string Unavailable {
+            get {
+                return ResourceManager.GetString("Unavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a View data.
+        /// </summary>
+        internal static string View_data {
+            get {
+                return ResourceManager.GetString("View data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Zone.
+        /// </summary>
+        internal static string Zone {
+            get {
+                return ResourceManager.GetString("Zone", resourceCulture);
             }
         }
     }

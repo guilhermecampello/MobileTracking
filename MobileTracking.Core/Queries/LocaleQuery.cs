@@ -7,9 +7,9 @@ namespace MobileTracking.Core.Application
 {
     public class LocaleQuery
     {
-        public float? Latitude { get; set; }
+        public double? Latitude { get; set; }
 
-        public float? Longitude { get; set; }
+        public double? Longitude { get; set; }
 
         public bool? IncludeZones { get; set; }
 
@@ -18,5 +18,13 @@ namespace MobileTracking.Core.Application
         public bool? IncludePositionsData { get; set; }
 
         public bool? IncludePositionsCalibrations { get; set; }
+
+        public LocaleQuery() { }
+
+        public LocaleQuery(double latitude, double longitude)
+        {
+            this.Latitude = latitude;
+            this.Longitude = longitude;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Android.Net.Wifi.Rtt;
+using MobileTracking.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,10 @@ namespace MobileTracking
 {
     public interface IWifiConnector
     {
-        void StartScanning(Dictionary<string, decimal> scanResults);
+        public MonitoringState State { get; }
+
+        Dictionary<string, decimal> ScanResults { get; }
+        
+        void StartScanning();
     }
 }

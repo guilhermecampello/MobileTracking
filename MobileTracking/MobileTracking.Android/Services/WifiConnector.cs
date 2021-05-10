@@ -2,14 +2,10 @@
 using Android.Content;
 using Android.Net.Wifi;
 using Android.Net.Wifi.Rtt;
-using Android.OS;
 using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+using MobileTracking.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -20,7 +16,8 @@ namespace MobileTracking.Droid.Services
     {
         private Context context = null;
 
-        private Dictionary<string, decimal> scanResults;
+        private Dictionary<string, decimal> scanResults { get; set; } = new Dictionary<string, decimal>();
+
 
         private WifiManager wifiManager;
 
@@ -29,14 +26,33 @@ namespace MobileTracking.Droid.Services
         public WifiConnector()
         {
             this.context = Android.App.Application.Context;
-        }
-
-        public void StartScanning(Dictionary<string, decimal> scanResults)
-        {
-            this.scanResults = scanResults;
             wifiManager = (WifiManager)context.GetSystemService(Context.WifiService);
             wifiReceiver = new WifiReceiver(wifiManager, scanResults);
             context.RegisterReceiver(wifiReceiver, new IntentFilter(WifiManager.ScanResultsAvailableAction));
+        }
+
+        public MonitoringState State
+        {
+            get
+            {
+                if (wifiManager == null || !wifiManager.IsWifiEnabled)
+                {
+                    return MonitoringState.Unavailable;
+                }
+
+                if (wifiManager.IsWifiEnabled && scanResults.Count == 0)
+                {
+                    return MonitoringState.Available;
+                }
+
+                return MonitoringState.Monitoring;
+            }
+        }
+
+        public Dictionary<string, decimal> ScanResults => scanResults;
+
+        public void StartScanning()
+        {
             while (true)
             {
                 try
@@ -62,7 +78,7 @@ namespace MobileTracking.Droid.Services
                 }
                 finally
                 {
-                    Task.Delay(1500).Wait();
+                    Task.Delay(500).Wait();
                 }
             }
         }
@@ -116,6 +132,10 @@ namespace MobileTracking.Droid.Services
         {
             foreach (var result in results)
             {
+                if (this.rangingResults.ContainsKey(this.ssid))
+                {
+                    this.rangingResults.Remove(this.ssid);
+                }
                 this.rangingResults.Add(this.ssid, result.DistanceMm);
             }
         }

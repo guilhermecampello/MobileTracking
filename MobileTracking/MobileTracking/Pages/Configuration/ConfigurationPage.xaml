@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:MobileTracking"
+             x:Class="MobileTracking.ConfigurationPage"
+             Visual="Material">
+    <NavigationPage.TitleView>
+        <Label Text="{x:Static resources:AppResources.Configurations}" TextColor="White" FontSize="Title"/>
+    </NavigationPage.TitleView>
+    <ContentPage.Content>
+        <StackLayout Margin="10">
+            <Label Text="{x:Static resources:AppResources.Hostname}" FontSize="Medium" FontAttributes="Bold"/>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                <Label  x:Name="urlEditor" Text="{Binding Hostname}" VerticalOptions="Center"/>
+                <BoxView x:Name="clientStatus" VerticalOptions="Center" CornerRadius="20" HeightRequest="15" WidthRequest="15" BackgroundColor="Red" />
+                <Button Text="{x:Static resources:AppResources.Edit}" Clicked="Button_Clicked" HorizontalOptions="End"/>
+            </StackLayout>
+            <Button Text="{x:Static resources:AppResources.Locales}" Clicked="Locales_Clicked"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
