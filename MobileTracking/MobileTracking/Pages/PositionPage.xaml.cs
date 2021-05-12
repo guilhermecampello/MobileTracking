@@ -1,4 +1,5 @@
-﻿using MobileTracking.Core.Models;
+﻿using MobileTracking.Core;
+using MobileTracking.Core.Models;
 using MobileTracking.Services;
 using MobileTracking.Services.Bluetooth;
 using MobileTracking.Services.MagneticField;
@@ -24,13 +25,7 @@ namespace MobileTracking.Pages
 
         private readonly IBluetoothConnector bluetoothConnector;
 
-        private Thread bluetoothThread;
-
-        private Thread wifiThread;
-
-        private Timer? timer;
-
-        private string position = string.Empty;
+        private Timer? statetimer;
 
         private int count = 0;
 
@@ -43,23 +38,14 @@ namespace MobileTracking.Pages
             this.bluetoothConnector = serviceProvider.GetService<IBluetoothConnector>();
             this.magneticFieldSensor = serviceProvider.GetService<MagneticFieldSensor>();
 
-            bluetoothThread = new Thread(StartBluetoothScan);
-            wifiThread = new Thread(StartWifiScan);
-            magneticFieldSensor.Start();
             BindingContext = this;
-        }
-
-        public void StartBluetoothScan()
-        {
-            bluetoothConnector.StartScanning();
-        }
-
-        public void StartWifiScan()
-        {
-            wifiConnector.StartScanning();
+            statetimer = new Timer(UpdateMonitoringState);
+            statetimer.Change(0, 1000);
         }
 
         public Position Position { get; set; }
+
+        
 
         public string BluetoothState
         { 
@@ -94,6 +80,47 @@ namespace MobileTracking.Pages
 
         public Color MagnetometerStateColor { get => GetStateColor(magneticFieldSensor.State); }
 
+        public void UpdateMonitoringState(object state)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                wifiColor.BackgroundColor = WifiStateColor;
+                wifiState.Text = WifiState;
+                bluetoothColor.BackgroundColor = BluetoothStateColor;
+                bluetoothState.Text = BluetoothState;
+                magnetometerColor.BackgroundColor = MagnetometerStateColor;
+                magnetometerState.Text = MagnetometerState;
+                var magneticVector = magneticFieldSensor.CalculateMagneticFieldVector();
+                X.Text = "X: "+ magneticVector.X.ToString("F");
+                Y.Text = "Y: " + magneticVector.Y.ToString("F");
+                Z.Text = "Z: " + magneticVector.Z.ToString("F");
+            });
+            FetchCalibrationData();
+        }
+
+        private List<Calibration> FetchCalibrationData()
+        {
+            var data = new List<Calibration>();
+            this.wifiConnector.ScanResults.ToList().ForEach(device =>
+            {
+                var measurement = MeasurementsFactory.CreateWifiMeasurement(device.Key, (int)Math.Round(device.Value));
+                data.Add(new Calibration(Position.Id, measurement));
+            });
+
+            this.bluetoothConnector.DevicesResults.ToList().ForEach(device =>
+            {
+                var measurement = MeasurementsFactory.CreateBluetoothMeasurement(device.Key, device.Value.Rssi);
+                data.Add(new Calibration(Position.Id, measurement));
+            });
+
+            data.Add(new Calibration(
+                Position.Id,
+                MeasurementsFactory.CreateMagnetometerMeasurement(magneticFieldSensor.CalculateMagneticFieldVector())
+            ));
+
+            return data;
+        }
+
         private Color GetStateColor(MonitoringState state)
         {
             switch (state)
@@ -105,6 +132,13 @@ namespace MobileTracking.Pages
                 default:
                     return Color.FromHex("#2196F3");
             }
+        }
+
+        private void Calibration_Button_Clicked(object sender, EventArgs e)
+        {
+            magneticFieldSensor.Start();
+            bluetoothConnector.StartScanning();
+            wifiConnector.StartScanning();
         }
     }
 }

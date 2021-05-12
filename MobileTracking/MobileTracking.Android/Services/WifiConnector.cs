@@ -6,6 +6,7 @@ using Android.Runtime;
 using MobileTracking.Services;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -18,10 +19,11 @@ namespace MobileTracking.Droid.Services
 
         private Dictionary<string, decimal> scanResults { get; set; } = new Dictionary<string, decimal>();
 
-
         private WifiManager wifiManager;
 
         private WifiReceiver wifiReceiver;
+
+        private Thread scanThread;
 
         public WifiConnector()
         {
@@ -29,18 +31,19 @@ namespace MobileTracking.Droid.Services
             wifiManager = (WifiManager)context.GetSystemService(Context.WifiService);
             wifiReceiver = new WifiReceiver(wifiManager, scanResults);
             context.RegisterReceiver(wifiReceiver, new IntentFilter(WifiManager.ScanResultsAvailableAction));
+            this.scanThread = new Thread(Scan);
         }
 
         public MonitoringState State
         {
             get
             {
-                if (wifiManager == null || !wifiManager.IsWifiEnabled)
+                if (!wifiManager.IsScanAlwaysAvailable)
                 {
                     return MonitoringState.Unavailable;
                 }
 
-                if (wifiManager.IsWifiEnabled && scanResults.Count == 0)
+                if (wifiManager.IsWifiEnabled && !scanThread.IsAlive)
                 {
                     return MonitoringState.Available;
                 }
@@ -52,6 +55,15 @@ namespace MobileTracking.Droid.Services
         public Dictionary<string, decimal> ScanResults => scanResults;
 
         public void StartScanning()
+        {
+            if (this.scanThread.IsAlive)
+            {
+                this.scanThread.Abort();
+            }
+            this.scanThread.Start();
+        }
+
+        public void Scan()
         {
             while (true)
             {

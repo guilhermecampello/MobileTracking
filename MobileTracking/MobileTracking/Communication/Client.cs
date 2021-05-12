@@ -20,11 +20,13 @@ namespace MobileTracking.Communication
                     return true;
                 }
             });
+
+            this._httpClient.Timeout = TimeSpan.FromSeconds(10);
         }
 
         private string apiAddress { get => $"https://{Hostname}:5001/api"; }
 
-        public string Hostname { get; set; } = "192.168.1.6";
+        public string Hostname { get; set; } = "192.168.1.7";
 
         public bool IsHealthy { get; set; }
         

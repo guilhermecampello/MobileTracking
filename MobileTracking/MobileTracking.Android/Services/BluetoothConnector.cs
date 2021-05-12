@@ -7,6 +7,7 @@ using MobileTracking.Services.Bluetooth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using ScanResult = Android.Bluetooth.LE.ScanResult;
@@ -26,12 +27,18 @@ namespace MobileTracking.Droid.Services
 
         private BluetoothLeScanner bluetoothScanner;
 
+        private Thread scanThread;
+
+        private ScanCallback scanCallback;
+
         public BluetoothConnector()
         {
             this.context = Android.App.Application.Context;
             bluetoothManager = (BluetoothManager)context.GetSystemService(Context.BluetoothService);
             bluetoothAdapter = bluetoothManager.Adapter;
             bluetoothScanner = bluetoothManager.Adapter.BluetoothLeScanner;
+            this.scanThread = new Thread(Scan);
+            this.scanCallback = new BluetoothScanCallback(devicesResults);
         }
 
         public Dictionary<string, BluetoothScanResult> DevicesResults { get => devicesResults; }
@@ -40,7 +47,7 @@ namespace MobileTracking.Droid.Services
         {
             get
             {
-                if (bluetoothAdapter != null && bluetoothAdapter.IsDiscovering)
+                if (bluetoothAdapter != null && bluetoothAdapter.IsEnabled && scanThread.IsAlive)
                 {
                     return MonitoringState.Monitoring;
                 }
@@ -56,11 +63,19 @@ namespace MobileTracking.Droid.Services
 
         public void StartScanning()
         {
+            if (this.scanThread.IsAlive)
+            {
+                this.scanThread.Abort();
+            }
+            this.scanThread.Start();
+        }
+
+        public void Scan()
+        {
             if (!bluetoothAdapter.IsEnabled)
             {
                 throw new Exception("Please enable Bluetooth");
             }
-            var scanCallback = new BluetoothScanCallback(devicesResults);
             while (true)
             {
                 try

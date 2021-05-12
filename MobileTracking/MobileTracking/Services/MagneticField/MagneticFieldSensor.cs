@@ -31,40 +31,38 @@ namespace MobileTracking.Services.MagneticField
             }
         }
 
-        public Vector3 MagneticFieldVector
-        {
-            get
+        public Vector3 CalculateMagneticFieldVector()
+        {           
+            var now = DateTime.Now;
+            var vector = new Vector3(0);
+            var n = 0;
+            var orientationData = OrientationSensorData.ToArray();
+            var intensitiesData = MagnetometerData.ToArray();
+            Array.ForEach(orientationData, orientationSample =>
             {
-                var now = DateTime.Now;
-                var vector = new Vector3(0);
-                var n = 0;
-                OrientationSensorData.ForEach(orientationSample =>
+                var sampleTime = orientationSample.Item2;
+                if (now.Subtract(sampleTime).TotalSeconds < 2)
                 {
-                    var sampleTime = orientationSample.Item2;
-                    if (now.Subtract(sampleTime).TotalSeconds < 2)
-                    {
-                        var orientation = orientationSample.Item1;
-                        var magneticFieldSample = MagnetometerData
-                        .OrderBy(sample => Math.Abs(sample.Item2.Subtract(sampleTime).TotalMilliseconds))
-                        .FirstOrDefault()
-                        .Item1;
+                    var orientation = orientationSample.Item1;
+                    var magneticFieldSample = intensitiesData
+                    .OrderBy(sample => Math.Abs(sample.Item2.Subtract(sampleTime).TotalMilliseconds))
+                    .FirstOrDefault()
+                    .Item1;
 
-                        var sampleVector = Transform(magneticFieldSample, orientation);
-                        vector += sampleVector;
-                        n += 1;
-                    }
-                });
-
-                if (n > 0)
-                {
-                    vector.X = vector.X / n;
-                    vector.Y = vector.Y / n;
-                    vector.Z = vector.Z / n;
+                    var sampleVector = Transform(magneticFieldSample, orientation);
+                    vector += sampleVector;
+                    n += 1;
                 }
+            });
 
-                return vector;
-                
+            if (n > 0)
+            {
+                vector.X = vector.X / n;
+                vector.Y = vector.Y / n;
+                vector.Z = vector.Z / n;
             }
+
+            return vector;
         }
 
         public Vector3 Transform(Vector3 value, Quaternion rotation)
