@@ -2,7 +2,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: WebApplication/Dockerfile
+      dockerfile: Dockerfile
       args:
         GPR_TOKEN: ${GPR_TOKEN}
     command: run --project WebApplication
