@@ -47,6 +47,8 @@ namespace WebApplication
                 app.UseDeveloperExceptionPage();
             }
 
+            app.ApplicationServices.GetRequiredService<DatabaseContext>().Database.Migrate();
+
             //app.UseHttpsRedirection();
             app.UseHsts();
             app.UseCors(builder =>
