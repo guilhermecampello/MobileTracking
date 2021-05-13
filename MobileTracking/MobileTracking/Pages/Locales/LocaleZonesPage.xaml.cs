@@ -71,13 +71,13 @@ namespace MobileTracking
 
         private async void ToolbarAddItem_Clicked(object sender, System.EventArgs e)
         {
-            await Navigation.PushAsync(new AddZoneForm(localeProvider, Startup.ServiceProvider.GetService<ZonesService>()));
+            await Navigation.PushAsync(new AddZoneForm(localeProvider, Startup.ServiceProvider.GetService<IZoneService>()));
         }
 
         private async void Button_Clicked(object sender, System.EventArgs e)
         {
             var zone = (Zone)((Button)sender).BindingContext;
-            await Navigation.PushAsync(new AddPositionForm(localeProvider, Startup.ServiceProvider.GetService<PositionsService>(), zone));
+            await Navigation.PushAsync(new AddPositionForm(localeProvider, Startup.ServiceProvider.GetService<IPositionService>(), zone));
         }
 
         private async void Zone_ItemTapped(object sender, ItemTappedEventArgs e)
@@ -89,7 +89,7 @@ namespace MobileTracking
                 var deleteConfirmation = await DisplayAlert(AppResources.Delete_zone, $"{AppResources.Confirm_delete_zone}  {zone.Name} ?", AppResources.Delete, AppResources.Cancel);
                 if (deleteConfirmation)
                 {
-                    var zonesService = Startup.ServiceProvider.GetService<ZonesService>();
+                    var zonesService = Startup.ServiceProvider.GetService<IZoneService>();
                     MyListView.IsRefreshing = true;
                     if (await zonesService.DeleteZone(zone.Id))
                     {
@@ -109,7 +109,7 @@ namespace MobileTracking
                 IncludeZone = true,
                 IncludeData = true
             };
-            var positionsService = Startup.ServiceProvider.GetService<PositionsService>();
+            var positionsService = Startup.ServiceProvider.GetService<IPositionService>();
             position = await positionsService.FindPositionById(position.Id, query);
             await Navigation.PushAsync(new PositionPage(position));
         }

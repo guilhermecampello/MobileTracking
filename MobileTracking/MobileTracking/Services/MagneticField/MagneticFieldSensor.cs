@@ -31,13 +31,24 @@ namespace MobileTracking.Services.MagneticField
             }
         }
 
-        public Vector3 CalculateMagneticFieldVector()
-        {           
+        public Vector3? TryCalculateMagneticFieldVector()
+        {
+            try
+            {
+
             var now = DateTime.Now;
             var vector = new Vector3(0);
             var n = 0;
-            var orientationData = OrientationSensorData.ToArray();
-            var intensitiesData = MagnetometerData.ToArray();
+            (Quaternion, DateTime)[] orientationData;
+            (Vector3, DateTime)[] intensitiesData;
+            lock (OrientationSensorData)
+            {
+                orientationData = OrientationSensorData.ToArray();
+            }
+            lock (MagnetometerData)
+            {
+                intensitiesData = MagnetometerData.ToArray();
+            }
             Array.ForEach(orientationData, orientationSample =>
             {
                 var sampleTime = orientationSample.Item2;
@@ -63,6 +74,12 @@ namespace MobileTracking.Services.MagneticField
             }
 
             return vector;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
 
         public Vector3 Transform(Vector3 value, Quaternion rotation)

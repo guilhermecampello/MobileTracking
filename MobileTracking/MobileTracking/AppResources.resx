@@ -153,6 +153,12 @@
   <data name="Current locale" xml:space="preserve">
     <value>Current locale</value>
   </data>
+  <data name="Data aquisition" xml:space="preserve">
+    <value>Data aquisition</value>
+  </data>
+  <data name="Data aquisition interval" xml:space="preserve">
+    <value>Data aquisition interval</value>
+  </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
@@ -170,6 +176,12 @@
   </data>
   <data name="Edit Hostname" xml:space="preserve">
     <value>Edit Hostname</value>
+  </data>
+  <data name="Edit interval" xml:space="preserve">
+    <value>Edit data aquisition interval</value>
+  </data>
+  <data name="Edit samples" xml:space="preserve">
+    <value>Edit samples per position</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
@@ -201,14 +213,29 @@
   <data name="Position" xml:space="preserve">
     <value>Position</value>
   </data>
+  <data name="Provide interval" xml:space="preserve">
+    <value>Provide the interval between data aquisition in seconds</value>
+  </data>
+  <data name="Provide samples per position" xml:space="preserve">
+    <value>Provide the number of samples you want to collect per position</value>
+  </data>
+  <data name="Samples per position" xml:space="preserve">
+    <value>Samples per position</value>
+  </data>
   <data name="Server not available" xml:space="preserve">
     <value>Server not available</value>
   </data>
   <data name="Start calibration" xml:space="preserve">
     <value>Iniciar calibração</value>
   </data>
+  <data name="Stop calibration" xml:space="preserve">
+    <value>Stop calibration</value>
+  </data>
   <data name="Unavailable" xml:space="preserve">
     <value>Unavailable</value>
+  </data>
+  <data name="Value must be a positive integer" xml:space="preserve">
+    <value>Value must be a positive integer</value>
   </data>
   <data name="View data" xml:space="preserve">
     <value>View data</value>

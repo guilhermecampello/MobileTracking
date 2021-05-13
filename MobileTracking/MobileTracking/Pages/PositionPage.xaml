@@ -48,10 +48,21 @@
                             <Label x:Name="magnetometerState" Text="{Binding MagnetometerState}" FontSize="Caption" VerticalOptions="Center"/>
                         </StackLayout>
                     </Grid>
-                    <Button Text="{x:Static resources:AppResources.Start_calibration}" Clicked="Calibration_Button_Clicked"/>
-                    <Label x:Name="X"/>
-                    <Label x:Name="Y" />
-                    <Label x:Name="Z" />
+                    <Button x:Name="calibrationButton" Text="{x:Static resources:AppResources.Start_calibration}" Clicked="Calibration_Button_Clicked"/>
+
+                    
+                    <Label FontSize="Large" VerticalTextAlignment="Center" HorizontalOptions="Center" Margin="20">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span x:Name="countLabel" />
+                                <Span Text="/" />
+                                <Span Text="{Binding Configuration.SamplesPerPosition}"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <ActivityIndicator x:Name="activity" />
+
                 </StackLayout>
             </Frame>
         </StackLayout>

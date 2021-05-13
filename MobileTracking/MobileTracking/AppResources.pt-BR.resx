@@ -153,6 +153,12 @@
   <data name="Current locale" xml:space="preserve">
     <value>Localização atual</value>
   </data>
+  <data name="Data aquisition" xml:space="preserve">
+    <value>Coleta de dados</value>
+  </data>
+  <data name="Data aquisition interval" xml:space="preserve">
+    <value>Intervalo entre coletas de dados</value>
+  </data>
   <data name="Delete" xml:space="preserve">
     <value>Deletar</value>
   </data>
@@ -201,14 +207,26 @@
   <data name="Position" xml:space="preserve">
     <value>Posição</value>
   </data>
+  <data name="Provide interval" xml:space="preserve">
+    <value>Forneça o intervalo entre a coleta de dados em segundos</value>
+  </data>
+  <data name="Samples per position" xml:space="preserve">
+    <value>Amostras por posição</value>
+  </data>
   <data name="Server not available" xml:space="preserve">
     <value>Servidor indisponível</value>
   </data>
   <data name="Start calibration" xml:space="preserve">
     <value>Iniciar calibração</value>
   </data>
+  <data name="Stop calibration" xml:space="preserve">
+    <value>Parar calibração</value>
+  </data>
   <data name="Unavailable" xml:space="preserve">
     <value>Indisponível</value>
+  </data>
+  <data name="Value must be a positive integer" xml:space="preserve">
+    <value>O valor deve ser um inteiro e maior que 0</value>
   </data>
   <data name="View data" xml:space="preserve">
     <value>Visualizar dados</value>

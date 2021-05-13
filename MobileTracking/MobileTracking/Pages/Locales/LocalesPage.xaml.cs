@@ -1,4 +1,5 @@
 ﻿using MobileTracking.Communication.ClientServices;
+using MobileTracking.Core.Application;
 using MobileTracking.Core.Models;
 using MobileTracking.Pages.Locales;
 using MobileTracking.Services;
@@ -58,7 +59,7 @@ namespace MobileTracking
 
         private async void ToolbarAddItem_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new AddLocaleForm(localeProvider, Startup.ServiceProvider.GetService<LocalesService>()));
+            await Navigation.PushAsync(new AddLocaleForm(localeProvider, Startup.ServiceProvider.GetService<ILocaleService>()));
             await RefreshLocales();
         }
 

@@ -169,6 +169,24 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Data aquisition.
+        /// </summary>
+        internal static string Data_aquisition {
+            get {
+                return ResourceManager.GetString("Data aquisition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Data aquisition interval.
+        /// </summary>
+        internal static string Data_aquisition_interval {
+            get {
+                return ResourceManager.GetString("Data aquisition interval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Delete.
         /// </summary>
         internal static string Delete {
@@ -219,6 +237,24 @@ namespace MobileTracking {
         internal static string Edit_Hostname {
             get {
                 return ResourceManager.GetString("Edit Hostname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Edit data aquisition interval.
+        /// </summary>
+        internal static string Edit_interval {
+            get {
+                return ResourceManager.GetString("Edit interval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Edit samples per position.
+        /// </summary>
+        internal static string Edit_samples {
+            get {
+                return ResourceManager.GetString("Edit samples", resourceCulture);
             }
         }
         
@@ -313,6 +349,33 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Provide the interval between data aquisition in seconds.
+        /// </summary>
+        internal static string Provide_interval {
+            get {
+                return ResourceManager.GetString("Provide interval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Provide the number of samples you want to collect per position.
+        /// </summary>
+        internal static string Provide_samples_per_position {
+            get {
+                return ResourceManager.GetString("Provide samples per position", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Samples per position.
+        /// </summary>
+        internal static string Samples_per_position {
+            get {
+                return ResourceManager.GetString("Samples per position", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Server not available.
         /// </summary>
         internal static string Server_not_available {
@@ -331,11 +394,29 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Stop calibration.
+        /// </summary>
+        internal static string Stop_calibration {
+            get {
+                return ResourceManager.GetString("Stop calibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Unavailable.
         /// </summary>
         internal static string Unavailable {
             get {
                 return ResourceManager.GetString("Unavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Value must be a positive integer.
+        /// </summary>
+        internal static string Value_must_be_a_positive_integer {
+            get {
+                return ResourceManager.GetString("Value must be a positive integer", resourceCulture);
             }
         }
         

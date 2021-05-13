@@ -11,9 +11,9 @@ namespace MobileTracking.Services
 {
     public class LocaleProvider
     {
-        private readonly LocalesService localesService;
+        private readonly ILocaleService localesService;
 
-        public LocaleProvider(LocalesService localesService)
+        public LocaleProvider(ILocaleService localesService)
         {
             this.localesService = localesService;
             TryGetLocalesByCoordinates();

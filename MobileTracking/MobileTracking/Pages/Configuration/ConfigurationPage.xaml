@@ -15,6 +15,20 @@
                 <BoxView x:Name="clientStatus" VerticalOptions="Center" CornerRadius="20" HeightRequest="15" WidthRequest="15" BackgroundColor="Red" />
                 <Button Text="{x:Static resources:AppResources.Edit}" Clicked="Button_Clicked" HorizontalOptions="End"/>
             </StackLayout>
+
+            <Label HorizontalTextAlignment="Center" Text="{x:Static resources:AppResources.Data_aquisition}" FontSize="Subtitle" FontAttributes="Bold" Margin="10"/>
+
+            <Label Text="{x:Static resources:AppResources.Samples_per_position}" FontSize="Medium" FontAttributes="Bold" Margin="0,10,0,0"/>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                <Label  x:Name="samplesPerPosition" Text="{Binding SamplesPerPosition}" VerticalOptions="Center"/>
+                <Button Text="{x:Static resources:AppResources.Edit}" Clicked="Samples_Button_Clicked" HorizontalOptions="End"/>
+            </StackLayout>
+
+            <Label Text="{x:Static resources:AppResources.Data_aquisition_interval}" FontSize="Medium" FontAttributes="Bold" Margin="0,10,0,0"/>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                <Label  x:Name="dataInterval" Text="{Binding DataAquisitionInterval}" VerticalOptions="Center"/>
+                <Button Text="{x:Static resources:AppResources.Edit}" Clicked="Interval_Button_Clicked" HorizontalOptions="End"/>
+            </StackLayout>
             <Button Text="{x:Static resources:AppResources.Locales}" Clicked="Locales_Clicked"/>
         </StackLayout>
     </ContentPage.Content>

@@ -63,11 +63,10 @@ namespace MobileTracking.Droid.Services
 
         public void StartScanning()
         {
-            if (this.scanThread.IsAlive)
+            if (!scanThread.IsAlive)
             {
-                this.scanThread.Abort();
+                this.scanThread.Start();
             }
-            this.scanThread.Start();
         }
 
         public void Scan()

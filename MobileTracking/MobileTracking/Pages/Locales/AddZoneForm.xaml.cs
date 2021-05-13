@@ -18,9 +18,9 @@ namespace MobileTracking.Pages.Locales
     {
         private readonly LocaleProvider localeProvider;
 
-        private readonly ZonesService zonesService;
+        private readonly IZoneService zonesService;
 
-        public AddZoneForm(LocaleProvider localeProvider, ZonesService zonesService)
+        public AddZoneForm(LocaleProvider localeProvider, IZoneService zonesService)
         {
             InitializeComponent();
             this.localeProvider = localeProvider;

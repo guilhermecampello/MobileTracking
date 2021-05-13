@@ -18,11 +18,11 @@ namespace MobileTracking.Pages.Locales
     {
         private readonly LocaleProvider localeProvider;
 
-        private readonly PositionsService positionsService;
+        private readonly IPositionService positionsService;
 
         private readonly Zone zone;
 
-        public AddPositionForm(LocaleProvider localeProvider, PositionsService positionsService, Zone zone)
+        public AddPositionForm(LocaleProvider localeProvider, IPositionService positionsService, Zone zone)
         {
             InitializeComponent();
             this.localeProvider = localeProvider;

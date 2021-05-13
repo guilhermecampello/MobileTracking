@@ -10,9 +10,12 @@ namespace MobileTracking.Communication
     {
         private HttpClient _httpClient;
 
+        private readonly Configuration configuration;
 
-        public Client()
+        public Client(Configuration configuration)
         {
+            this.configuration = configuration;
+
             this._httpClient = new HttpClient(new HttpClientHandler()
             {
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
@@ -26,7 +29,7 @@ namespace MobileTracking.Communication
 
         private string apiAddress { get => $"https://{Hostname}:5001/api"; }
 
-        public string Hostname { get; set; } = "192.168.1.7";
+        public string Hostname { get => this.configuration.Hostname; }
 
         public bool IsHealthy { get; set; }
         

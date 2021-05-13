@@ -10,7 +10,7 @@ namespace MobileTracking.Tests
         [TestMethod]
         public void ConvertQuery()
         {
-            var client = new Client();
+            var client = new Client(new Configuration());
             var query = new CalibrationsQuery()
             {
                 LocaleId = 1,

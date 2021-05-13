@@ -1,14 +1,12 @@
 ﻿using MobileTracking.Core;
+using MobileTracking.Core.Application;
 using MobileTracking.Core.Models;
 using MobileTracking.Services;
-using MobileTracking.Services.Bluetooth;
 using MobileTracking.Services.MagneticField;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Timers;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -25,7 +23,11 @@ namespace MobileTracking.Pages
 
         private readonly IBluetoothConnector bluetoothConnector;
 
-        private Timer? statetimer;
+        private readonly ICalibrationService calibrationsService;
+
+        private readonly Configuration configuration;
+
+        private Timer timer;
 
         private int count = 0;
 
@@ -37,15 +39,43 @@ namespace MobileTracking.Pages
             this.wifiConnector = serviceProvider.GetService<IWifiConnector>();
             this.bluetoothConnector = serviceProvider.GetService<IBluetoothConnector>();
             this.magneticFieldSensor = serviceProvider.GetService<MagneticFieldSensor>();
+            this.calibrationsService = serviceProvider.GetService<ICalibrationService>();
+            this.configuration = serviceProvider.GetService<Configuration>();
 
             BindingContext = this;
-            statetimer = new Timer(UpdateMonitoringState);
-            statetimer.Change(0, 1000);
+            timer = new Timer(configuration.DataAquisitionInterval * 1000);
+            timer.Elapsed += UpdateMonitoringState;
+            timer.Start();
+            countLabel.Text = count.ToString();
         }
 
         public Position Position { get; set; }
 
-        
+        public Configuration Configuration { get => this.configuration; }
+
+        public void UpdateCollectingDataState()
+        {
+            if (_isCollecting)
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    calibrationButton.Text = AppResources.Stop_calibration;
+                    calibrationButton.BackgroundColor = Color.Red;
+                    calibrationButton.TextColor = Color.White;
+                    activity.IsRunning = true;
+                });
+            }
+            else
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    calibrationButton.Text = AppResources.Start_calibration;
+                    calibrationButton.BackgroundColor = Color.Gray;
+                    calibrationButton.TextColor = Color.Black;
+                    activity.IsRunning = false;
+                });
+            }
+        }
 
         public string BluetoothState
         { 
@@ -80,7 +110,7 @@ namespace MobileTracking.Pages
 
         public Color MagnetometerStateColor { get => GetStateColor(magneticFieldSensor.State); }
 
-        public void UpdateMonitoringState(object state)
+        public async void UpdateMonitoringState(object sender, ElapsedEventArgs e)
         {
             Device.BeginInvokeOnMainThread(() =>
             {
@@ -90,34 +120,70 @@ namespace MobileTracking.Pages
                 bluetoothState.Text = BluetoothState;
                 magnetometerColor.BackgroundColor = MagnetometerStateColor;
                 magnetometerState.Text = MagnetometerState;
-                var magneticVector = magneticFieldSensor.CalculateMagneticFieldVector();
-                X.Text = "X: "+ magneticVector.X.ToString("F");
-                Y.Text = "Y: " + magneticVector.Y.ToString("F");
-                Z.Text = "Z: " + magneticVector.Z.ToString("F");
             });
-            FetchCalibrationData();
+            if (IsCollecting)
+            {
+                var data = FetchCalibrationData();
+                var command = new CreateCalibrationsCommand()
+                {
+                    Measurements = data,
+                    PositionId = Position.Id
+                };
+                try
+                {
+                    await calibrationsService.CreateCalibrations(command);
+                    count++;
+                }
+                catch(Exception ex)
+                {
+                    await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
+                }
+
+                if (count > configuration.SamplesPerPosition)
+                {
+                    count = 0;
+                    IsCollecting = false;
+                }
+            }
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                countLabel.Text = count.ToString();
+            });
         }
 
-        private List<Calibration> FetchCalibrationData()
+        private bool _isCollecting;
+
+        public bool IsCollecting
         {
-            var data = new List<Calibration>();
+            get => _isCollecting;
+            set
+            {
+                _isCollecting = value;
+                UpdateCollectingDataState();
+            } 
+        }
+
+        private List<Measurement> FetchCalibrationData()
+        {
+            var data = new List<Measurement>();
             this.wifiConnector.ScanResults.ToList().ForEach(device =>
             {
                 var measurement = MeasurementsFactory.CreateWifiMeasurement(device.Key, (int)Math.Round(device.Value));
-                data.Add(new Calibration(Position.Id, measurement));
+                data.Add(measurement);
             });
 
             this.bluetoothConnector.DevicesResults.ToList().ForEach(device =>
             {
                 var measurement = MeasurementsFactory.CreateBluetoothMeasurement(device.Key, device.Value.Rssi);
-                data.Add(new Calibration(Position.Id, measurement));
+                data.Add(measurement);
             });
 
-            data.Add(new Calibration(
-                Position.Id,
-                MeasurementsFactory.CreateMagnetometerMeasurement(magneticFieldSensor.CalculateMagneticFieldVector())
-            ));
-
+            var magneticFieldVector = magneticFieldSensor.TryCalculateMagneticFieldVector();
+            if (magneticFieldVector.HasValue)
+            {
+                data.Add(MeasurementsFactory.CreateMagnetometerMeasurement(magneticFieldVector.Value));
+            }
+            
             return data;
         }
 
@@ -136,9 +202,35 @@ namespace MobileTracking.Pages
 
         private void Calibration_Button_Clicked(object sender, EventArgs e)
         {
+            if (!_isCollecting)
+            {
+                StartDataAquisition(); 
+            }
+            else
+            {
+                StopDataAquisition();
+            }
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            StopDataAquisition();   
+        }
+
+        public void StopDataAquisition()
+        {
+            IsCollecting = false;
+            this.timer.Stop();
+        }
+
+        public void StartDataAquisition()
+        {
             magneticFieldSensor.Start();
             bluetoothConnector.StartScanning();
             wifiConnector.StartScanning();
+            IsCollecting = true;
+            this.timer.Start();
         }
     }
 }
