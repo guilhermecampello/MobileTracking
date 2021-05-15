@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Xamarin.Essentials;
+using MobileTracking.Pages.Locales;
 
 namespace MobileTracking.Services
 {
@@ -19,7 +20,18 @@ namespace MobileTracking.Services
             TryGetLocalesByCoordinates();
         }
         
-        public Core.Models.Locale? Locale { get; set; }
+        private Core.Models.Locale? locale;
+        public Core.Models.Locale? Locale {
+            get => locale; 
+            set 
+            {
+                locale = value;
+                LocaleView.Locale = value;
+                LocaleView.IsSelected = true;
+            } 
+        }
+
+        public LocaleView LocaleView { get; set; } = new LocaleView(null, false);
 
         public List<Core.Models.Locale> ClosestLocales { get; set; } = new List<Core.Models.Locale>();
 

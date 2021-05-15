@@ -30,6 +30,8 @@ namespace MobileTracking.Core.Models
 
         public Zone? Zone { get; set; }
 
+        public bool DataNeedsUpdate { get; set; }
+
         public List<PositionData>? PositionData { get; set; }
 
         public List<Calibration>? Calibrations { get; set; }

@@ -138,8 +138,14 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="Compiled data" xml:space="preserve">
+    <value>Compiled data</value>
+  </data>
   <data name="Configurations" xml:space="preserve">
     <value>Configurations</value>
+  </data>
+  <data name="Confirm delete position" xml:space="preserve">
+    <value>Are you sure you want to delete position and all it's data ?</value>
   </data>
   <data name="Confirm delete zone" xml:space="preserve">
     <value>Are you sure you want to delete zone</value>
@@ -161,6 +167,9 @@
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="Delete position" xml:space="preserve">
+    <value>Delete position</value>
   </data>
   <data name="Delete zone" xml:space="preserve">
     <value>Delete zone</value>
@@ -186,11 +195,17 @@
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="Finding current locale" xml:space="preserve">
+    <value>Finding current locale</value>
+  </data>
   <data name="Floor" xml:space="preserve">
-    <value>Andar</value>
+    <value>Floor</value>
   </data>
   <data name="Hostname" xml:space="preserve">
     <value>Hostname</value>
+  </data>
+  <data name="Interval" xml:space="preserve">
+    <value>Interval</value>
   </data>
   <data name="Invalid Hostname" xml:space="preserve">
     <value>Invalid Hostname</value>
@@ -200,6 +215,9 @@
   </data>
   <data name="Magnetic field" xml:space="preserve">
     <value>Magnetic field</value>
+  </data>
+  <data name="MeanStdDev" xml:space="preserve">
+    <value>Mean and Std. Deviation</value>
   </data>
   <data name="Monitoring" xml:space="preserve">
     <value>Monitoring</value>
@@ -226,7 +244,7 @@
     <value>Server not available</value>
   </data>
   <data name="Start calibration" xml:space="preserve">
-    <value>Iniciar calibração</value>
+    <value>Start calibration</value>
   </data>
   <data name="Stop calibration" xml:space="preserve">
     <value>Stop calibration</value>

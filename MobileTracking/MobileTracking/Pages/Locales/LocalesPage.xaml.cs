@@ -67,13 +67,12 @@ namespace MobileTracking
         {
             if (e.Item == null)
                 return;
-            var selectedLocale = (Locale)e.Item;
+            var selectedLocale = ((LocaleView)e.Item)!.Locale;
             localeProvider.Locale = selectedLocale;
             Device.BeginInvokeOnMainThread(() =>
             {
                 Locales.FirstOrDefault(locale => locale.IsSelected).IsSelected = false;
-                Locales.FirstOrDefault(locale => locale.Id == selectedLocale.Id).IsSelected = true;
-                
+                Locales.FirstOrDefault(locale => locale.Locale!.Id == selectedLocale.Id).IsSelected = true;
             });
             await Navigation.PushAsync(new LocaleZonesPage(this.localeProvider));
 

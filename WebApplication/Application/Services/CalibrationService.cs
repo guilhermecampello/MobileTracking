@@ -40,6 +40,8 @@ namespace MobileTracking.Core.Application.Services
                 count++;
             });
 
+            position.DataNeedsUpdate = true;
+
             await this.databaseContext.SaveChangesAsync();
 
             return count;

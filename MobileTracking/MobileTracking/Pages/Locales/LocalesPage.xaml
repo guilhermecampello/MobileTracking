@@ -29,11 +29,11 @@
                     <ViewCell>
                         <StackLayout>
                             <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                                <Label HorizontalOptions="Start" Text="{Binding Name}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Start"/>
+                                <Label HorizontalOptions="Start" Text="{Binding Locale.Name}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Start"/>
                                 <Label HorizontalOptions="End" HorizontalTextAlignment="End" Padding="2" IsVisible="{Binding IsSelected}"
                                        Text="{x:Static resources:AppResources.Current_locale}" FontAttributes="Bold" BackgroundColor="#2196F3" TextColor="White"/>
                             </StackLayout>
-                            <Label Text="{Binding Description}" />
+                            <Label Text="{Binding Locale.Description}" />
                         </StackLayout>
                     </ViewCell>
                 </DataTemplate>

@@ -24,6 +24,7 @@ namespace MobileTracking
                 .AddSingleton<IZoneService, ZonesService>()
                 .AddSingleton<IPositionService, PositionsService>()
                 .AddSingleton<ICalibrationService, CalibrationsService>()
+                .AddSingleton<IPositionDataService, PositionDatasService>()
                 .AddSingleton(DependencyService.Get<IWifiConnector>())
                 .AddSingleton(DependencyService.Get<IBluetoothConnector>())
                 .AddSingleton<MagneticFieldSensor>()

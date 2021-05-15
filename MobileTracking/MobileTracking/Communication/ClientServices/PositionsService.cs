@@ -25,7 +25,7 @@ namespace MobileTracking.Communication.ClientServices
 
         public Task<bool> DeletePosition(int positionId)
         {
-            throw new NotImplementedException();
+            return client.Delete<bool>(positionsController, positionId.ToString());
         }
 
         public async Task<Position> FindPositionById(int positionId, PositionQuery query)

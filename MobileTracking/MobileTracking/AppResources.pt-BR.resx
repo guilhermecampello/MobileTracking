@@ -138,8 +138,14 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="Compiled data" xml:space="preserve">
+    <value>Dados compilados</value>
+  </data>
   <data name="Configurations" xml:space="preserve">
     <value>Configurações</value>
+  </data>
+  <data name="Confirm delete position" xml:space="preserve">
+    <value>Tem certeza que deseja deletar a posição e todos os seus dados ?</value>
   </data>
   <data name="Confirm delete zone" xml:space="preserve">
     <value>Você tem certeza que deseja deletar a zona</value>
@@ -162,6 +168,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Deletar</value>
   </data>
+  <data name="Delete position" xml:space="preserve">
+    <value>Deletar posição</value>
+  </data>
   <data name="Delete zone" xml:space="preserve">
     <value>Deletar zona</value>
   </data>
@@ -180,11 +189,17 @@
   <data name="Error" xml:space="preserve">
     <value>Erro</value>
   </data>
+  <data name="Finding current locale" xml:space="preserve">
+    <value>Buscando localização atual</value>
+  </data>
   <data name="Floor" xml:space="preserve">
     <value>Andar</value>
   </data>
   <data name="Hostname" xml:space="preserve">
     <value>Endereço do servidor</value>
+  </data>
+  <data name="Interval" xml:space="preserve">
+    <value>Intervalo</value>
   </data>
   <data name="Invalid Hostname" xml:space="preserve">
     <value>Endereço inválido</value>
@@ -194,6 +209,9 @@
   </data>
   <data name="Magnetic field" xml:space="preserve">
     <value>Campo magnético</value>
+  </data>
+  <data name="MeanStdDev" xml:space="preserve">
+    <value>Média e Desv. Padrão</value>
   </data>
   <data name="Monitoring" xml:space="preserve">
     <value>Monitorando</value>
@@ -212,6 +230,9 @@
   </data>
   <data name="Samples per position" xml:space="preserve">
     <value>Amostras por posição</value>
+  </data>
+  <data name="Searching current locale" xml:space="preserve">
+    <value>Buscando localização atual</value>
   </data>
   <data name="Server not available" xml:space="preserve">
     <value>Servidor indisponível</value>

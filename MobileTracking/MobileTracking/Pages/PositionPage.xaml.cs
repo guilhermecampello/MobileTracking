@@ -1,31 +1,38 @@
 ﻿using MobileTracking.Core;
 using MobileTracking.Core.Application;
 using MobileTracking.Core.Models;
+using MobileTracking.Pages.Views;
 using MobileTracking.Services;
 using MobileTracking.Services.MagneticField;
+using Plugin.Toast;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
-
+using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace MobileTracking.Pages
 {
-
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class PositionPage : ContentPage
     {
-        private readonly IWifiConnector wifiConnector;
+        private IWifiConnector wifiConnector;
 
-        private readonly MagneticFieldSensor magneticFieldSensor;
+        private MagneticFieldSensor magneticFieldSensor;
 
-        private readonly IBluetoothConnector bluetoothConnector;
+        private IBluetoothConnector bluetoothConnector;
 
-        private readonly ICalibrationService calibrationsService;
+        private ICalibrationService calibrationsService;
 
-        private readonly Configuration configuration;
+        private LocaleProvider localeProvider;
+
+        private Configuration configuration;
+
+        private IPositionDataService positionDataService;
 
         private Timer timer;
 
@@ -34,24 +41,68 @@ namespace MobileTracking.Pages
         public PositionPage(Position position)
         {
             InitializeComponent();
+            InitializeServices();
             this.Position = position;
-            var serviceProvider = Startup.ServiceProvider;
-            this.wifiConnector = serviceProvider.GetService<IWifiConnector>();
-            this.bluetoothConnector = serviceProvider.GetService<IBluetoothConnector>();
-            this.magneticFieldSensor = serviceProvider.GetService<MagneticFieldSensor>();
-            this.calibrationsService = serviceProvider.GetService<ICalibrationService>();
-            this.configuration = serviceProvider.GetService<Configuration>();
+
+            PositionDataCollection.RefreshCommand = RefreshData_Command;
+            PositionDataCollection.ItemsSource = PositionData;
+            Position.PositionData?.ForEach(data => PositionData.Add(new PositionDataView(data)));
 
             BindingContext = this;
-            timer = new Timer(configuration.DataAquisitionInterval * 1000);
+            timer = new Timer(configuration!.DataAquisitionInterval * 1000);
             timer.Elapsed += UpdateMonitoringState;
             timer.Start();
             countLabel.Text = count.ToString();
         }
 
+        public void InitializeServices()
+        {
+            var serviceProvider = Startup.ServiceProvider;
+            this.wifiConnector = serviceProvider.GetService<IWifiConnector>();
+            this.bluetoothConnector = serviceProvider.GetService<IBluetoothConnector>();
+            this.magneticFieldSensor = serviceProvider.GetService<MagneticFieldSensor>();
+            this.calibrationsService = serviceProvider.GetService<ICalibrationService>();
+            this.positionDataService = serviceProvider.GetService<IPositionDataService>();
+            this.localeProvider = serviceProvider.GetService<LocaleProvider>();
+            this.configuration = serviceProvider.GetService<Configuration>();
+        }
+
         public Position Position { get; set; }
 
+        public ObservableCollection<PositionDataView> PositionData { get; set; } = new ObservableCollection<PositionDataView>();
+
         public Configuration Configuration { get => this.configuration; }
+
+        public ICommand RefreshData_Command
+        {
+            get => new Command(async () =>
+            {
+                PositionDataCollection.IsRefreshing = true;
+                await RefreshData();
+                PositionDataCollection.IsRefreshing = false;
+            });
+        }
+
+        public async Task RefreshData()
+        {
+            var query = new PositionDataQuery()
+            {
+                PositionId = Position.Id
+            };
+            try
+            {
+                if (await positionDataService.RecalculatePositionData(query))
+                {
+                    var newData = await positionDataService.GetPositionDatas(query);
+                    this.PositionData.Clear();
+                    newData.ForEach(data => PositionData.Add(new PositionDataView(data)));
+                }
+            }
+            catch (Exception e)
+            {
+                await DisplayAlert(e.Message, e.InnerException.Message, "OK");
+            }
+        }
 
         public void UpdateCollectingDataState()
         {
@@ -70,7 +121,7 @@ namespace MobileTracking.Pages
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     calibrationButton.Text = AppResources.Start_calibration;
-                    calibrationButton.BackgroundColor = Color.Gray;
+                    calibrationButton.BackgroundColor = Color.Default;
                     calibrationButton.TextColor = Color.Black;
                     activity.IsRunning = false;
                 });
@@ -209,6 +260,22 @@ namespace MobileTracking.Pages
             else
             {
                 StopDataAquisition();
+            }
+        }
+
+        private async void DeletePosition_Clicked(object sender, EventArgs e)
+        {
+            var deleteConfirmation = await DisplayAlert(AppResources.Delete_position + " " + Position.Name, AppResources.Confirm_delete_position, AppResources.Delete, AppResources.Cancel);
+            if (deleteConfirmation)
+            {
+                var positionService = Startup.ServiceProvider.GetService<IPositionService>();
+                
+                if (await positionService.DeletePosition(Position.Id))
+                {
+                    await localeProvider.RefreshLocale();
+                    CrossToastPopUp.Current.ShowToastError($"{AppResources.Position} {Position.Name} {AppResources.Deleted.ToLower()}");
+                }
+                await Navigation.PopAsync();
             }
         }
 

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:MobileTracking"
              x:Class="MobileTracking.Pages.PositionPage"
+             xmlns:local="clr-namespace:MobileTracking.Helpers"
              Visual="Material">
     <NavigationPage.TitleView>
         <Label TextColor="White" FontSize="Title" VerticalTextAlignment="Center">
@@ -15,16 +16,28 @@
             </Label.FormattedText>
         </Label>
     </NavigationPage.TitleView>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:GlyphConverter x:Key="glyph" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Clicked="DeletePosition_Clicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FA" Glyph="&#xf2ed;" Size="Medium"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout Margin="10">
             <Frame HasShadow="True">
                 <StackLayout>
                     <Label Text="{x:Static resources:AppResources.Calibrate_position}" FontSize="Medium" FontAttributes="Bold" TextTransform="Uppercase"/>
-                    <Grid Margin="5">
+                    <Grid Margin="5" VerticalOptions="FillAndExpand">
                         <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -51,7 +64,7 @@
                     <Button x:Name="calibrationButton" Text="{x:Static resources:AppResources.Start_calibration}" Clicked="Calibration_Button_Clicked"/>
 
                     
-                    <Label FontSize="Large" VerticalTextAlignment="Center" HorizontalOptions="Center" Margin="20">
+                    <Label FontSize="Large" VerticalTextAlignment="Center" HorizontalOptions="Center" Margin="5">
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span x:Name="countLabel" />
@@ -62,9 +75,73 @@
                     </Label>
 
                     <ActivityIndicator x:Name="activity" />
-
                 </StackLayout>
             </Frame>
+
+            <Label HorizontalTextAlignment="Center" Margin="15" FontSize="Medium" Text="{x:Static resources:AppResources.Compiled_data}" FontAttributes="Bold"/>
+            
+            <ListView
+                x:Name="PositionDataCollection"
+                HasUnevenRows="True"
+                ItemsSource="{Binding PositionDataCollection}"
+                SelectionMode="None"
+                CachingStrategy="RecycleElement"
+                IsPullToRefreshEnabled="True"
+                Margin="10"
+            >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout HorizontalOptions="FillAndExpand" Margin="10">
+                                <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Margin="5">
+                                    <Frame HorizontalOptions="Start" VerticalOptions="Start" Padding="0" Margin="0"  BackgroundColor="White" CornerRadius="15" WidthRequest="30" HeightRequest="30">
+                                        <Image VerticalOptions="Center" HorizontalOptions="Center">
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    Glyph="{Binding Icon, Converter={StaticResource glyph}}"
+                                                    Color="{Binding IconColor}"
+                                                    FontFamily="FA"
+                                                    Size="Medium" />
+                                            </Image.Source>
+                                        </Image>
+                                    </Frame>
+                                    <Label Text="{Binding Name}" VerticalTextAlignment="Center" FontAttributes="Bold" FontSize="Small" HorizontalTextAlignment="Start"/>
+                                    <Label HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="{Binding LastUpdate, StringFormat='{0:dd/MM/yy H:mm}'}"/>
+                                </StackLayout>
+                                <Grid Margin="5" VerticalOptions="FillAndExpand">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                        <Label Grid.Row="0" Grid.Column="0">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{x:Static resources:AppResources.MeanStdDev}" FontAttributes="Bold"/>
+                                                    <Span Text=": " FontAttributes="Bold"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding ConfidenceInterval}" />
+
+                                        <Label Grid.Row="1" Grid.Column="0">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{x:Static resources:AppResources.Interval}" FontAttributes="Bold"/>
+                                                    <Span Text=": " FontAttributes="Bold"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding StrengthAbsoluteInterval}" />
+                                </Grid>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

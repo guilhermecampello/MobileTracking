@@ -4,23 +4,42 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+             xmlns:local="clr-namespace:MobileTracking.Helpers"
              xmlns:resources="clr-namespace:MobileTracking"
              x:Class="MobileTracking.MainPage"
              Visual="Material">
     <NavigationPage.TitleView>
         <Label TextColor="White" FontSize="Title">Mobile Indoor Localization</Label>
     </NavigationPage.TitleView>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:InverseBoolConverter x:Key="inverseBool" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Clicked="Configuration_Clicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FA" Glyph="&#xf013;" Size="Medium"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
     <StackLayout VerticalOptions="Center">
-        <StackLayout>
-            <Button x:Name="calibrate_button" Text="Iniciar scan" Clicked="calibrate_btn_clicked" />
-            <Label FontAttributes="Bold" x:Name="counter" Text="0/10" VerticalOptions="Center" HorizontalOptions="Center"/>
-        </StackLayout>
-        <StackLayout>
-            <Label FontAttributes="Bold" Text="{x:Static resources:AppResources.Magnetic_field}" VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" x:Name="magX" Text="X: " VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" x:Name="magY" Text="Y: " VerticalOptions="Center" HorizontalOptions="Center"/>
-            <Label FontAttributes="Bold" x:Name="magZ" Text="Z: " VerticalOptions="Center" HorizontalOptions="Center"/>
-        </StackLayout>
-        <Button Text="{x:Static resources:AppResources.Configurations}" Clicked="Configuration_Clicked"/>
+        <Frame HasShadow="True">
+            <Frame.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Locale_Tapped"/>
+            </Frame.GestureRecognizers>
+            <StackLayout>
+                <StackLayout IsVisible="{Binding IsSelected}">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                        <Label HorizontalOptions="Start" Text="{Binding Locale.Name}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Start"/>
+                    </StackLayout>
+                    <Label Text="{Binding Locale.Description}" />
+                </StackLayout>
+                <StackLayout IsVisible="{Binding IsSelected, Converter={StaticResource inverseBool}}">
+                    <Label HorizontalOptions="Center" Text="{x:Static resources:AppResources.Finding_current_locale}"/>
+                    <ActivityIndicator IsRunning="True"/>
+                </StackLayout>
+            </StackLayout>
+        </Frame>
     </StackLayout>
 </ContentPage>

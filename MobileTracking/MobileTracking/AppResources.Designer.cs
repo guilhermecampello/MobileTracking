@@ -124,11 +124,29 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Compiled data.
+        /// </summary>
+        internal static string Compiled_data {
+            get {
+                return ResourceManager.GetString("Compiled data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Configurations.
         /// </summary>
         internal static string Configurations {
             get {
                 return ResourceManager.GetString("Configurations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Are you sure you want to delete position and all it&apos;s data ?.
+        /// </summary>
+        internal static string Confirm_delete_position {
+            get {
+                return ResourceManager.GetString("Confirm delete position", resourceCulture);
             }
         }
         
@@ -192,6 +210,15 @@ namespace MobileTracking {
         internal static string Delete {
             get {
                 return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Delete position.
+        /// </summary>
+        internal static string Delete_position {
+            get {
+                return ResourceManager.GetString("Delete position", resourceCulture);
             }
         }
         
@@ -268,7 +295,16 @@ namespace MobileTracking {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Andar.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Finding current locale.
+        /// </summary>
+        internal static string Finding_current_locale {
+            get {
+                return ResourceManager.GetString("Finding current locale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Floor.
         /// </summary>
         internal static string Floor {
             get {
@@ -282,6 +318,15 @@ namespace MobileTracking {
         internal static string Hostname {
             get {
                 return ResourceManager.GetString("Hostname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Interval.
+        /// </summary>
+        internal static string Interval {
+            get {
+                return ResourceManager.GetString("Interval", resourceCulture);
             }
         }
         
@@ -309,6 +354,15 @@ namespace MobileTracking {
         internal static string Magnetic_field {
             get {
                 return ResourceManager.GetString("Magnetic field", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Mean and Std. Deviation.
+        /// </summary>
+        internal static string MeanStdDev {
+            get {
+                return ResourceManager.GetString("MeanStdDev", resourceCulture);
             }
         }
         
@@ -385,7 +439,7 @@ namespace MobileTracking {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Iniciar calibração.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Start calibration.
         /// </summary>
         internal static string Start_calibration {
             get {

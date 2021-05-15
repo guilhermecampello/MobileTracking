@@ -27,7 +27,7 @@ namespace MobileTracking.Communication
             this._httpClient.Timeout = TimeSpan.FromSeconds(10);
         }
 
-        private string apiAddress { get => $"https://{Hostname}:5001/api"; }
+        private string apiAddress { get => $"{Hostname}/api"; }
 
         public string Hostname { get => this.configuration.Hostname; }
 
@@ -45,9 +45,9 @@ namespace MobileTracking.Communication
             return await GetResponse<T>(request);
         }
 
-        public async Task<T> Put<T>(string controller, string path, object body)
+        public async Task<T> Put<T>(string controller, string path, object? body, object? query = null)
         {
-            var request =  await _httpClient.PutAsync($"{apiAddress}/{controller}/{path}",
+            var request =  await _httpClient.PutAsync($"{apiAddress}/{controller}/{path}{ConvertQuery(query)}",
                     new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8)
                );
             return await GetResponse<T>(request);

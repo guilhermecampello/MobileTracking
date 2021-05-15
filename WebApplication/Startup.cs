@@ -8,6 +8,8 @@ using MobileTracking.Core.Application;
 using MobileTracking.Core.Application.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using WebApplication.Application.Services;
+using WebApplication.BackgroundServices;
 using WebApplication.Infrastructure;
 using WebApplication.Middlewares;
 
@@ -47,7 +49,10 @@ namespace WebApplication
                 app.UseDeveloperExceptionPage();
             }
 
-            app.ApplicationServices.GetRequiredService<DatabaseContext>().Database.Migrate();
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<DatabaseContext>().Database.Migrate();
+            }
 
             //app.UseHttpsRedirection();
             app.UseHsts();
@@ -76,6 +81,8 @@ namespace WebApplication
             services.AddScoped<IZoneService, ZoneService>();
             services.AddScoped<IPositionService, PositionService>();
             services.AddScoped<ICalibrationService, CalibrationService>();
+            services.AddScoped<IPositionDataService, PositionDataService>();
+            services.AddHostedService<PositionDataUpdater>();
         }
 
         private void AddDatabaseContext(

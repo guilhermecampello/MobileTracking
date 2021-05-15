@@ -1,22 +1,21 @@
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        GPR_TOKEN: ${GPR_TOKEN}
-    command: run --project WebApplication
-    container_name: mobile-tracking-api
-    restart: on-failure
-    depends_on:
-      - postgres
-    networks:
-      - mynetwork
-    volumes:
-      - .:/app
+  #api:
+   # build:
+    #  context: .
+     # dockerfile: Dockerfile
+      #args:
+       # GPR_TOKEN: ${GPR_TOKEN}
+    #command: run --project WebApplication
+    #container_name: mobile-tracking-api
+    #restart: on-failure
+    #depends_on:
+    #  - postgres
+    #networks:
+    #  - mynetwork
+    #volumes:
+     # - .:/app
 
   postgres:
-    container_name: postgres
     image: postgres
     environment:
       POSTGRES_USER: user
