@@ -132,6 +132,9 @@
   <data name="Back" xml:space="preserve">
     <value>Back</value>
   </data>
+  <data name="Calculating data" xml:space="preserve">
+    <value>Calculating data</value>
+  </data>
   <data name="Calibrate position" xml:space="preserve">
     <value>Calibrate position</value>
   </data>
@@ -258,6 +261,9 @@
   <data name="Provide samples per position" xml:space="preserve">
     <value>Provide the number of samples you want to collect per position</value>
   </data>
+  <data name="RSSI dB" xml:space="preserve">
+    <value>RSSI [dB]</value>
+  </data>
   <data name="Samples" xml:space="preserve">
     <value>Samples</value>
   </data>
@@ -266,6 +272,9 @@
   </data>
   <data name="Server not available" xml:space="preserve">
     <value>Server not available</value>
+  </data>
+  <data name="Signals found" xml:space="preserve">
+    <value>Signals found</value>
   </data>
   <data name="Start calibration" xml:space="preserve">
     <value>Start calibration</value>

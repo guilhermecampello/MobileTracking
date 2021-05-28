@@ -106,6 +106,15 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Calculating data.
+        /// </summary>
+        internal static string Calculating_data {
+            get {
+                return ResourceManager.GetString("Calculating data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Calibrate position.
         /// </summary>
         internal static string Calibrate_position {
@@ -484,6 +493,15 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a RSSI [dB].
+        /// </summary>
+        internal static string RSSI_dB {
+            get {
+                return ResourceManager.GetString("RSSI dB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Samples.
         /// </summary>
         internal static string Samples {
@@ -507,6 +525,15 @@ namespace MobileTracking {
         internal static string Server_not_available {
             get {
                 return ResourceManager.GetString("Server not available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Signals found.
+        /// </summary>
+        internal static string Signals_found {
+            get {
+                return ResourceManager.GetString("Signals found", resourceCulture);
             }
         }
         

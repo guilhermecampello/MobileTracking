@@ -132,6 +132,9 @@
   <data name="Back" xml:space="preserve">
     <value>Voltar</value>
   </data>
+  <data name="Calculating data" xml:space="preserve">
+    <value>Calculando dados</value>
+  </data>
   <data name="Calibrate position" xml:space="preserve">
     <value>Calibrar posição</value>
   </data>
@@ -249,6 +252,9 @@
   <data name="Provide interval" xml:space="preserve">
     <value>Forneça o intervalo entre a coleta de dados em segundos</value>
   </data>
+  <data name="RSSI dB" xml:space="preserve">
+    <value>RSSI [dB]</value>
+  </data>
   <data name="Samples" xml:space="preserve">
     <value>Amostras</value>
   </data>
@@ -260,6 +266,9 @@
   </data>
   <data name="Server not available" xml:space="preserve">
     <value>Servidor indisponível</value>
+  </data>
+  <data name="Signals found" xml:space="preserve">
+    <value>Sinais encontrados</value>
   </data>
   <data name="Start calibration" xml:space="preserve">
     <value>Iniciar calibração</value>

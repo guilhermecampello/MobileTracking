@@ -7,6 +7,6 @@
     <NavigationPage.TitleView>
         <Label TextColor="White" Text="{Binding Locale.Name}" FontSize="Title" />
     </NavigationPage.TitleView>
-    <chart:SfChart x:Name="Chart">
-    </chart:SfChart>
+    <ScrollView x:Name="ScrollView">
+    </ScrollView>
 </ContentPage>
