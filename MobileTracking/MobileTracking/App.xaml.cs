@@ -8,6 +8,7 @@ namespace MobileTracking
     {
         public App()
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NDUyMjg4QDMxMzkyZTMxMmUzME40OVZpZVoyVXZCa1c3SnF1V1J5Q0l6Qk8zSGNzWEoweUl6Q2ZkTloxYVk9");
             InitializeComponent();
             Startup.ConfigureServices();
             MainPage = new NavigationPage(Startup.ServiceProvider.GetService<MainPage>());

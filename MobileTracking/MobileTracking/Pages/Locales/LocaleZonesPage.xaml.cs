@@ -5,6 +5,7 @@ using MobileTracking.Pages;
 using MobileTracking.Pages.Locales;
 using MobileTracking.Services;
 using Plugin.Toast;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -112,6 +113,21 @@ namespace MobileTracking
             var positionsService = Startup.ServiceProvider.GetService<IPositionService>();
             position = await positionsService.FindPositionById(position.Id, query);
             await Navigation.PushAsync(new PositionPage(position));
+        }
+
+        private async void ExploreDataButton_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var localeService = Startup.ServiceProvider.GetService<ILocaleService>();
+                var query = new LocaleQuery() { IncludeZones = true, IncludePositions = true, IncludePositionsData = true };
+                var locale = await localeService.FindLocaleById(localeProvider.Locale!.Id, query);
+                await Navigation.PushAsync(new LocaleExplorerPage(locale));
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
+            }
         }
     }
 }

@@ -25,6 +25,7 @@ namespace MobileTracking.Pages.Locales
             InitializeComponent();
             this.localeProvider = localeProvider;
             this.zonesService = zonesService;
+            this.BindingContext = localeProvider.Locale;
         }
 
         private async void Button_Clicked(object sender, EventArgs e)

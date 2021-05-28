@@ -17,5 +17,7 @@ namespace MobileTracking.Core.Application
         public SignalType? SignalType { get; set; }
 
         public string? SignalId { get; set; }
+
+        public int[]? CalibrationIds { get; set; }
     }
 }

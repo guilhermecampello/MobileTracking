@@ -26,6 +26,10 @@ namespace WebApplication.Application.Services
                 .Where(query.LocaleId, localeId => data => data.Position!.Zone!.LocaleId == localeId)
                 .Where(query.ZoneId, zoneId => data => data.Position!.ZoneId == zoneId)
                 .Where(query.PositionId, positionId => data => data.PositionId == positionId)
+                .Where(query.SignalId, signalId => data => data.SignalId == signalId)
+                .Where(query.SignalType, signalType => data => data.SignalType == signalType)
+                .Include(query.IncludePosition, data => data.Position)
+                .Include(query.IncludeZone, data => data.Position!, position => position.Zone!)
                 .ToListAsync();
         }
 
@@ -70,7 +74,7 @@ namespace WebApplication.Application.Services
                 {
                     var calibrations = position.Calibrations!
                     .Where(calibration => calibration.SignalId == data.SignalId
-                        && calibration.SignalType == calibration.SignalType)
+                        && calibration.SignalType == data.SignalType)
                     .ToList();
 
                     data.CalculateStandardDeviation(calibrations);

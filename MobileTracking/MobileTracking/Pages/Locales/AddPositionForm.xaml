@@ -3,6 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MobileTracking.Pages.Locales.AddPositionForm"
              xmlns:resources="clr-namespace:MobileTracking">
+    <NavigationPage.TitleView>
+        <Label Text="{Binding Name}" TextColor="White" FontSize="Title" VerticalTextAlignment="Center"/>
+    </NavigationPage.TitleView>
     <ContentPage.Content>
         <StackLayout>
             <Label Text="{x:Static resources:AppResources.Add_position}"
@@ -12,11 +15,11 @@
                 HorizontalOptions="CenterAndExpand" />
             <StackLayout Margin="10">
                 <Label Text="{x:Static resources:AppResources.Name}" FontSize="Medium" FontAttributes="Bold"/>
-                <Editor x:Name="name" Placeholder="{x:Static resources:AppResources.Name}" />
+                <Entry x:Name="name" Placeholder="{x:Static resources:AppResources.Name}" ReturnType="Next"/>
             </StackLayout>
             <StackLayout Margin="10">
                 <Label Text="{x:Static resources:AppResources.Description}" FontSize="Medium" FontAttributes="Bold"/>
-                <Editor x:Name="description" Placeholder="{x:Static resources:AppResources.Description}" />
+                <Entry x:Name="description" Placeholder="{x:Static resources:AppResources.Description}" ReturnType="Done"/>
             </StackLayout>
             <ActivityIndicator x:Name="activityIndicator" IsRunning="False"/>
             <Button Text="{x:Static resources:AppResources.Add}" Clicked="Button_Clicked"/>

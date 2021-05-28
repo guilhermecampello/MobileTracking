@@ -1,6 +1,7 @@
 ﻿using MobileTracking.Core;
 using MobileTracking.Core.Application;
 using MobileTracking.Core.Models;
+using MobileTracking.Pages.Positions;
 using MobileTracking.Pages.Views;
 using MobileTracking.Services;
 using MobileTracking.Services.MagneticField;
@@ -20,19 +21,19 @@ namespace MobileTracking.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class PositionPage : ContentPage
     {
-        private IWifiConnector wifiConnector;
+        private readonly IWifiConnector wifiConnector;
 
-        private MagneticFieldSensor magneticFieldSensor;
+        private readonly MagneticFieldSensor magneticFieldSensor;
 
-        private IBluetoothConnector bluetoothConnector;
+        private readonly IBluetoothConnector bluetoothConnector;
 
-        private ICalibrationService calibrationsService;
+        private readonly ICalibrationService calibrationsService;
 
-        private LocaleProvider localeProvider;
+        private readonly LocaleProvider localeProvider;
 
-        private Configuration configuration;
+        private readonly Configuration configuration;
 
-        private IPositionDataService positionDataService;
+        private readonly IPositionDataService positionDataService;
 
         private Timer timer;
 
@@ -41,22 +42,6 @@ namespace MobileTracking.Pages
         public PositionPage(Position position)
         {
             InitializeComponent();
-            InitializeServices();
-            this.Position = position;
-
-            PositionDataCollection.RefreshCommand = RefreshData_Command;
-            PositionDataCollection.ItemsSource = PositionData;
-            Position.PositionData?.ForEach(data => PositionData.Add(new PositionDataView(data)));
-
-            BindingContext = this;
-            timer = new Timer(configuration!.DataAquisitionInterval * 1000);
-            timer.Elapsed += UpdateMonitoringState;
-            timer.Start();
-            countLabel.Text = count.ToString();
-        }
-
-        public void InitializeServices()
-        {
             var serviceProvider = Startup.ServiceProvider;
             this.wifiConnector = serviceProvider.GetService<IWifiConnector>();
             this.bluetoothConnector = serviceProvider.GetService<IBluetoothConnector>();
@@ -65,6 +50,21 @@ namespace MobileTracking.Pages
             this.positionDataService = serviceProvider.GetService<IPositionDataService>();
             this.localeProvider = serviceProvider.GetService<LocaleProvider>();
             this.configuration = serviceProvider.GetService<Configuration>();
+            this.Position = position;
+
+            PositionDataCollection.RefreshCommand = RefreshData_Command;
+            PositionDataCollection.ItemsSource = PositionData;
+            Position.PositionData?
+                .OrderBy(data => data.SignalType)
+                .ThenByDescending(data => data.Strength)
+                .ToList()
+                .ForEach(data => PositionData.Add(new PositionDataView(data)));
+
+            BindingContext = this;
+            timer = new Timer(configuration!.DataAquisitionInterval * 1000);
+            timer.Elapsed += UpdateMonitoringState;
+            timer.Start();
+            countLabel.Text = count.ToString();
         }
 
         public Position Position { get; set; }
@@ -77,14 +77,13 @@ namespace MobileTracking.Pages
         {
             get => new Command(async () =>
             {
-                PositionDataCollection.IsRefreshing = true;
                 await RefreshData();
-                PositionDataCollection.IsRefreshing = false;
             });
         }
 
         public async Task RefreshData()
         {
+            PositionDataCollection.IsRefreshing = true;
             var query = new PositionDataQuery()
             {
                 PositionId = Position.Id
@@ -95,12 +94,20 @@ namespace MobileTracking.Pages
                 {
                     var newData = await positionDataService.GetPositionDatas(query);
                     this.PositionData.Clear();
-                    newData.ForEach(data => PositionData.Add(new PositionDataView(data)));
+                    newData
+                        .OrderBy(data => data.SignalType)
+                        .ThenByDescending(data => data.Strength)
+                        .ToList()
+                        .ForEach(data => PositionData.Add(new PositionDataView(data)));
                 }
             }
             catch (Exception e)
             {
                 await DisplayAlert(e.Message, e.InnerException.Message, "OK");
+            }
+            finally
+            {
+                PositionDataCollection.IsRefreshing = false;
             }
         }
 
@@ -129,7 +136,7 @@ namespace MobileTracking.Pages
         }
 
         public string BluetoothState
-        { 
+        {
             get
             {
                 Resources.TryGetValue(bluetoothConnector.State.ToString(), out var translatedState);
@@ -185,7 +192,7 @@ namespace MobileTracking.Pages
                     await calibrationsService.CreateCalibrations(command);
                     count++;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
                 }
@@ -211,7 +218,7 @@ namespace MobileTracking.Pages
             {
                 _isCollecting = value;
                 UpdateCollectingDataState();
-            } 
+            }
         }
 
         private List<Measurement> FetchCalibrationData()
@@ -234,7 +241,7 @@ namespace MobileTracking.Pages
             {
                 data.Add(MeasurementsFactory.CreateMagnetometerMeasurement(magneticFieldVector.Value));
             }
-            
+
             return data;
         }
 
@@ -251,15 +258,16 @@ namespace MobileTracking.Pages
             }
         }
 
-        private void Calibration_Button_Clicked(object sender, EventArgs e)
+        private async void Calibration_Button_Clicked(object sender, EventArgs e)
         {
             if (!_isCollecting)
             {
-                StartDataAquisition(); 
+                StartDataAquisition();
             }
             else
             {
                 StopDataAquisition();
+                await RefreshData();
             }
         }
 
@@ -269,7 +277,7 @@ namespace MobileTracking.Pages
             if (deleteConfirmation)
             {
                 var positionService = Startup.ServiceProvider.GetService<IPositionService>();
-                
+
                 if (await positionService.DeletePosition(Position.Id))
                 {
                     await localeProvider.RefreshLocale();
@@ -282,7 +290,7 @@ namespace MobileTracking.Pages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            StopDataAquisition();   
+            StopDataAquisition();
         }
 
         public void StopDataAquisition()
@@ -298,6 +306,26 @@ namespace MobileTracking.Pages
             wifiConnector.StartScanning();
             IsCollecting = true;
             this.timer.Start();
+        }
+
+        private async void PositionDataCollection_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            var positionData = ((PositionDataView)e.Item).PositionData;
+            var query = new CalibrationsQuery()
+            {
+                PositionId = positionData.PositionId,
+                SignalId = positionData.SignalId,
+                SignalType = positionData.SignalType,
+            };
+            try
+            {
+                var calibrations = await calibrationsService.GetCalibrations(query);
+                await Navigation.PushAsync(new PositionCalibrationsPage(Position, calibrations));
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
+            }
         }
     }
 }

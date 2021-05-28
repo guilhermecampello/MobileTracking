@@ -16,7 +16,7 @@ namespace MobileTracking.Droid
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
-
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NDUyMjg4QDMxMzkyZTMxMmUzME40OVZpZVoyVXZCa1c3SnF1V1J5Q0l6Qk8zSGNzWEoweUl6Q2ZkTloxYVk9");
             base.OnCreate(savedInstanceState);
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);

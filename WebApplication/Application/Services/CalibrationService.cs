@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MobileTracking.Core.Application;
@@ -34,10 +35,13 @@ namespace MobileTracking.Core.Application.Services
             int count = 0;
             command.Measurements.ForEach(measurement =>
             {
-                var calibration = new Calibration(positionId, measurement);
-                calibration.DateTime = dateTime;
-                position.Calibrations!.Add(calibration);
-                count++;
+                if (IsValidMeasurement(measurement))
+                {
+                    var calibration = new Calibration(positionId, measurement);
+                    calibration.DateTime = dateTime;
+                    position.Calibrations!.Add(calibration);
+                    count++;
+                }
             });
 
             position.DataNeedsUpdate = true;
@@ -47,16 +51,21 @@ namespace MobileTracking.Core.Application.Services
             return count;
         }
 
-        public async Task<bool> DeleteCalibration(int calibrationId)
+        public async Task<bool> DeleteCalibrations(int[] calibrationIds)
         {
-            var calibration = await this.databaseContext.Calibrations.FindAsync(calibrationId);
+            var calibrations = await this.databaseContext.Calibrations
+                .Include(calibration => calibration.Position)
+                .Where(calibration => calibrationIds.Contains(calibration.Id))
+                .ToListAsync();
 
-            if (calibration == null)
+            if (calibrations.Count == 0)
             {
                 return false;
             }
 
-            this.databaseContext.Remove(calibration);
+            calibrations.ForEach(calibration => calibration.Position!.DataNeedsUpdate = true);
+
+            this.databaseContext.Calibrations.RemoveRange(calibrations);
             await this.databaseContext.SaveChangesAsync();
 
             return true;
@@ -77,6 +86,16 @@ namespace MobileTracking.Core.Application.Services
                 .Where(query.SignalType, signalType => calibration => calibration.SignalType == signalType)
                 .Where(query.SignalId, signalId => calibration => calibration.SignalId == signalId)
                 .ToListAsync();
+        }
+
+        private bool IsValidMeasurement(Measurement measurement)
+        {
+            if (measurement.SignalType == SignalType.Magnetometer && measurement.Strength == 0)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

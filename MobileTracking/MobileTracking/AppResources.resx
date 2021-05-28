@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Add" xml:space="preserve">
-    <value>Adicionar</value>
+    <value>Add</value>
   </data>
   <data name="Add position" xml:space="preserve">
     <value>Add position</value>
@@ -130,13 +130,19 @@
     <value>Available</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Voltar</value>
+    <value>Back</value>
   </data>
   <data name="Calibrate position" xml:space="preserve">
     <value>Calibrate position</value>
   </data>
+  <data name="Calibrations" xml:space="preserve">
+    <value>Calibrations</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>Cancel</value>
+  </data>
+  <data name="Collected data" xml:space="preserve">
+    <value>Collected data</value>
   </data>
   <data name="Compiled data" xml:space="preserve">
     <value>Compiled data</value>
@@ -168,6 +174,9 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="Delete calibrations" xml:space="preserve">
+    <value>Delete calibrations</value>
+  </data>
   <data name="Delete position" xml:space="preserve">
     <value>Delete position</value>
   </data>
@@ -195,6 +204,9 @@
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="Explore data" xml:space="preserve">
+    <value>Explore data</value>
+  </data>
   <data name="Finding current locale" xml:space="preserve">
     <value>Finding current locale</value>
   </data>
@@ -215,6 +227,15 @@
   </data>
   <data name="Magnetic field" xml:space="preserve">
     <value>Magnetic field</value>
+  </data>
+  <data name="Magnetic field intensity per position" xml:space="preserve">
+    <value>Magnetic field intensity per position</value>
+  </data>
+  <data name="Magnetic Y Intensity" xml:space="preserve">
+    <value>Y [µT]</value>
+  </data>
+  <data name="Magnetic Z Intensity" xml:space="preserve">
+    <value>Z [µT]</value>
   </data>
   <data name="MeanStdDev" xml:space="preserve">
     <value>Mean and Std. Deviation</value>
@@ -237,6 +258,9 @@
   <data name="Provide samples per position" xml:space="preserve">
     <value>Provide the number of samples you want to collect per position</value>
   </data>
+  <data name="Samples" xml:space="preserve">
+    <value>Samples</value>
+  </data>
   <data name="Samples per position" xml:space="preserve">
     <value>Samples per position</value>
   </data>
@@ -248,6 +272,9 @@
   </data>
   <data name="Stop calibration" xml:space="preserve">
     <value>Stop calibration</value>
+  </data>
+  <data name="Strength" xml:space="preserve">
+    <value>Strength</value>
   </data>
   <data name="Unavailable" xml:space="preserve">
     <value>Unavailable</value>

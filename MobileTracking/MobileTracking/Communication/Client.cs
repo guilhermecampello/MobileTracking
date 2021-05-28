@@ -61,9 +61,9 @@ namespace MobileTracking.Communication
             return await GetResponse<T>(request);
         }
 
-        public async Task<T> Delete<T>(string controller, string path)
+        public async Task<T> Delete<T>(string controller, string path, object? query = null)
         {
-            var request = await _httpClient.DeleteAsync($"{apiAddress}/{controller}/{path}");
+            var request = await _httpClient.DeleteAsync($"{apiAddress}/{controller}/{path}{ConvertQuery(query)}");
             return await GetResponse<T>(request);
         }
         
@@ -99,8 +99,21 @@ namespace MobileTracking.Communication
                     {
                         queryString += "&";
                     }
+
                     var propertyName = property.Name[0].ToString().ToLower() + property.Name.Substring(1);
-                    queryString += $"{propertyName}={property.GetValue(query)}";
+                    var type = property.GetType();
+                    if (property.GetValue(query).GetType().IsArray)
+                    {
+                        foreach (var value in (Array)property.GetValue(query))
+                        {
+                            queryString += $"{propertyName}={value}&";
+                        }
+                        queryString = queryString.Substring(0, queryString.Length - 1);
+                    }
+                    else
+                    {
+                        queryString += $"{propertyName}={property.GetValue(query)}";
+                    }
                 }
             }
 
@@ -111,7 +124,8 @@ namespace MobileTracking.Communication
         {
             if (response.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync())!;
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<T>(responseContent)!;
             }
             else
             {

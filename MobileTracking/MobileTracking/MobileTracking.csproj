@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Plugin.Toast" Version="2.2.0" />
+    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.1.0.65" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
@@ -55,6 +56,9 @@
     <Compile Update="Pages\Locales\AddLocaleForm.xaml.cs">
       <DependentUpon>AddLocaleForm.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Pages\Locales\LocaleExplorerPage.xaml.cs">
+      <DependentUpon>LocaleExplorerPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Pages\Locales\LocaleZonesPage.xaml.cs">
       <DependentUpon>LocaleZonesPage.xaml</DependentUpon>
     </Compile>
@@ -68,6 +72,9 @@
     <EmbeddedResource Update="Pages\Configuration\ConfigurationPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Pages\Locales\LocaleExplorerPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Pages\Locales\AddZoneForm.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -77,7 +84,10 @@
     <EmbeddedResource Update="Pages\Locales\LocaleZonesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Pages\PositionPage.xaml">
+    <EmbeddedResource Update="Pages\Positions\PositionCalibrationsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Pages\Positions\PositionPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

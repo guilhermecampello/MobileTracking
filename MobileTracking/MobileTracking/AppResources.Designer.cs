@@ -61,7 +61,7 @@ namespace MobileTracking {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Adicionar.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Add.
         /// </summary>
         internal static string Add {
             get {
@@ -97,7 +97,7 @@ namespace MobileTracking {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Voltar.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Back.
         /// </summary>
         internal static string Back {
             get {
@@ -115,11 +115,29 @@ namespace MobileTracking {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Cancelar.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Calibrations.
+        /// </summary>
+        internal static string Calibrations {
+            get {
+                return ResourceManager.GetString("Calibrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cancel.
         /// </summary>
         internal static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Collected data.
+        /// </summary>
+        internal static string Collected_data {
+            get {
+                return ResourceManager.GetString("Collected data", resourceCulture);
             }
         }
         
@@ -214,6 +232,15 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Delete calibrations.
+        /// </summary>
+        internal static string Delete_calibrations {
+            get {
+                return ResourceManager.GetString("Delete calibrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Delete position.
         /// </summary>
         internal static string Delete_position {
@@ -295,6 +322,15 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Explore data.
+        /// </summary>
+        internal static string Explore_data {
+            get {
+                return ResourceManager.GetString("Explore data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Finding current locale.
         /// </summary>
         internal static string Finding_current_locale {
@@ -354,6 +390,33 @@ namespace MobileTracking {
         internal static string Magnetic_field {
             get {
                 return ResourceManager.GetString("Magnetic field", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Magnetic field intensity per position.
+        /// </summary>
+        internal static string Magnetic_field_intensity_per_position {
+            get {
+                return ResourceManager.GetString("Magnetic field intensity per position", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Y [µT].
+        /// </summary>
+        internal static string Magnetic_Y_Intensity {
+            get {
+                return ResourceManager.GetString("Magnetic Y Intensity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Z [µT].
+        /// </summary>
+        internal static string Magnetic_Z_Intensity {
+            get {
+                return ResourceManager.GetString("Magnetic Z Intensity", resourceCulture);
             }
         }
         
@@ -421,6 +484,15 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Samples.
+        /// </summary>
+        internal static string Samples {
+            get {
+                return ResourceManager.GetString("Samples", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Samples per position.
         /// </summary>
         internal static string Samples_per_position {
@@ -453,6 +525,15 @@ namespace MobileTracking {
         internal static string Stop_calibration {
             get {
                 return ResourceManager.GetString("Stop calibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Strength.
+        /// </summary>
+        internal static string Strength {
+            get {
+                return ResourceManager.GetString("Strength", resourceCulture);
             }
         }
         

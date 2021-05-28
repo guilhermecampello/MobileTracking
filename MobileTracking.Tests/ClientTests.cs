@@ -19,5 +19,17 @@ namespace MobileTracking.Tests
 
             Assert.AreEqual("?localeId=1&positionId=1", client.ConvertQuery(query));
         }
+
+        [TestMethod]
+        public void ConvertArrayInQuery()
+        {
+            var client = new Client(new Configuration());
+            var query = new CalibrationsQuery()
+            {
+                CalibrationIds = new int[]{ 1, 2, 3 }
+            };
+
+            Assert.AreEqual("?calibrationIds[]=1&calibrationIds[]=2&calibrationIds[]=3", client.ConvertQuery(query));
+        }
     }
 }

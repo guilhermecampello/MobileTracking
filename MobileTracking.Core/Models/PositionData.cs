@@ -36,6 +36,13 @@ namespace MobileTracking.Core.Models
 
         public float MinZ { get; set; }
 
+        public string Name
+        {
+            get => this.Position?.Name != null && this.Position.Zone != null
+                ? $"{this.Position.Zone.Name}-{this.Position.Name}"
+                : this.PositionId.ToString();
+        }
+
         public DateTime LastUpdate { get; set; }
 
         public Position? Position { get; set; }

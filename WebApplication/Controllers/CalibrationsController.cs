@@ -26,12 +26,12 @@ namespace WebApplication.Controllers
             return await calibrationService.GetCalibrations(query);
         }
 
-        [HttpDelete("{calibrationId}")]
-        public async Task<ActionResult<bool>> DeleteCalibration(
+        [HttpDelete]
+        public async Task<ActionResult<bool>> DeleteCalibrations(
             [FromServices] ICalibrationService calibrationService,
-            [FromRoute] int calibrationId)
+            [FromQuery] int[] calibrationIds)
         {
-            return await calibrationService.DeleteCalibration(calibrationId);
+            return await calibrationService.DeleteCalibrations(calibrationIds);
         }
 
         [HttpPost]

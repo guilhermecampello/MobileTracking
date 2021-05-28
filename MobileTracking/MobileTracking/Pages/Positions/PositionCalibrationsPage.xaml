@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:MobileTracking"
+             xmlns:local="clr-namespace:MobileTracking.Helpers"
+             x:Class="MobileTracking.Pages.Positions.PositionCalibrationsPage">
+    <NavigationPage.TitleView>
+        <Label TextColor="White" FontSize="Title" VerticalTextAlignment="Center">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="{Binding Position.Zone.Name}" />
+                    <Span Text=" - " />
+                    <Span Text="{Binding Position.Name}"/>
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+    </NavigationPage.TitleView>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:GlyphConverter x:Key="glyph" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Clicked="DeleteCalibrations_Clicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FA" Glyph="&#xf2ed;" Size="Medium"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <ListView
+            Margin="10"
+            x:Name="collectionView"
+            SelectionMode="None"
+            HasUnevenRows="True"
+            CachingStrategy="RetainElement"
+            ItemsSource="{Binding Calibrations}">
+            <ListView.Header>
+                <Label Text="{x:Static resources:AppResources.Collected_data}" FontSize="Title" HorizontalTextAlignment="Center" Margin="10"/>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout HorizontalOptions="FillAndExpand" Margin="10">
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+                            </StackLayout.GestureRecognizers>
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Margin="5">
+                                <Frame HorizontalOptions="Start" VerticalOptions="Start" Padding="0" Margin="0"  BackgroundColor="White" CornerRadius="15" WidthRequest="30" HeightRequest="30">
+                                    <Image VerticalOptions="Center" HorizontalOptions="Center">
+                                        <Image.Source>
+                                            <FontImageSource
+                                                        Glyph="{Binding Icon, Converter={StaticResource glyph}}"
+                                                        Color="{Binding IconColor}"
+                                                        FontFamily="FA"
+                                                        Size="Medium" />
+                                        </Image.Source>
+                                    </Image>
+                                </Frame>
+                                <Label Text="{Binding Name}" VerticalTextAlignment="Center" FontAttributes="Bold" FontSize="Small" HorizontalTextAlignment="Start"/>
+                                <Label HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="{Binding Date, StringFormat='{0:dd/MM/yy H:mm}'}"/>
+                            </StackLayout>
+                            <StackLayout Margin="5" VerticalOptions="FillAndExpand" Orientation="Horizontal">
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{x:Static resources:AppResources.Strength}" FontAttributes="Bold"/>
+                                            <Span Text=": " FontAttributes="Bold"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label Text="{Binding Strength}" />
+                            </StackLayout>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</ContentPage>

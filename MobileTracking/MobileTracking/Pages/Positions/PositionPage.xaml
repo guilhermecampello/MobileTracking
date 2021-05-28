@@ -63,7 +63,7 @@
                     </Grid>
                     <Button x:Name="calibrationButton" Text="{x:Static resources:AppResources.Start_calibration}" Clicked="Calibration_Button_Clicked"/>
 
-                    
+
                     <Label FontSize="Large" VerticalTextAlignment="Center" HorizontalOptions="Center" Margin="5">
                         <Label.FormattedText>
                             <FormattedString>
@@ -79,11 +79,12 @@
             </Frame>
 
             <Label HorizontalTextAlignment="Center" Margin="15" FontSize="Medium" Text="{x:Static resources:AppResources.Compiled_data}" FontAttributes="Bold"/>
-            
+
             <ListView
                 x:Name="PositionDataCollection"
                 HasUnevenRows="True"
                 ItemsSource="{Binding PositionDataCollection}"
+                ItemTapped="PositionDataCollection_ItemTapped"
                 SelectionMode="None"
                 CachingStrategy="RecycleElement"
                 IsPullToRefreshEnabled="True"
@@ -112,30 +113,40 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                        <Label Grid.Row="0" Grid.Column="0">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="{x:Static resources:AppResources.MeanStdDev}" FontAttributes="Bold"/>
-                                                    <Span Text=": " FontAttributes="Bold"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding ConfidenceInterval}" />
+                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{x:Static resources:AppResources.Samples}" FontAttributes="Bold"/>
+                                                <Span Text=": " FontAttributes="Bold"/>
+                                                <Span Text="{Binding Samples}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label Grid.Row="1" Grid.Column="0">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{x:Static resources:AppResources.MeanStdDev}" FontAttributes="Bold"/>
+                                                <Span Text=": " FontAttributes="Bold"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding ConfidenceInterval}" />
 
-                                        <Label Grid.Row="1" Grid.Column="0">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="{x:Static resources:AppResources.Interval}" FontAttributes="Bold"/>
-                                                    <Span Text=": " FontAttributes="Bold"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding StrengthAbsoluteInterval}" />
+                                    <Label Grid.Row="2" Grid.Column="0">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{x:Static resources:AppResources.Interval}" FontAttributes="Bold"/>
+                                                <Span Text=": " FontAttributes="Bold"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding StrengthAbsoluteInterval}" />
                                 </Grid>
                             </StackLayout>
                         </ViewCell>
