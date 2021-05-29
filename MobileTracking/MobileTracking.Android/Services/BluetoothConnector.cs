@@ -19,6 +19,8 @@ namespace MobileTracking.Droid.Services
     {
         private Context context = null;
 
+        private Dictionary<string, string> macAddressMapping { get; set; } = new Dictionary<string, string>();
+
         private Dictionary<string, BluetoothScanResult> devicesResults { get; set; } = new Dictionary<string, BluetoothScanResult>();
 
         private BluetoothManager bluetoothManager;
@@ -26,6 +28,8 @@ namespace MobileTracking.Droid.Services
         private BluetoothAdapter bluetoothAdapter;
 
         private BluetoothLeScanner bluetoothScanner;
+
+        private BluetoothReceiver bluetoothReceiver;
 
         private Thread scanThread;
 
@@ -37,11 +41,18 @@ namespace MobileTracking.Droid.Services
             bluetoothManager = (BluetoothManager)context.GetSystemService(Context.BluetoothService);
             bluetoothAdapter = bluetoothManager.Adapter;
             bluetoothScanner = bluetoothManager.Adapter.BluetoothLeScanner;
+            bluetoothReceiver = new BluetoothReceiver(devicesResults, macAddressMapping);
+            context.RegisterReceiver(bluetoothReceiver, new IntentFilter(BluetoothDevice.ActionFound));
             this.scanThread = new Thread(Scan);
-            this.scanCallback = new BluetoothScanCallback(devicesResults);
+            this.scanCallback = new BluetoothScanCallback(devicesResults, macAddressMapping);
         }
 
-        public Dictionary<string, BluetoothScanResult> DevicesResults { get => devicesResults; }
+        public Dictionary<string, BluetoothScanResult> DevicesResults
+        {
+            get => devicesResults
+                .Where(result => DateTime.Now.Subtract(result.Value.CreatedAt).TotalSeconds < 10)
+                .ToDictionary(result => result.Key, result => result.Value);
+        }
 
         public MonitoringState State
         {
@@ -79,9 +90,11 @@ namespace MobileTracking.Droid.Services
             {
                 try
                 {
+                    bluetoothAdapter.StartDiscovery();
                     bluetoothScanner.StartScan(scanCallback);
                     Task.Delay(3000).Wait();
                     bluetoothScanner.StopScan(scanCallback);
+                    bluetoothAdapter.CancelDiscovery();
                 }
                 catch(Exception e)
                 {
@@ -90,13 +103,59 @@ namespace MobileTracking.Droid.Services
             }
         }
 
+        public class BluetoothReceiver : BroadcastReceiver
+        {
+            private Dictionary<string, BluetoothScanResult> devicesResults;
+
+            private Dictionary<string, string> macAddressMapping { get; set; }
+
+            public BluetoothReceiver(
+                Dictionary<string, BluetoothScanResult> devicesResults,
+                Dictionary<string, string> macAddressMapping)
+            {
+                this.devicesResults = devicesResults;
+                this.macAddressMapping = macAddressMapping;
+            }
+
+            public override void OnReceive(Context context, Intent intent)
+            {
+                String action = intent.Action;            
+                if (action == BluetoothDevice.ActionFound)
+                {
+                    var device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
+                    var rssi = intent.GetShortExtra(BluetoothDevice.ExtraRssi, 0);
+                    lock (macAddressMapping)
+                    {
+                        macAddressMapping[device.Address] = device.Name;
+                    }
+
+                    AddScanResult(new BluetoothScanResult(device.Name, rssi));
+                }
+            }
+
+            private void AddScanResult(BluetoothScanResult bluetoothScanResult)
+            {
+                lock (devicesResults)
+                {
+                    if (this.devicesResults.ContainsKey(bluetoothScanResult.Name))
+                    {
+                        this.devicesResults.Remove(bluetoothScanResult.Name);
+                    }
+                    this.devicesResults.Add(bluetoothScanResult.Name, bluetoothScanResult);
+                }
+            }
+        }
+
         public class BluetoothScanCallback : ScanCallback
         {
             private Dictionary<string, BluetoothScanResult> devicesResults;
 
-            public BluetoothScanCallback(Dictionary<string, BluetoothScanResult> devicesResults)
+            private Dictionary<string, string> macAddressMapping { get; set; }
+
+            public BluetoothScanCallback(Dictionary<string, BluetoothScanResult> devicesResults, Dictionary<string, string> macAddressMapping)
             {
                 this.devicesResults = devicesResults;
+                this.macAddressMapping = macAddressMapping;
             }
 
             public override void OnBatchScanResults(IList<ScanResult> results)
@@ -115,11 +174,19 @@ namespace MobileTracking.Droid.Services
             private void AddScanResult(ScanResult result)
             {
                 var bluetoothScanResult = new BluetoothScanResult(result);
-                if (this.devicesResults.ContainsKey(bluetoothScanResult.Name))
+                macAddressMapping.TryGetValue(result.Device.Address, out string name);
+                if (string.IsNullOrEmpty(name))
                 {
-                    this.devicesResults.Remove(bluetoothScanResult.Name);
+                    name = bluetoothScanResult.Name;
                 }
-                this.devicesResults.Add(bluetoothScanResult.Name, bluetoothScanResult);
+                lock (devicesResults)
+                {
+                    if (this.devicesResults.ContainsKey(name))
+                    {
+                        this.devicesResults.Remove(name);
+                    }
+                    this.devicesResults.Add(name, bluetoothScanResult);
+                }
             }
         }
     }

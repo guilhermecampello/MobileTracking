@@ -11,6 +11,12 @@ namespace MobileTracking.Services.Bluetooth
             this.Rssi = scanResult.Rssi;
         }
 
+        public BluetoothScanResult(string name, int rssi)
+        {
+            this.Name = name;
+            this.Rssi = rssi;
+        }
+
         public string Name { get; set; } = string.Empty;
 
         public int Rssi { get; set; }

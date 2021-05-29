@@ -16,12 +16,13 @@ namespace MobileTracking.Pages.Locales
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LocaleExplorerPage : ContentPage
     {
-        private Timer timer;
+        private Timer? timer;
         public LocaleExplorerPage(Locale locale)
         {
             InitializeComponent();
             BindingContext = this;
             this.Locale = locale;
+            NavTitle.Text = this.Locale.Name;
             AggregateData();
         }
 
@@ -40,7 +41,7 @@ namespace MobileTracking.Pages.Locales
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            timer.Stop();
+            timer?.Stop();
             AddCharts();
         }
 

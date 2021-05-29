@@ -70,7 +70,10 @@ namespace WebApplication.Application.Services
                 })
                 .ToList();
 
-                positionDatas.ForEach(data =>
+                positionDatas
+                .Where(data => data.Samples > 10)
+                .ToList()
+                .ForEach(data =>
                 {
                     var calibrations = position.Calibrations!
                     .Where(calibration => calibration.SignalId == data.SignalId
