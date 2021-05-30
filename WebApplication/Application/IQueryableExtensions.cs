@@ -91,8 +91,8 @@ namespace MobileTracking.Core.Application
             Expression<Func<T1, T2>> expression,
             Expression<Func<T2, T3>> secondExpression)
             where T1 : class
-            where T2 : class
-            where T3 : class
+            where T2 : class?
+            where T3 : class?
         {
             if (include.GetValueOrDefault())
             {

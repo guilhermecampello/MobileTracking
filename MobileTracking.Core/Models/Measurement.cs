@@ -7,6 +7,16 @@ namespace MobileTracking.Core.Models
 {
     public class Measurement
     {
+        public Measurement() { }
+
+        public Measurement(string signalId, int strength, SignalType signalType, DateTime dateTime)
+        {
+            this.SignalType = signalType;
+            this.SignalId = signalId;
+            this.Strength = strength;
+            this.DateTime = dateTime;
+        }
+
         public string SignalId { get; set; } = string.Empty;
 
         public SignalType SignalType { get; set; }

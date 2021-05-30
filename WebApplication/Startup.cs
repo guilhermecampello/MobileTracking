@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MobileTracking.Core.Application;
 using MobileTracking.Core.Application.Services;
+using MobileTracking.Core.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using WebApplication.Application.Services;
@@ -82,6 +83,7 @@ namespace WebApplication
             services.AddScoped<IPositionService, PositionService>();
             services.AddScoped<ICalibrationService, CalibrationService>();
             services.AddScoped<IPositionDataService, PositionDataService>();
+            services.AddScoped<IPositionEstimationService, PositionEstimationService>();
             services.AddHostedService<PositionDataUpdater>();
         }
 

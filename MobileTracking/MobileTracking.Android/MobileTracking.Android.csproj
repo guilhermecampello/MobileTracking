@@ -105,6 +105,10 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MobileTracking.Core\MobileTracking.Core.csproj">
+      <Project>{90772dba-f47f-48b0-bb27-d619c84f45b3}</Project>
+      <Name>MobileTracking.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MobileTracking\MobileTracking.csproj">
       <Project>{AB3E5EB5-D950-4717-A759-25F2FBCC5A5C}</Project>
       <Name>MobileTracking</Name>

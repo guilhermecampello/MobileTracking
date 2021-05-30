@@ -153,6 +153,9 @@
   <data name="Configurations" xml:space="preserve">
     <value>Configurações</value>
   </data>
+  <data name="Confirm delete data" xml:space="preserve">
+    <value>Tem certeza que deseja deletar todos os dados coletados para esta posição?</value>
+  </data>
   <data name="Confirm delete position" xml:space="preserve">
     <value>Tem certeza que deseja deletar a posição e todos os seus dados ?</value>
   </data>
@@ -173,6 +176,9 @@
   </data>
   <data name="Data aquisition interval" xml:space="preserve">
     <value>Intervalo entre coletas de dados</value>
+  </data>
+  <data name="Data deleted" xml:space="preserve">
+    <value>Dados deletados</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Deletar</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="Error" xml:space="preserve">
     <value>Erro</value>
+  </data>
+  <data name="Estimate position" xml:space="preserve">
+    <value>Estimar posição</value>
   </data>
   <data name="Explore data" xml:space="preserve">
     <value>Explorar dados</value>
@@ -252,6 +261,9 @@
   <data name="Provide interval" xml:space="preserve">
     <value>Forneça o intervalo entre a coleta de dados em segundos</value>
   </data>
+  <data name="Reset data" xml:space="preserve">
+    <value>Limpar dados</value>
+  </data>
   <data name="RSSI dB" xml:space="preserve">
     <value>RSSI [dB]</value>
   </data>
@@ -260,6 +272,9 @@
   </data>
   <data name="Samples per position" xml:space="preserve">
     <value>Amostras por posição</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Score</value>
   </data>
   <data name="Searching current locale" xml:space="preserve">
     <value>Buscando localização atual</value>
@@ -272,6 +287,9 @@
   </data>
   <data name="Start calibration" xml:space="preserve">
     <value>Iniciar calibração</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Parar</value>
   </data>
   <data name="Stop calibration" xml:space="preserve">
     <value>Parar calibração</value>

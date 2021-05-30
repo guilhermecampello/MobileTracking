@@ -11,7 +11,7 @@ namespace MobileTracking
     {
         public MonitoringState State { get; }
 
-        Dictionary<string, decimal> ScanResults { get; }
+        Dictionary<string, SignalScanResult> ScanResults { get; }
         
         void StartScanning();
     }

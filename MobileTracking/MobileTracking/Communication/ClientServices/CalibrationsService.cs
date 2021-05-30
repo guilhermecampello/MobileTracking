@@ -22,12 +22,8 @@ namespace MobileTracking.Communication.Services
             return client.Post<int>(calibrationsController, command);
         }
 
-        public Task<bool> DeleteCalibrations(int[] calibrationIds)
+        public Task<bool> DeleteCalibrations(CalibrationsQuery query)
         {
-            var query = new CalibrationsQuery()
-            {
-                CalibrationIds = calibrationIds
-            };
             return client.Delete<bool>(calibrationsController, string.Empty, query);
         }
 

@@ -3,9 +3,11 @@ using Android.Content;
 using Android.Net.Wifi;
 using Android.Net.Wifi.Rtt;
 using Android.Runtime;
+using MobileTracking.Core.Models;
 using MobileTracking.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -17,7 +19,7 @@ namespace MobileTracking.Droid.Services
     {
         private Context context = null;
 
-        private Dictionary<string, decimal> scanResults { get; set; } = new Dictionary<string, decimal>();
+        private Dictionary<string, SignalScanResult> scanResults { get; set; } = new Dictionary<string, SignalScanResult>();
 
         private WifiManager wifiManager;
 
@@ -52,7 +54,10 @@ namespace MobileTracking.Droid.Services
             }
         }
 
-        public Dictionary<string, decimal> ScanResults => scanResults;
+        public Dictionary<string, SignalScanResult> ScanResults =>
+            scanResults
+            .Where(result => DateTime.Now.Subtract(result.Value.CreatedAt).TotalSeconds <= 8)
+            .ToDictionary(result => result.Key, result => result.Value);
 
         public void StartScanning()
         {
@@ -85,7 +90,7 @@ namespace MobileTracking.Droid.Services
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    // Console.WriteLine(e.Message);
                 }
                 finally
                 {
@@ -99,9 +104,9 @@ namespace MobileTracking.Droid.Services
     {
         private WifiManager wifiManager;
 
-        private IDictionary<string, decimal> rangingResults;
+        private IDictionary<string, SignalScanResult> rangingResults;
 
-        public WifiReceiver(WifiManager wifiManager, IDictionary<string, decimal> rangingResults)
+        public WifiReceiver(WifiManager wifiManager, IDictionary<string, SignalScanResult> rangingResults)
         {
             this.wifiManager = wifiManager;
             this.rangingResults = rangingResults;
@@ -117,18 +122,18 @@ namespace MobileTracking.Droid.Services
                 {
                     this.rangingResults.Remove(scanResult.Ssid);
                 }
-                this.rangingResults.Add(scanResult.Ssid, scanResult.Level);
+                this.rangingResults.Add(scanResult.Ssid, new SignalScanResult(scanResult.Ssid, scanResult.Level, SignalType.Wifi));
             }
         }
     }
 
     public class RangingCallback : RangingResultCallback
     {
-        private IDictionary<string, decimal> rangingResults;
+        private IDictionary<string, SignalScanResult> rangingResults;
 
         private string ssid;
 
-        public RangingCallback(string ssid, IDictionary<string, decimal> rangingResults)
+        public RangingCallback(string ssid, IDictionary<string, SignalScanResult> rangingResults)
         {
             this.rangingResults = rangingResults;
             this.ssid = ssid;
@@ -147,7 +152,7 @@ namespace MobileTracking.Droid.Services
                 {
                     this.rangingResults.Remove(this.ssid);
                 }
-                this.rangingResults.Add(this.ssid, result.DistanceMm);
+                this.rangingResults.Add(this.ssid, new SignalScanResult(this.ssid, result.DistanceMm, Core.Models.SignalType.Wifi));
             }
         }
     }

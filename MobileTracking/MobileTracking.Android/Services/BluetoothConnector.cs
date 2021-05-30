@@ -2,8 +2,8 @@
 using Android.Bluetooth.LE;
 using Android.Content;
 using Android.Runtime;
+using MobileTracking.Core.Models;
 using MobileTracking.Services;
-using MobileTracking.Services.Bluetooth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace MobileTracking.Droid.Services
 
         private Dictionary<string, string> macAddressMapping { get; set; } = new Dictionary<string, string>();
 
-        private Dictionary<string, BluetoothScanResult> devicesResults { get; set; } = new Dictionary<string, BluetoothScanResult>();
+        private Dictionary<string, SignalScanResult> devicesResults { get; set; } = new Dictionary<string, SignalScanResult>();
 
         private BluetoothManager bluetoothManager;
 
@@ -47,7 +47,7 @@ namespace MobileTracking.Droid.Services
             this.scanCallback = new BluetoothScanCallback(devicesResults, macAddressMapping);
         }
 
-        public Dictionary<string, BluetoothScanResult> DevicesResults
+        public Dictionary<string, SignalScanResult> DevicesResults
         {
             get => devicesResults
                 .Where(result => DateTime.Now.Subtract(result.Value.CreatedAt).TotalSeconds < 10)
@@ -105,12 +105,12 @@ namespace MobileTracking.Droid.Services
 
         public class BluetoothReceiver : BroadcastReceiver
         {
-            private Dictionary<string, BluetoothScanResult> devicesResults;
+            private Dictionary<string, SignalScanResult> devicesResults;
 
             private Dictionary<string, string> macAddressMapping { get; set; }
 
             public BluetoothReceiver(
-                Dictionary<string, BluetoothScanResult> devicesResults,
+                Dictionary<string, SignalScanResult> devicesResults,
                 Dictionary<string, string> macAddressMapping)
             {
                 this.devicesResults = devicesResults;
@@ -119,21 +119,33 @@ namespace MobileTracking.Droid.Services
 
             public override void OnReceive(Context context, Intent intent)
             {
-                String action = intent.Action;            
-                if (action == BluetoothDevice.ActionFound)
+                try
                 {
-                    var device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
-                    var rssi = intent.GetShortExtra(BluetoothDevice.ExtraRssi, 0);
-                    lock (macAddressMapping)
+                    var action = intent.Action;            
+                    if (action == BluetoothDevice.ActionFound)
                     {
-                        macAddressMapping[device.Address] = device.Name;
+                        var device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
+                        var rssi = intent.GetShortExtra(BluetoothDevice.ExtraRssi, 0);
+                        if (device != null)
+                        {
+                            lock (macAddressMapping)
+                            {
+                                macAddressMapping[device.Address] = device.Name;
+                            }
+                        }
+                        if (rssi !=0)
+                        {
+                            AddScanResult(new SignalScanResult(device.Name, rssi, SignalType.Bluetooth));
+                        }
                     }
-
-                    AddScanResult(new BluetoothScanResult(device.Name, rssi));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
                 }
             }
 
-            private void AddScanResult(BluetoothScanResult bluetoothScanResult)
+            private void AddScanResult(SignalScanResult bluetoothScanResult)
             {
                 lock (devicesResults)
                 {
@@ -148,11 +160,11 @@ namespace MobileTracking.Droid.Services
 
         public class BluetoothScanCallback : ScanCallback
         {
-            private Dictionary<string, BluetoothScanResult> devicesResults;
+            private Dictionary<string, SignalScanResult> devicesResults;
 
             private Dictionary<string, string> macAddressMapping { get; set; }
 
-            public BluetoothScanCallback(Dictionary<string, BluetoothScanResult> devicesResults, Dictionary<string, string> macAddressMapping)
+            public BluetoothScanCallback(Dictionary<string, SignalScanResult> devicesResults, Dictionary<string, string> macAddressMapping)
             {
                 this.devicesResults = devicesResults;
                 this.macAddressMapping = macAddressMapping;
@@ -173,7 +185,7 @@ namespace MobileTracking.Droid.Services
 
             private void AddScanResult(ScanResult result)
             {
-                var bluetoothScanResult = new BluetoothScanResult(result);
+                var bluetoothScanResult = new SignalScanResult(result);
                 macAddressMapping.TryGetValue(result.Device.Address, out string name);
                 if (string.IsNullOrEmpty(name))
                 {

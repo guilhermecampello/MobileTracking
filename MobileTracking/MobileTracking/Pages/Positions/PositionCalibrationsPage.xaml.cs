@@ -60,7 +60,11 @@ namespace MobileTracking.Pages.Positions
             if (deleteConfirmation)
             {
                 var calibrationService = Startup.ServiceProvider.GetService<ICalibrationService>();
-                var deleted = await calibrationService.DeleteCalibrations(SelectedCalibrations.Select(calibration => calibration.Id).ToArray());
+                var query = new CalibrationsQuery()
+                {
+                    CalibrationIds = SelectedCalibrations.Select(calibration => calibration.Id).ToArray()
+                };
+                var deleted = await calibrationService.DeleteCalibrations(query);
                 if (deleted)
                 {
                     CrossToastPopUp.Current.ShowToastError($"{SelectedCalibrations.Count} {AppResources.Calibrations.ToLower()} {AppResources.Deleted.ToLower()}");

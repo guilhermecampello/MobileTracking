@@ -105,14 +105,21 @@ namespace MobileTracking
         private async void Position_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             var position = (Position)e.Item;
-            var query = new PositionQuery()
+            try
             {
-                IncludeZone = true,
-                IncludeData = true
-            };
-            var positionsService = Startup.ServiceProvider.GetService<IPositionService>();
-            position = await positionsService.FindPositionById(position.Id, query);
-            await Navigation.PushAsync(new PositionPage(position));
+                var query = new PositionQuery()
+                {
+                    IncludeData = true,
+                    IncludeZone = true
+                };
+                var positionsService = Startup.ServiceProvider.GetService<IPositionService>();
+                position = await positionsService.FindPositionById(position.Id, query);
+                await Navigation.PushAsync(new PositionPage(position));
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
+            }
         }
 
         private async void ExploreDataButton_Clicked(object sender, EventArgs e)
@@ -128,6 +135,11 @@ namespace MobileTracking
             {
                 await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
             }
+        }
+
+        private async void EstimateButton_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new PositionEstimationPage(localeProvider.Locale!));
         }
     }
 }

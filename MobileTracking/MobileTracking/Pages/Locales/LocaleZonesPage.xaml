@@ -16,6 +16,7 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>
+            <Button Text="{x:Static resources:AppResources.Estimate_position}" Clicked="EstimateButton_Clicked"/>
             <Button Text="{x:Static resources:AppResources.Explore_data}" Clicked="ExploreDataButton_Clicked"/>
             <ListView x:Name="MyListView"
                             SelectionMode="None"

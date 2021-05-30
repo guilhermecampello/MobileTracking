@@ -37,6 +37,11 @@ namespace MobileTracking.Core.Application.Services
             {
                 if (IsValidMeasurement(measurement))
                 {
+                    if (measurement.SignalType == SignalType.Magnetometer)
+                    {
+                        measurement.SignalId = "Magnetic Field";
+                    }
+
                     var calibration = new Calibration(positionId, measurement);
                     calibration.DateTime = dateTime;
                     position.Calibrations!.Add(calibration);
@@ -51,11 +56,15 @@ namespace MobileTracking.Core.Application.Services
             return count;
         }
 
-        public async Task<bool> DeleteCalibrations(int[] calibrationIds)
+        public async Task<bool> DeleteCalibrations(CalibrationsQuery query)
         {
             var calibrations = await this.databaseContext.Calibrations
                 .Include(calibration => calibration.Position)
-                .Where(calibration => calibrationIds.Contains(calibration.Id))
+                .Where(query.CalibrationIds, calibrationIds => calibration => calibrationIds.Contains(calibration.Id))
+                .Where(query.LocaleId, localeId => calibration => calibration.Position!.Zone!.LocaleId == localeId)
+                .Where(query.PositionId, positionId => calibration => calibration.PositionId == positionId)
+                .Where(query.SignalId, signalId => calibration => calibration.SignalId == signalId)
+                .Where(query.ZoneId, zoneId => calibration => calibration.Position!.ZoneId == zoneId)
                 .ToListAsync();
 
             if (calibrations.Count == 0)

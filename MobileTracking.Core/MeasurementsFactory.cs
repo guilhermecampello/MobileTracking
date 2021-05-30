@@ -6,32 +6,11 @@ namespace MobileTracking.Core
 {
     public class MeasurementsFactory
     {
-        public static Measurement CreateWifiMeasurement(string signalId, int rssi)
-        {
-            return new Measurement()
-            {
-                SignalId = signalId,
-                SignalType = SignalType.Wifi,
-                Strength = rssi,
-                DateTime = DateTime.Now
-            };
-        }
-
-        public static Measurement CreateBluetoothMeasurement(string signalId, int rssi)
-        {
-            return new Measurement()
-            {
-                SignalId = signalId,
-                SignalType = SignalType.Bluetooth,
-                Strength = rssi,
-                DateTime = DateTime.Now
-            };
-        }
-
         public static Measurement CreateMagnetometerMeasurement(Vector3 intensitiesVector)
         {
             return new Measurement()
             {
+                SignalId = "Magnetic Field",
                 SignalType = SignalType.Magnetometer,
                 Strength = intensitiesVector.Length(),
                 X = intensitiesVector.X,

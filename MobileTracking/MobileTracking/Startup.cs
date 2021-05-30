@@ -3,6 +3,7 @@ using MobileTracking.Communication;
 using MobileTracking.Communication.ClientServices;
 using MobileTracking.Communication.Services;
 using MobileTracking.Core.Application;
+using MobileTracking.Core.Interfaces;
 using MobileTracking.Core.Models;
 using MobileTracking.Services;
 using MobileTracking.Services.MagneticField;
@@ -25,6 +26,7 @@ namespace MobileTracking
                 .AddSingleton<IPositionService, PositionsService>()
                 .AddSingleton<ICalibrationService, CalibrationsService>()
                 .AddSingleton<IPositionDataService, PositionDatasService>()
+                .AddSingleton<IPositionEstimationService, PositionEstimationService>()
                 .AddSingleton(DependencyService.Get<IWifiConnector>())
                 .AddSingleton(DependencyService.Get<IBluetoothConnector>())
                 .AddSingleton<MagneticFieldSensor>()

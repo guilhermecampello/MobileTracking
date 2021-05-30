@@ -5,6 +5,7 @@ using Xamarin.Forms.Xaml;
 using MobileTracking.Services;
 using MobileTracking.Core.Models;
 using System.Collections.Generic;
+using MobileTracking.Pages;
 
 namespace MobileTracking
 {
@@ -33,6 +34,12 @@ namespace MobileTracking
         private async void Locale_Tapped(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new LocaleZonesPage(this.localeProvider));
+        }
+
+        private async void EstimateButton_Clicked(object sender, EventArgs e)
+        {
+            var locale = this.localeProvider.Locale;
+            await Navigation.PushAsync(new PositionEstimationPage(locale!));
         }
     }
 }

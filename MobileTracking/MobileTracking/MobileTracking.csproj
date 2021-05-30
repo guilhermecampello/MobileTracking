@@ -62,6 +62,12 @@
     <Compile Update="Pages\Locales\LocaleZonesPage.xaml.cs">
       <DependentUpon>LocaleZonesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Pages\Positions\PositionEstimationPage.xaml.cs">
+      <DependentUpon>PositionEstimationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Pages\Positions\PositionPage.xaml.cs">
+      <DependentUpon>PositionPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

@@ -169,6 +169,15 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Are you sure you want to delete all collected data for this position?.
+        /// </summary>
+        internal static string Confirm_delete_data {
+            get {
+                return ResourceManager.GetString("Confirm delete data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Are you sure you want to delete position and all it&apos;s data ?.
         /// </summary>
         internal static string Confirm_delete_position {
@@ -228,6 +237,15 @@ namespace MobileTracking {
         internal static string Data_aquisition_interval {
             get {
                 return ResourceManager.GetString("Data aquisition interval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Data deleted.
+        /// </summary>
+        internal static string Data_deleted {
+            get {
+                return ResourceManager.GetString("Data deleted", resourceCulture);
             }
         }
         
@@ -327,6 +345,15 @@ namespace MobileTracking {
         internal static string Error {
             get {
                 return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Estimate position.
+        /// </summary>
+        internal static string Estimate_position {
+            get {
+                return ResourceManager.GetString("Estimate position", resourceCulture);
             }
         }
         
@@ -493,6 +520,15 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Reset data.
+        /// </summary>
+        internal static string Reset_data {
+            get {
+                return ResourceManager.GetString("Reset data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a RSSI [dB].
         /// </summary>
         internal static string RSSI_dB {
@@ -520,6 +556,15 @@ namespace MobileTracking {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Score.
+        /// </summary>
+        internal static string Score {
+            get {
+                return ResourceManager.GetString("Score", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Server not available.
         /// </summary>
         internal static string Server_not_available {
@@ -543,6 +588,15 @@ namespace MobileTracking {
         internal static string Start_calibration {
             get {
                 return ResourceManager.GetString("Start calibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Stop.
+        /// </summary>
+        internal static string Stop {
+            get {
+                return ResourceManager.GetString("Stop", resourceCulture);
             }
         }
         

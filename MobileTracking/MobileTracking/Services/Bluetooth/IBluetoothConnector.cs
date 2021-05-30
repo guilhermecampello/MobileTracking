@@ -1,5 +1,4 @@
 ﻿using MobileTracking.Services;
-using MobileTracking.Services.Bluetooth;
 using System.Collections.Generic;
 
 namespace MobileTracking
@@ -8,7 +7,7 @@ namespace MobileTracking
     {
         public MonitoringState State { get; }
 
-        Dictionary<string, BluetoothScanResult> DevicesResults { get; }
+        Dictionary<string, SignalScanResult> DevicesResults { get; }
 
         public void StartScanning();
     }

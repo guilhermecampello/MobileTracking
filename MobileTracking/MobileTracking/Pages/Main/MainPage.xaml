@@ -34,6 +34,7 @@
                         <Label HorizontalOptions="Start" Text="{Binding Locale.Name}" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Start"/>
                     </StackLayout>
                     <Label Text="{Binding Locale.Description}" />
+                    <Button Text="{x:Static resources:AppResources.Estimate_position}" Clicked="EstimateButton_Clicked"/>
                 </StackLayout>
                 <StackLayout IsVisible="{Binding IsSelected, Converter={StaticResource inverseBool}}">
                     <Label HorizontalOptions="Center" Text="{x:Static resources:AppResources.Finding_current_locale}"/>

@@ -12,6 +12,6 @@ namespace MobileTracking.Core.Application
 
         Task<int> CreateCalibrations(CreateCalibrationsCommand command);
 
-        Task<bool> DeleteCalibrations(int[] calibrationIds);
+        Task<bool> DeleteCalibrations(CalibrationsQuery query);
     }
 }

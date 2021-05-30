@@ -153,6 +153,9 @@
   <data name="Configurations" xml:space="preserve">
     <value>Configurations</value>
   </data>
+  <data name="Confirm delete data" xml:space="preserve">
+    <value>Are you sure you want to delete all collected data for this position?</value>
+  </data>
   <data name="Confirm delete position" xml:space="preserve">
     <value>Are you sure you want to delete position and all it's data ?</value>
   </data>
@@ -173,6 +176,9 @@
   </data>
   <data name="Data aquisition interval" xml:space="preserve">
     <value>Data aquisition interval</value>
+  </data>
+  <data name="Data deleted" xml:space="preserve">
+    <value>Data deleted</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
@@ -206,6 +212,9 @@
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="Estimate position" xml:space="preserve">
+    <value>Estimate position</value>
   </data>
   <data name="Explore data" xml:space="preserve">
     <value>Explore data</value>
@@ -261,6 +270,9 @@
   <data name="Provide samples per position" xml:space="preserve">
     <value>Provide the number of samples you want to collect per position</value>
   </data>
+  <data name="Reset data" xml:space="preserve">
+    <value>Reset data</value>
+  </data>
   <data name="RSSI dB" xml:space="preserve">
     <value>RSSI [dB]</value>
   </data>
@@ -270,6 +282,9 @@
   <data name="Samples per position" xml:space="preserve">
     <value>Samples per position</value>
   </data>
+  <data name="Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
   <data name="Server not available" xml:space="preserve">
     <value>Server not available</value>
   </data>
@@ -278,6 +293,9 @@
   </data>
   <data name="Start calibration" xml:space="preserve">
     <value>Start calibration</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Stop</value>
   </data>
   <data name="Stop calibration" xml:space="preserve">
     <value>Stop calibration</value>

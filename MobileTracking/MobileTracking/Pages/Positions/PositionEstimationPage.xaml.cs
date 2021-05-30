@@ -1,11 +1,11 @@
 ﻿using MobileTracking.Core;
 using MobileTracking.Core.Application;
+using MobileTracking.Core.Commands;
+using MobileTracking.Core.Interfaces;
 using MobileTracking.Core.Models;
-using MobileTracking.Pages.Positions;
 using MobileTracking.Pages.Views;
 using MobileTracking.Services;
 using MobileTracking.Services.MagneticField;
-using Plugin.Toast;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +19,7 @@ using Xamarin.Forms.Xaml;
 namespace MobileTracking.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class PositionPage : ContentPage
+    public partial class PositionEstimationPage : ContentPage
     {
         private readonly IWifiConnector wifiConnector;
 
@@ -27,91 +27,62 @@ namespace MobileTracking.Pages
 
         private readonly IBluetoothConnector bluetoothConnector;
 
-        private readonly ICalibrationService calibrationsService;
+        private readonly IPositionEstimationService positionEstimationService;
 
-        private readonly LocaleProvider localeProvider;
+        private readonly IPositionService positionsService;
 
         private readonly Configuration configuration;
 
-        private readonly IPositionDataService positionDataService;
-
         private Timer timer;
 
-        private int count = 0;
-
-        public PositionPage(Position position)
+        public PositionEstimationPage(Locale locale)
         {
             InitializeComponent();
             var serviceProvider = Startup.ServiceProvider;
             this.wifiConnector = serviceProvider.GetService<IWifiConnector>();
             this.bluetoothConnector = serviceProvider.GetService<IBluetoothConnector>();
             this.magneticFieldSensor = serviceProvider.GetService<MagneticFieldSensor>();
-            this.calibrationsService = serviceProvider.GetService<ICalibrationService>();
-            this.positionDataService = serviceProvider.GetService<IPositionDataService>();
-            this.localeProvider = serviceProvider.GetService<LocaleProvider>();
+            this.positionEstimationService = serviceProvider.GetService<IPositionEstimationService>();
+            this.positionsService = serviceProvider.GetService<IPositionService>();
             this.configuration = serviceProvider.GetService<Configuration>();
-            this.Position = position;
+            this.Locale = locale;
 
-            PositionDataCollection.RefreshCommand = RefreshData_Command;
             PositionDataCollection.ItemsSource = PositionData;
-            Position.PositionData?
-                .OrderBy(data => data.SignalType)
-                .ThenByDescending(data => data.Strength)
-                .ToList()
-                .ForEach(data => PositionData.Add(new PositionDataView(data)));
 
             BindingContext = this;
-            timer = new Timer(configuration!.DataAquisitionInterval * 1000);
+            timer = new Timer(5000);
             timer.Elapsed += UpdateMonitoringState;
             timer.Start();
-            countLabel.Text = count.ToString();
         }
 
-        public Position Position { get; set; }
+        public Locale Locale { get; set; }
 
-        public ObservableCollection<PositionDataView> PositionData { get; set; } = new ObservableCollection<PositionDataView>();
+        public ObservableCollection<CalibrationView> PositionData { get; set; } = new ObservableCollection<CalibrationView>();
+
+        public ObservableCollection<PositionEstimationView> PositionEstimations { get; set; } = new ObservableCollection<PositionEstimationView>();
 
         public Configuration Configuration { get => this.configuration; }
 
-        public ICommand RefreshData_Command
+     
+        public void RefreshMeasurements(List<Measurement> measurements)
         {
-            get => new Command(async () =>
-            {
-                await RefreshData();
-            });
-        }
-
-        public async Task RefreshData()
-        {
-            PositionDataCollection.IsPullToRefreshEnabled = true;
             PositionDataCollection.IsRefreshing = true;
-            var query = new PositionDataQuery()
-            {
-                PositionId = Position.Id
-            };
             try
             {
-                if (await positionDataService.RecalculatePositionData(query))
-                {
-                    var newData = await positionDataService.GetPositionDatas(query);
-                    this.PositionData.Clear();
-                    newData
-                        .OrderBy(data => data.SignalType)
-                        .ThenByDescending(data => data.Strength)
-                        .ToList()
-                        .ForEach(data => PositionData.Add(new PositionDataView(data)));
-                }
+                this.PositionData.Clear();
+                measurements
+                .OrderBy(data => data.SignalType)
+                .ThenByDescending(data => data.Strength)
+                .ToList()
+                .ForEach(data => PositionData.Add(new CalibrationView(new Calibration(0, data))));
+
             }
             catch (Exception e)
             {
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    DisplayAlert(e.Message, e.InnerException.Message, "OK");
-                });
+                Console.WriteLine(e.Message);
             }
             finally
             {
-                PositionDataCollection.IsPullToRefreshEnabled = false;
                 PositionDataCollection.IsRefreshing = false;
             }
         }
@@ -122,20 +93,22 @@ namespace MobileTracking.Pages
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    calibrationButton.Text = AppResources.Stop_calibration;
+                    calibrationButton.Text = AppResources.Stop;
                     calibrationButton.BackgroundColor = Color.Red;
                     calibrationButton.TextColor = Color.White;
                     activity.IsRunning = true;
+                    activity.IsVisible = true;
                 });
             }
             else
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    calibrationButton.Text = AppResources.Start_calibration;
+                    calibrationButton.Text = AppResources.Estimate_position;
                     calibrationButton.BackgroundColor = Color.Default;
                     calibrationButton.TextColor = Color.Black;
                     activity.IsRunning = false;
+                    activity.IsVisible = false;
                 });
             }
         }
@@ -175,6 +148,7 @@ namespace MobileTracking.Pages
 
         public async void UpdateMonitoringState(object sender, ElapsedEventArgs e)
         {
+            timer.Stop();
             Device.BeginInvokeOnMainThread(() =>
             {
                 wifiColor.BackgroundColor = WifiStateColor;
@@ -187,31 +161,30 @@ namespace MobileTracking.Pages
             if (IsCollecting)
             {
                 var data = FetchCalibrationData();
-                var command = new CreateCalibrationsCommand()
+                var command = new EstimatePositionCommand()
                 {
                     Measurements = data,
-                    PositionId = Position.Id
+                    LocaleId = Locale.Id
                 };
                 try
                 {
-                    await calibrationsService.CreateCalibrations(command);
-                    count++;
+                    Device.BeginInvokeOnMainThread(() => RefreshMeasurements(data));
+                    var result = await positionEstimationService.EstimatePosition(command);
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        PositionEstimations.Clear();
+                        result.ForEach(position => PositionEstimations.Add(new PositionEstimationView(position)));
+                    });
+                    StopDataAquisition();
                 }
                 catch (Exception ex)
                 {
-                    await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
-                }
-
-                if (count > configuration.SamplesPerPosition)
-                {
-                    count = 0;
-                    IsCollecting = false;
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
+                    });
                 }
             }
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                countLabel.Text = count.ToString();
-            });
         }
 
         private bool _isCollecting;
@@ -271,31 +244,16 @@ namespace MobileTracking.Pages
                 {
                     StartDataAquisition();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
+                    await DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
                 }
             }
             else
             {
                 StopDataAquisition();
-                await RefreshData();
-            }
-        }
-
-        private async void DeletePosition_Clicked(object sender, EventArgs e)
-        {
-            var deleteConfirmation = await DisplayAlert(AppResources.Delete_position + " " + Position.Name, AppResources.Confirm_delete_position, AppResources.Delete, AppResources.Cancel);
-            if (deleteConfirmation)
-            {
-                var positionService = Startup.ServiceProvider.GetService<IPositionService>();
-
-                if (await positionService.DeletePosition(Position.Id))
-                {
-                    await localeProvider.RefreshLocale();
-                    CrossToastPopUp.Current.ShowToastError($"{AppResources.Position} {Position.Name} {AppResources.Deleted.ToLower()}");
-                }
-                await Navigation.PopAsync();
+                var data = FetchCalibrationData();
+                RefreshMeasurements(data);
             }
         }
 
@@ -320,44 +278,23 @@ namespace MobileTracking.Pages
             this.timer.Start();
         }
 
-        private async void PositionDataCollection_ItemTapped(object sender, ItemTappedEventArgs e)
+        private async void PositionEstimationsCollection_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            var positionData = ((PositionDataView)e.Item).PositionData;
-            var query = new CalibrationsQuery()
-            {
-                PositionId = positionData.PositionId,
-                SignalId = positionData.SignalId,
-                SignalType = positionData.SignalType,
-            };
+            var positionEstimation = (PositionEstimationView)e.Item;
+            var positionId = positionEstimation.PositionEstimation.Position.Id;
             try
             {
-                var calibrations = await calibrationsService.GetCalibrations(query);
-                await Navigation.PushAsync(new PositionCalibrationsPage(Position, calibrations));
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
-            }
-        }
-
-        private async void ResetDataButton_Clicked(object sender, EventArgs e)
-        {
-            var deleteConfirmation = await DisplayAlert(AppResources.Reset_data + " ", AppResources.Confirm_delete_data, AppResources.Delete, AppResources.Cancel);
-            if (deleteConfirmation)
-            {
-                try
+                var query = new PositionQuery()
                 {
-                    var query = new CalibrationsQuery() { PositionId = Position.Id }; 
-                    if (await calibrationsService.DeleteCalibrations(query))
-                    {
-                        CrossToastPopUp.Current.ShowToastError($"{AppResources.Data_deleted}");
-                        await RefreshData();
-                    }
-                }
-                catch(Exception ex)
-                {
-                    await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
-                }
+                    IncludeData = true,
+                    IncludeZone = true
+                };
+                var position = await positionsService.FindPositionById(positionId, query);
+                await Navigation.PushAsync(new PositionPage(position));
+            }
+            catch(Exception ex)
+            {
+                await DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
             }
         }
     }
