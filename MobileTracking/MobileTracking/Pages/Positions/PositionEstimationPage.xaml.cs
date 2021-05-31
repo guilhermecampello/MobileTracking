@@ -271,7 +271,8 @@ namespace MobileTracking.Pages
 
         public void StartDataAquisition()
         {
-            magneticFieldSensor.Start();
+            
+            magneticFieldSensor.Start();           
             bluetoothConnector.StartScanning();
             wifiConnector.StartScanning();
             IsCollecting = true;

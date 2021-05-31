@@ -45,6 +45,8 @@ namespace MobileTracking.Core.Models
 
         public DateTime LastUpdate { get; set; }
 
+        public DateTime LastSeen { get; set; }
+
         public Position? Position { get; set; }
 
         public void CalculateStandardDeviation(List<Calibration> calibrations)

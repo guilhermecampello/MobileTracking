@@ -10,7 +10,9 @@ namespace MobileTracking.Services.MagneticField
 {
     public class MagneticFieldSensor
     {
-        public MonitoringState State { get => Magnetometer.IsMonitoring ? MonitoringState.Monitoring : MonitoringState.Available; }
+        private MonitoringState state = MonitoringState.Available;
+
+        public MonitoringState State { get => state; }
 
         private List<(Vector3, DateTime)> MagnetometerData { get; set; } = new List<(Vector3, DateTime)>();
 
@@ -18,16 +20,28 @@ namespace MobileTracking.Services.MagneticField
 
         public MagneticFieldSensor()
         {
+            Magnetometer.ReadingChanged += Magnetometer_ReadingChanged;
+            OrientationSensor.ReadingChanged += OrientationSensor_ReadingChanged;
         }
 
         public void Start()
         {
-            if (!Magnetometer.IsMonitoring)
+            try
             {
-                OrientationSensor.Start(SensorSpeed.Fastest);
-                OrientationSensor.ReadingChanged += OrientationSensor_ReadingChanged;
-                Magnetometer.Start(SensorSpeed.Fastest);
-                Magnetometer.ReadingChanged += Magnetometer_ReadingChanged;
+                if (!Magnetometer.IsMonitoring)
+                {
+                    Magnetometer.Start(SensorSpeed.Default);
+                }
+
+                if (!OrientationSensor.IsMonitoring)
+                {
+                    OrientationSensor.Start(SensorSpeed.Fastest);
+                }
+                state = MonitoringState.Monitoring;
+            }
+            catch
+            {
+                state = MonitoringState.Unavailable;
             }
         }
 
@@ -36,46 +50,46 @@ namespace MobileTracking.Services.MagneticField
             try
             {
 
-            var now = DateTime.Now;
-            var vector = new Vector3(0);
-            var n = 0;
-            (Quaternion, DateTime)[] orientationData;
-            (Vector3, DateTime)[] intensitiesData;
-            lock (OrientationSensorData)
-            {
-                orientationData = OrientationSensorData.ToArray();
-            }
-            lock (MagnetometerData)
-            {
-                intensitiesData = MagnetometerData.ToArray();
-            }
-            Array.ForEach(orientationData, orientationSample =>
-            {
-                var sampleTime = orientationSample.Item2;
-                if (now.Subtract(sampleTime).TotalSeconds < 2)
+                var now = DateTime.Now;
+                var vector = new Vector3(0);
+                var n = 0;
+                (Quaternion, DateTime)[] orientationData;
+                (Vector3, DateTime)[] intensitiesData;
+                lock (OrientationSensorData)
                 {
-                    var orientation = orientationSample.Item1;
-                    var magneticFieldSample = intensitiesData
-                    .OrderBy(sample => Math.Abs(sample.Item2.Subtract(sampleTime).TotalMilliseconds))
-                    .FirstOrDefault()
-                    .Item1;
-
-                    var sampleVector = Transform(magneticFieldSample, orientation);
-                    vector += sampleVector;
-                    n += 1;
+                    orientationData = OrientationSensorData.ToArray();
                 }
-            });
+                lock (MagnetometerData)
+                {
+                    intensitiesData = MagnetometerData.ToArray();
+                }
+                Array.ForEach(orientationData, orientationSample =>
+                {
+                    var sampleTime = orientationSample.Item2;
+                    if (now.Subtract(sampleTime).TotalSeconds < 2)
+                    {
+                        var orientation = orientationSample.Item1;
+                        var magneticFieldSample = intensitiesData
+                        .OrderBy(sample => Math.Abs(sample.Item2.Subtract(sampleTime).TotalMilliseconds))
+                        .FirstOrDefault()
+                        .Item1;
 
-            if (n > 0)
-            {
-                vector.X = vector.X / n;
-                vector.Y = vector.Y / n;
-                vector.Z = vector.Z / n;
-            }
+                        var sampleVector = Transform(magneticFieldSample, orientation);
+                        vector += sampleVector;
+                        n += 1;
+                    }
+                });
 
-            return vector;
+                if (n > 0)
+                {
+                    vector.X = vector.X / n;
+                    vector.Y = vector.Y / n;
+                    vector.Z = vector.Z / n;
+                }
+
+                return vector;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
@@ -121,15 +135,16 @@ namespace MobileTracking.Services.MagneticField
                 var data = "";
                 try
                 {
-                    MagnetometerData.ForEach(sample => {
+                    MagnetometerData.ForEach(sample =>
+                    {
                         var orientation = OrientationSensorData.Last().Item1;
                         sample.Item1 = Transform(sample.Item1, orientation);
                         data += $"{sample.Item2.Ticks}; {sample.Item1.X}; {sample.Item1.Y}; {sample.Item1.Z} \n";
-                        });
-         
+                    });
+
                     MagnetometerData.Clear();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }

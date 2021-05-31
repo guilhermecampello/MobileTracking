@@ -106,7 +106,7 @@
                                                 </Image>
                                             </Frame>
                                             <Label Text="{Binding Name}" VerticalTextAlignment="Center" FontAttributes="Bold" FontSize="Small" HorizontalTextAlignment="Start"/>
-                                            <Label HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="{Binding LastUpdate, StringFormat='{0:dd/MM/yy H:mm}'}"/>
+                                            <Label HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Text="{Binding LastSeen, StringFormat='{0:dd/MM/yy H:mm}'}"/>
                                         </StackLayout>
                                         <Grid Margin="5" VerticalOptions="FillAndExpand">
                                             <Grid.RowDefinitions>

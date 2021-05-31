@@ -135,7 +135,8 @@ namespace MobileTracking.Droid.Services
                         }
                         if (rssi !=0)
                         {
-                            AddScanResult(new SignalScanResult(device.Name, rssi, SignalType.Bluetooth));
+                            var name = $"{device.Name}({device.Address})";
+                            AddScanResult(new SignalScanResult(name, rssi, SignalType.Bluetooth));
                         }
                     }
                 }
@@ -185,19 +186,33 @@ namespace MobileTracking.Droid.Services
 
             private void AddScanResult(ScanResult result)
             {
-                var bluetoothScanResult = new SignalScanResult(result);
-                macAddressMapping.TryGetValue(result.Device.Address, out string name);
-                if (string.IsNullOrEmpty(name))
+                Console.WriteLine("TxPower" + result.TxPower);
+                Console.WriteLine(result.ScanRecord.ManufacturerSpecificData);
+                Console.WriteLine("erviceData:"+ result.ScanRecord.ServiceData.Count);
+                if (result.ScanRecord.ServiceSolicitationUuids != null)
                 {
-                    name = bluetoothScanResult.Name;
+                    foreach (var uuid in result.ScanRecord.ServiceSolicitationUuids)
+                    {
+                        Console.WriteLine(uuid.Uuid + ";");
+                    }
                 }
+
+                if (result.ScanRecord.ServiceUuids != null)
+                {
+                    foreach (var uuid in result.ScanRecord.ServiceUuids)
+                    {
+                        Console.WriteLine(uuid.Uuid + ";");
+                    }
+                }
+
+                var bluetoothScanResult = new SignalScanResult(result);                
                 lock (devicesResults)
                 {
-                    if (this.devicesResults.ContainsKey(name))
+                    if (this.devicesResults.ContainsKey(bluetoothScanResult.Name))
                     {
-                        this.devicesResults.Remove(name);
+                        this.devicesResults.Remove(bluetoothScanResult.Name);
                     }
-                    this.devicesResults.Add(name, bluetoothScanResult);
+                    this.devicesResults.Add(bluetoothScanResult.Name, bluetoothScanResult);
                 }
             }
         }

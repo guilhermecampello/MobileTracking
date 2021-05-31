@@ -78,7 +78,7 @@ namespace WebApplication.Application.Services
                     .ToList();
 
                     data.CalculateStandardDeviation(calibrations);
-
+                    data.LastSeen = calibrations.Max(calibration => calibration.DateTime);
                     data.LastUpdate = DateTime.Now;
                     this.databaseContext.Add(data);
                 });

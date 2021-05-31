@@ -8,7 +8,7 @@ namespace MobileTracking.Services
     {
         public SignalScanResult(ScanResult bleScanResult)
         {
-            this.Name = bleScanResult.Device!.Name ?? bleScanResult.Device.Address ?? string.Empty;
+            this.Name = $"{bleScanResult.Device?.Name ?? string.Empty}({bleScanResult.Device?.Address ?? string.Empty})";
             this.Rssi = bleScanResult.Rssi;
             this.SignalType = SignalType.Bluetooth;
         }

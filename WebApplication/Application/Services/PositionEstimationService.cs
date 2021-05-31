@@ -35,6 +35,7 @@ namespace WebApplication.Application.Services
                 .ToList()
                 .ForEach(data =>
             {
+                data.LastSeen = DateTime.Now;
                 var measurement = signals[data.SignalId];
                 var positionEstimation = positionEstimations
                     .FirstOrDefault(positionEstimation => positionEstimation.Position.Id == data.PositionId);
@@ -46,6 +47,8 @@ namespace WebApplication.Application.Services
 
                 positionEstimation.SignalScores.Add(new SignalScore(data, measurement));
             });
+
+            _ = this.databaseContext.SaveChangesAsync();
 
             return positionEstimations.OrderByDescending(estimation => estimation.Score).Take(5).ToList();
         }

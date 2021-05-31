@@ -104,6 +104,6 @@ namespace MobileTracking.Pages.Views
             }
         }
 
-        public string LastUpdate { get => this.PositionData.LastUpdate.ToLocalTime().ToString(); }
+        public string LastSeen { get => this.PositionData.LastSeen.ToLocalTime().ToString(); }
     }
 }
