@@ -20,7 +20,7 @@ namespace WebApplication.Application.Services
 
         public Task<List<PositionSignalData>> GetPositionSignalDatas(PositionSignalDataQuery query)
         {
-            return this.databaseContext.PositionsData
+            return this.databaseContext.PositionsSignalsData
                 .AsNoTracking()
                 .AsQueryable()
                 .Where(query.LocaleId, localeId => data => data.Position!.Zone!.LocaleId == localeId)
@@ -93,13 +93,13 @@ namespace WebApplication.Application.Services
 
         private void RemoveOldData(int positionId)
         {
-            var data = this.databaseContext.PositionsData
+            var data = this.databaseContext.PositionsSignalsData
                 .AsQueryable()
                 .Where(positionSignalData =>
                     positionSignalData.PositionId == positionId)
                 .ToList();
 
-            this.databaseContext.PositionsData.RemoveRange(data);
+            this.databaseContext.PositionsSignalsData.RemoveRange(data);
         }
     }
 }

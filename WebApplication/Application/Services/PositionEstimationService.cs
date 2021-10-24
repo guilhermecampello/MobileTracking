@@ -23,7 +23,7 @@ namespace WebApplication.Application.Services
         public async Task<List<PositionEstimation>> EstimatePosition(EstimatePositionCommand command)
         {
             var signals = command.Measurements.ToDictionary(signal => signal.SignalId);
-            var positionSignalDatas = await this.databaseContext.PositionsData
+            var positionSignalDatas = await this.databaseContext.PositionsSignalsData
                 .Include(true, positionSignalData => positionSignalData.Position, position => position!.Zone)
                 .Where(positionSignalData => positionSignalData.Position!.Zone!.LocaleId == command.LocaleId)
                 .Where(positionSignalData => signals.Keys.Contains(positionSignalData.SignalId))
