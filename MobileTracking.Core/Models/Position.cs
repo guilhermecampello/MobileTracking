@@ -32,7 +32,7 @@ namespace MobileTracking.Core.Models
 
         public bool DataNeedsUpdate { get; set; }
 
-        public List<PositionData>? PositionData { get; set; }
+        public List<PositionSignalData>? PositionSignalData { get; set; }
 
         public List<Calibration>? Calibrations { get; set; }
     }

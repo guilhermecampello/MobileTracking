@@ -45,7 +45,7 @@ namespace MobileTracking.Pages
             this.configuration = serviceProvider.GetService<Configuration>();
             this.Locale = locale;
 
-            PositionDataCollection.ItemsSource = PositionData;
+            PositionSignalDataCollection.ItemsSource = PositionSignalData;
 
             BindingContext = this;
             timer = new Timer(5000);
@@ -68,7 +68,7 @@ namespace MobileTracking.Pages
 
         public Locale Locale { get; set; }
 
-        public ObservableCollection<CalibrationView> PositionData { get; set; } = new ObservableCollection<CalibrationView>();
+        public ObservableCollection<CalibrationView> PositionSignalData { get; set; } = new ObservableCollection<CalibrationView>();
 
         public ObservableCollection<PositionEstimationView> PositionEstimations { get; set; } = new ObservableCollection<PositionEstimationView>();
 
@@ -76,15 +76,15 @@ namespace MobileTracking.Pages
      
         public void RefreshMeasurements(List<Measurement> measurements)
         {
-            PositionDataCollection.IsRefreshing = true;
+            PositionSignalDataCollection.IsRefreshing = true;
             try
             {
-                this.PositionData.Clear();
+                this.PositionSignalData.Clear();
                 measurements
                 .OrderBy(data => data.SignalType)
                 .ThenByDescending(data => data.Strength)
                 .ToList()
-                .ForEach(data => PositionData.Add(new CalibrationView(new Calibration(0, data))));
+                .ForEach(data => PositionSignalData.Add(new CalibrationView(new Calibration(0, data))));
 
             }
             catch (Exception e)
@@ -93,7 +93,7 @@ namespace MobileTracking.Pages
             }
             finally
             {
-                PositionDataCollection.IsRefreshing = false;
+                PositionSignalDataCollection.IsRefreshing = false;
             }
         }
 

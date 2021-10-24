@@ -10,8 +10,8 @@ using WebApplication.Infrastructure;
 namespace WebApplication.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210531010556_AddLastSeenToPositionData")]
-    partial class AddLastSeenToPositionData
+    [Migration("20210531010556_AddLastSeenToPositionSignalData")]
+    partial class AddLastSeenToPositionSignalData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -160,7 +160,7 @@ namespace WebApplication.Migrations
                     b.ToTable("Positions");
                 });
 
-            modelBuilder.Entity("MobileTracking.Core.Models.PositionData", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.PositionSignalData", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -325,10 +325,10 @@ namespace WebApplication.Migrations
                     b.Navigation("Zone");
                 });
 
-            modelBuilder.Entity("MobileTracking.Core.Models.PositionData", b =>
+            modelBuilder.Entity("MobileTracking.Core.Models.PositionSignalData", b =>
                 {
                     b.HasOne("MobileTracking.Core.Models.Position", "Position")
-                        .WithMany("PositionData")
+                        .WithMany("PositionSignalData")
                         .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -367,7 +367,7 @@ namespace WebApplication.Migrations
                 {
                     b.Navigation("Calibrations");
 
-                    b.Navigation("PositionData");
+                    b.Navigation("PositionSignalData");
                 });
 
             modelBuilder.Entity("MobileTracking.Core.Models.UserLocalization", b =>

@@ -49,9 +49,9 @@ namespace MobileTracking.Pages.Locales
 
         public HashSet<string> SignalNames { get; set; } = new HashSet<string>();
 
-        public ObservableCollection<PositionData> LocaleData { get; set; } = new ObservableCollection<PositionData>();
+        public ObservableCollection<PositionSignalData> LocaleData { get; set; } = new ObservableCollection<PositionSignalData>();
 
-        public ObservableCollection<PositionData> MagneticFieldData { get; set; } = new ObservableCollection<PositionData>();
+        public ObservableCollection<PositionSignalData> MagneticFieldData { get; set; } = new ObservableCollection<PositionSignalData>();
 
         private void AggregateData()
         {
@@ -59,7 +59,7 @@ namespace MobileTracking.Pages.Locales
                 zone.Positions?.ForEach(position =>
                 {
                     position.Zone = zone;
-                    position.PositionData?.ForEach(data =>
+                    position.PositionSignalData?.ForEach(data =>
                     {
                         data.Position = position;
                         LocaleData.Add(data);
@@ -69,7 +69,7 @@ namespace MobileTracking.Pages.Locales
             SignalNames = LocaleData
                 .Where(data => data.SignalType != SignalType.Magnetometer && !string.IsNullOrEmpty(data.SignalId))
                 .GroupBy(data => data.SignalId)
-                .Select(data => new { SignalId = data.Key, Samples = data.Sum(positionData => positionData.Samples) })
+                .Select(data => new { SignalId = data.Key, Samples = data.Sum(positionSignalData => positionSignalData.Samples) })
                 .OrderByDescending(signal => signal.Samples)
                 .Select(signal => signal.SignalId)
                 .ToHashSet();
@@ -90,8 +90,8 @@ namespace MobileTracking.Pages.Locales
         private SfChart GeneratePositionsMagneticFieldChart()
         {
             var magneticFieldData = LocaleData.Where(data => data.SignalType == SignalType.Magnetometer).ToList();
-            MagneticFieldData = new ObservableCollection<PositionData>(magneticFieldData);
-            return ChartsFactory.CreatePositionDataScatterChart(
+            MagneticFieldData = new ObservableCollection<PositionSignalData>(magneticFieldData);
+            return ChartsFactory.CreatePositionSignalDataScatterChart(
                 AppResources.Magnetic_field,
                 AppResources.Magnetic_Y_Intensity,
                 AppResources.Magnetic_Z_Intensity,
@@ -116,7 +116,7 @@ namespace MobileTracking.Pages.Locales
                     LabelStyle = new ChartAxisLabelStyle() { LabelFormat = "##" },
                     Title = new ChartAxisTitle() { Text = AppResources.RSSI_dB }
                 };
-                var chart = ChartsFactory.CreatePositionDataScatterChart(
+                var chart = ChartsFactory.CreatePositionSignalDataScatterChart(
                     signalName,
                     AppResources.RSSI_dB,
                     AppResources.Position,

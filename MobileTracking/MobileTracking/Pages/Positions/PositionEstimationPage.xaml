@@ -98,9 +98,9 @@
             <Label HorizontalTextAlignment="Center" Margin="15" FontSize="Medium" Text="{x:Static resources:AppResources.Collected_data}" FontAttributes="Bold"/>
 
             <ListView
-                x:Name="PositionDataCollection"
+                x:Name="PositionSignalDataCollection"
                 HasUnevenRows="True"
-                ItemsSource="{Binding PositionData}"
+                ItemsSource="{Binding PositionSignalData}"
                 SelectionMode="None"
                 CachingStrategy="RecycleElement"
                 Margin="10"

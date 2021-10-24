@@ -7,11 +7,11 @@ using MobileTracking.Core.Application;
 
 namespace WebApplication.BackgroundServices
 {
-    public class PositionDataUpdater : BackgroundService
+    public class PositionSignalDataUpdater : BackgroundService
     {
         private readonly IServiceProvider serviceProvider;
 
-        public PositionDataUpdater(IServiceProvider serviceProvider)
+        public PositionSignalDataUpdater(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
         }
@@ -22,12 +22,12 @@ namespace WebApplication.BackgroundServices
             {
                 using (var scope = this.serviceProvider.CreateScope())
                 {
-                    var positionDataService = scope.ServiceProvider.GetRequiredService<IPositionDataService>();
-                    var query = new PositionDataQuery()
+                    var positionSignalDataService = scope.ServiceProvider.GetRequiredService<IPositionSignalDataService>();
+                    var query = new PositionSignalDataQuery()
                     {
                         NeedsUpdate = true
                     };
-                    await positionDataService.RecalculatePositionData(query);
+                    await positionSignalDataService.RecalculatePositionSignalData(query);
                     await Task.Delay(30000);
                 }
             }

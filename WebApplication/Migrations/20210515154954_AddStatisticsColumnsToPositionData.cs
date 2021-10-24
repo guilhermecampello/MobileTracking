@@ -2,7 +2,7 @@
 
 namespace WebApplication.Migrations
 {
-    public partial class AddStatisticsColumnsToPositionData : Migration
+    public partial class AddStatisticsColumnsToPositionSignalData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

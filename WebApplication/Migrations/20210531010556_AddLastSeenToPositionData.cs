@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApplication.Migrations
 {
-    public partial class AddLastSeenToPositionData : Migration
+    public partial class AddLastSeenToPositionSignalData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

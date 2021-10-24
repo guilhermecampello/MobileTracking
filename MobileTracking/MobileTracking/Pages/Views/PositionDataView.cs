@@ -6,41 +6,41 @@ using System.Text;
 
 namespace MobileTracking.Pages.Views
 {
-    public class PositionDataView
+    public class PositionSignalDataView
     {
-        public PositionDataView(PositionData positionData)
+        public PositionSignalDataView(PositionSignalData positionSignalData)
         {
-            this.PositionData = positionData;
+            this.PositionSignalData = positionSignalData;
         }
         
-        public PositionData PositionData { get; set; }
+        public PositionSignalData PositionSignalData { get; set; }
 
         public string Name {
             get
             {
-                if (PositionData.SignalType == SignalType.Magnetometer)
+                if (PositionSignalData.SignalType == SignalType.Magnetometer)
                 {
                     return AppResources.Magnetic_field;
                 }
                 else
                 {
-                    return PositionData.SignalId;
+                    return PositionSignalData.SignalId;
                 }
             }
         }
 
-        public string Samples { get => PositionData.Samples.ToString(); }
+        public string Samples { get => PositionSignalData.Samples.ToString(); }
 
         public string Type
         {
-            get => PositionData.SignalType.ToString();
+            get => PositionSignalData.SignalType.ToString();
         }
 
         public string Icon
         {
             get
             {
-                switch (PositionData.SignalType)
+                switch (PositionSignalData.SignalType)
                 {
                     case SignalType.Wifi:
                         return "\uf1eb";
@@ -56,7 +56,7 @@ namespace MobileTracking.Pages.Views
         {
             get
             {
-                switch (PositionData.SignalType)
+                switch (PositionSignalData.SignalType)
                 {
                     case SignalType.Wifi:
                         return Color.Black;
@@ -72,16 +72,16 @@ namespace MobileTracking.Pages.Views
         {
             get
             {
-                if (PositionData.SignalType == SignalType.Magnetometer)
+                if (PositionSignalData.SignalType == SignalType.Magnetometer)
                 {
-                    return $"X:{PositionData.X.ToString("0.00")} \u00B1 {PositionData.StandardDeviationX.ToString("0.00")} \n" +
-                        $"Y:{PositionData.Y.ToString("0.00")} \u00B1 {PositionData.StandardDeviationY.ToString("0.00")} \n" +
-                        $"Z:{PositionData.Z.ToString("0.00")} \u00B1 {PositionData.StandardDeviationZ.ToString("0.00")} \n" +
-                        $"T:{PositionData.Strength.ToString("0.00")}  \u00B1 {PositionData.StandardDeviation.ToString("0.00")}";
+                    return $"X:{PositionSignalData.X.ToString("0.00")} \u00B1 {PositionSignalData.StandardDeviationX.ToString("0.00")} \n" +
+                        $"Y:{PositionSignalData.Y.ToString("0.00")} \u00B1 {PositionSignalData.StandardDeviationY.ToString("0.00")} \n" +
+                        $"Z:{PositionSignalData.Z.ToString("0.00")} \u00B1 {PositionSignalData.StandardDeviationZ.ToString("0.00")} \n" +
+                        $"T:{PositionSignalData.Strength.ToString("0.00")}  \u00B1 {PositionSignalData.StandardDeviation.ToString("0.00")}";
                 }
                 else
                 {
-                    return $"{PositionData.Strength.ToString("0.00")} \u00B1 {PositionData.StandardDeviation.ToString("0.00")}";
+                    return $"{PositionSignalData.Strength.ToString("0.00")} \u00B1 {PositionSignalData.StandardDeviation.ToString("0.00")}";
                 }
             }
         }
@@ -90,20 +90,20 @@ namespace MobileTracking.Pages.Views
         {
             get
             {
-                if (PositionData.SignalType == SignalType.Magnetometer)
+                if (PositionSignalData.SignalType == SignalType.Magnetometer)
                 {
-                    return $"X:{PositionData.MinX.ToString("0.00")}; {PositionData.MaxX.ToString("0.00")} \n" +
-                        $"Y:{PositionData.MinY.ToString("0.00")}; {PositionData.MaxY.ToString("0.00")} \n" +
-                        $"Z:{PositionData.MinZ.ToString("0.00")};  {PositionData.MaxZ.ToString("0.00")} \n" +
-                        $"T:{PositionData.Min.ToString("0.00")}; {PositionData.Max.ToString("0.00")}";
+                    return $"X:{PositionSignalData.MinX.ToString("0.00")}; {PositionSignalData.MaxX.ToString("0.00")} \n" +
+                        $"Y:{PositionSignalData.MinY.ToString("0.00")}; {PositionSignalData.MaxY.ToString("0.00")} \n" +
+                        $"Z:{PositionSignalData.MinZ.ToString("0.00")};  {PositionSignalData.MaxZ.ToString("0.00")} \n" +
+                        $"T:{PositionSignalData.Min.ToString("0.00")}; {PositionSignalData.Max.ToString("0.00")}";
                 }
                 else
                 {
-                    return $"{PositionData.Min.ToString("0.00")}; {PositionData.Max.ToString("0.00")}";
+                    return $"{PositionSignalData.Min.ToString("0.00")}; {PositionSignalData.Max.ToString("0.00")}";
                 }
             }
         }
 
-        public string LastSeen { get => this.PositionData.LastSeen.ToLocalTime().ToString(); }
+        public string LastSeen { get => this.PositionSignalData.LastSeen.ToLocalTime().ToString(); }
     }
 }

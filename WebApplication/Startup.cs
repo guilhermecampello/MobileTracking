@@ -82,9 +82,9 @@ namespace WebApplication
             services.AddScoped<IZoneService, ZoneService>();
             services.AddScoped<IPositionService, PositionService>();
             services.AddScoped<ICalibrationService, CalibrationService>();
-            services.AddScoped<IPositionDataService, PositionDataService>();
+            services.AddScoped<IPositionSignalDataService, PositionSignalDataService>();
             services.AddScoped<IPositionEstimationService, PositionEstimationService>();
-            services.AddHostedService<PositionDataUpdater>();
+            services.AddHostedService<PositionSignalDataUpdater>();
         }
 
         private void AddDatabaseContext(

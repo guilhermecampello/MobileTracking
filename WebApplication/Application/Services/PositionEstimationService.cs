@@ -23,15 +23,15 @@ namespace WebApplication.Application.Services
         public async Task<List<PositionEstimation>> EstimatePosition(EstimatePositionCommand command)
         {
             var signals = command.Measurements.ToDictionary(signal => signal.SignalId);
-            var positionDatas = await this.databaseContext.PositionsData
-                .Include(true, positionData => positionData.Position, position => position!.Zone)
-                .Where(positionData => positionData.Position!.Zone!.LocaleId == command.LocaleId)
-                .Where(positionData => signals.Keys.Contains(positionData.SignalId))
+            var positionSignalDatas = await this.databaseContext.PositionsData
+                .Include(true, positionSignalData => positionSignalData.Position, position => position!.Zone)
+                .Where(positionSignalData => positionSignalData.Position!.Zone!.LocaleId == command.LocaleId)
+                .Where(positionSignalData => signals.Keys.Contains(positionSignalData.SignalId))
                 .ToListAsync();
 
             var positionEstimations = new List<PositionEstimation>();
-            positionDatas
-                .Where(positionData => this.IsValidEstimation(positionData, signals[positionData.SignalId]))
+            positionSignalDatas
+                .Where(positionSignalData => this.IsValidEstimation(positionSignalData, signals[positionSignalData.SignalId]))
                 .ToList()
                 .ForEach(data =>
             {
@@ -53,18 +53,19 @@ namespace WebApplication.Application.Services
             return positionEstimations.OrderByDescending(estimation => estimation.Score).Take(5).ToList();
         }
 
-        private bool IsValidEstimation(PositionData positionData, Measurement measurement)
+        private bool IsValidEstimation(PositionSignalData positionSignalData, Measurement measurement)
         {
             var magneticFieldTolerance = 0.5;
-            return (positionData.SignalType != SignalType.Magnetometer
-                        && positionData.Min <= measurement.Strength
-                        && positionData.Max >= measurement.Strength)
+            var rssiTolerance = -20;
+            return (positionSignalData.SignalType != SignalType.Magnetometer
+                        && positionSignalData.Min - rssiTolerance <= measurement.Strength
+                        && positionSignalData.Max + rssiTolerance >= measurement.Strength)
                    ||
-                   (positionData.SignalType == SignalType.Magnetometer
-                        && positionData.MinY - magneticFieldTolerance <= measurement.Y
-                        && positionData.MaxY + magneticFieldTolerance >= measurement.Y
-                        && positionData.MinZ - magneticFieldTolerance <= measurement.Z
-                        && positionData.MaxZ + magneticFieldTolerance >= measurement.Z);
+                   (positionSignalData.SignalType == SignalType.Magnetometer
+                        && positionSignalData.MinY - magneticFieldTolerance <= measurement.Y
+                        && positionSignalData.MaxY + magneticFieldTolerance >= measurement.Y
+                        && positionSignalData.MinZ - magneticFieldTolerance <= measurement.Z
+                        && positionSignalData.MaxZ + magneticFieldTolerance >= measurement.Z);
         }
     }
 }

@@ -6,25 +6,25 @@ using MobileTracking.Core.Models;
 
 namespace MobileTracking.Communication.Services
 {
-    class PositionDatasService : IPositionDataService
+    class PositionSignalDatasService : IPositionSignalDataService
     {
         private readonly Client client;
 
-        private string positionDatasController = "position-datas";
+        private string positionSignalDatasController = "position-datas";
 
-        public PositionDatasService(Client client)
+        public PositionSignalDatasService(Client client)
         {
             this.client = client;
         }
 
-        public Task<List<PositionData>> GetPositionDatas(PositionDataQuery query)
+        public Task<List<PositionSignalData>> GetPositionSignalDatas(PositionSignalDataQuery query)
         {
-            return client.Get<List<PositionData>>(positionDatasController, query);
+            return client.Get<List<PositionSignalData>>(positionSignalDatasController, query);
         }
 
-        public Task<bool> RecalculatePositionData(PositionDataQuery query)
+        public Task<bool> RecalculatePositionSignalData(PositionSignalDataQuery query)
         {
-            return client.Put<bool>(positionDatasController, "recalculate", null, query);
+            return client.Put<bool>(positionSignalDatasController, "recalculate", null, query);
         }
     }
 }

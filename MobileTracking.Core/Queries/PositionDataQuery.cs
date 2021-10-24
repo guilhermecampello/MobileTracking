@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MobileTracking.Core.Application
 {
-    public class PositionDataQuery
+    public class PositionSignalDataQuery
     {
         public int? LocaleId { get; set; }
 

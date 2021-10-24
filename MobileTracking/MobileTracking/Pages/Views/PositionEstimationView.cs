@@ -34,14 +34,14 @@ namespace MobileTracking.Pages.Views
                         if (score.Measurement.SignalType == SignalType.Magnetometer)
                         {
                             description += $"{AppResources.Magnetic_field}: " +
-                            $"Y:{score.PositionData.Y.ToString("0.00")} " +
+                            $"Y:{score.PositionSignalData.Y.ToString("0.00")} " +
                             $"Z:{score.Measurement.Z.ToString("0.00")} \n" +
                             $"SCORE: {score.Score.ToString("0.00")}\n";
                         }
                         else
                         {
                             description += $"{score.Measurement.SignalId}: " +
-                            $"{score.PositionData.Strength.ToString("0.00")} \n" +
+                            $"{score.PositionSignalData.Strength.ToString("0.00")} \n" +
                             $"SCORE: {score.Score.ToString("0.00")} \n";
                         }
                     });

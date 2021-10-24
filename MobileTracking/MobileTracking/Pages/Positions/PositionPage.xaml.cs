@@ -33,7 +33,7 @@ namespace MobileTracking.Pages
 
         private readonly Configuration configuration;
 
-        private readonly IPositionDataService positionDataService;
+        private readonly IPositionSignalDataService positionSignalDataService;
 
         private Timer timer;
 
@@ -47,18 +47,18 @@ namespace MobileTracking.Pages
             this.bluetoothConnector = serviceProvider.GetService<IBluetoothConnector>();
             this.magneticFieldSensor = serviceProvider.GetService<MagneticFieldSensor>();
             this.calibrationsService = serviceProvider.GetService<ICalibrationService>();
-            this.positionDataService = serviceProvider.GetService<IPositionDataService>();
+            this.positionSignalDataService = serviceProvider.GetService<IPositionSignalDataService>();
             this.localeProvider = serviceProvider.GetService<LocaleProvider>();
             this.configuration = serviceProvider.GetService<Configuration>();
             this.Position = position;
 
-            PositionDataCollection.RefreshCommand = RefreshData_Command;
-            PositionDataCollection.ItemsSource = PositionData;
-            Position.PositionData?
+            PositionSignalDataCollection.RefreshCommand = RefreshData_Command;
+            PositionSignalDataCollection.ItemsSource = PositionSignalData;
+            Position.PositionSignalData?
                 .OrderBy(data => data.SignalType)
                 .ThenByDescending(data => data.Strength)
                 .ToList()
-                .ForEach(data => PositionData.Add(new PositionDataView(data)));
+                .ForEach(data => PositionSignalData.Add(new PositionSignalDataView(data)));
 
             BindingContext = this;
             timer = new Timer(configuration!.DataAquisitionInterval * 1000);
@@ -69,7 +69,7 @@ namespace MobileTracking.Pages
 
         public Position Position { get; set; }
 
-        public ObservableCollection<PositionDataView> PositionData { get; set; } = new ObservableCollection<PositionDataView>();
+        public ObservableCollection<PositionSignalDataView> PositionSignalData { get; set; } = new ObservableCollection<PositionSignalDataView>();
 
         public Configuration Configuration { get => this.configuration; }
 
@@ -83,23 +83,23 @@ namespace MobileTracking.Pages
 
         public async Task RefreshData()
         {
-            PositionDataCollection.IsPullToRefreshEnabled = true;
-            PositionDataCollection.IsRefreshing = true;
-            var query = new PositionDataQuery()
+            PositionSignalDataCollection.IsPullToRefreshEnabled = true;
+            PositionSignalDataCollection.IsRefreshing = true;
+            var query = new PositionSignalDataQuery()
             {
                 PositionId = Position.Id
             };
             try
             {
-                if (await positionDataService.RecalculatePositionData(query))
+                if (await positionSignalDataService.RecalculatePositionSignalData(query))
                 {
-                    var newData = await positionDataService.GetPositionDatas(query);
-                    this.PositionData.Clear();
+                    var newData = await positionSignalDataService.GetPositionSignalDatas(query);
+                    this.PositionSignalData.Clear();
                     newData
                         .OrderBy(data => data.SignalType)
                         .ThenByDescending(data => data.Strength)
                         .ToList()
-                        .ForEach(data => PositionData.Add(new PositionDataView(data)));
+                        .ForEach(data => PositionSignalData.Add(new PositionSignalDataView(data)));
                 }
             }
             catch (Exception e)
@@ -111,8 +111,8 @@ namespace MobileTracking.Pages
             }
             finally
             {
-                PositionDataCollection.IsPullToRefreshEnabled = false;
-                PositionDataCollection.IsRefreshing = false;
+                PositionSignalDataCollection.IsPullToRefreshEnabled = false;
+                PositionSignalDataCollection.IsRefreshing = false;
             }
         }
 
@@ -323,14 +323,14 @@ namespace MobileTracking.Pages
             this.timer.Start();
         }
 
-        private async void PositionDataCollection_ItemTapped(object sender, ItemTappedEventArgs e)
+        private async void PositionSignalDataCollection_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            var positionData = ((PositionDataView)e.Item).PositionData;
+            var positionSignalData = ((PositionSignalDataView)e.Item).PositionSignalData;
             var query = new CalibrationsQuery()
             {
-                PositionId = positionData.PositionId,
-                SignalId = positionData.SignalId,
-                SignalType = positionData.SignalType,
+                PositionId = positionSignalData.PositionId,
+                SignalId = positionSignalData.SignalId,
+                SignalType = positionSignalData.SignalType,
             };
             try
             {

@@ -4,10 +4,10 @@ using MobileTracking.Core.Models;
 
 namespace MobileTracking.Core.Application
 {
-    public interface IPositionDataService
+    public interface IPositionSignalDataService
     {
-        Task<List<PositionData>> GetPositionDatas(PositionDataQuery query);
+        Task<List<PositionSignalData>> GetPositionSignalDatas(PositionSignalDataQuery query);
 
-        Task<bool> RecalculatePositionData(PositionDataQuery query);
+        Task<bool> RecalculatePositionSignalData(PositionSignalDataQuery query);
     }
 }

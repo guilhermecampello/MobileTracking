@@ -6,13 +6,13 @@ namespace MobileTracking.Core.Models
 {
     public class SignalScore
     {
-        public SignalScore(PositionData positionData, Measurement measurement)
+        public SignalScore(PositionSignalData positionSignalData, Measurement measurement)
         {
-            this.PositionData = positionData;
+            this.PositionSignalData = positionSignalData;
             this.Measurement = measurement;
             CalculateScore();
         }
-        public PositionData PositionData { get; set; }
+        public PositionSignalData PositionSignalData { get; set; }
 
         public Measurement Measurement { get; set; }
 
@@ -22,7 +22,7 @@ namespace MobileTracking.Core.Models
         {
             if (Measurement.SignalType == SignalType.Magnetometer)
             {
-                var distance = Math.Sqrt(Math.Pow(Measurement.Y - PositionData.Y, 2) + Math.Pow(Measurement.Z - PositionData.Z, 2));
+                var distance = Math.Sqrt(Math.Pow(Measurement.Y - PositionSignalData.Y, 2) + Math.Pow(Measurement.Z - PositionSignalData.Z, 2));
                 Score = (1 - distance) * 3;
                 if (Score < 0.5)
                 {
@@ -31,7 +31,7 @@ namespace MobileTracking.Core.Models
             }
             else
             {
-                var proximityFactor = Measurement.Strength/PositionData.Strength;
+                var proximityFactor = Measurement.Strength/PositionSignalData.Strength;
                 Score = (1 - Math.Abs(1 - proximityFactor)) * 3;
             }
         }

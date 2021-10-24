@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace MobileTracking.Core.Models
 {
-    public class PositionData : Measurement
+    public class PositionSignalData : Measurement
     {
         public int Id { get; set; }
 

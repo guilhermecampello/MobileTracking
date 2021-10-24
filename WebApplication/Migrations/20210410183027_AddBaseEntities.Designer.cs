@@ -154,7 +154,7 @@ namespace WebApplication.Migrations
                     b.ToTable("Positions");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.PositionData", b =>
+            modelBuilder.Entity("WebApplication.Models.PositionSignalData", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -275,10 +275,10 @@ namespace WebApplication.Migrations
                     b.Navigation("Zone");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.PositionData", b =>
+            modelBuilder.Entity("WebApplication.Models.PositionSignalData", b =>
                 {
                     b.HasOne("WebApplication.Models.Position", "Position")
-                        .WithMany("PositionData")
+                        .WithMany("PositionSignalData")
                         .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -317,7 +317,7 @@ namespace WebApplication.Migrations
                 {
                     b.Navigation("Calibrations");
 
-                    b.Navigation("PositionData");
+                    b.Navigation("PositionSignalData");
                 });
 
             modelBuilder.Entity("WebApplication.Models.UserLocalization", b =>

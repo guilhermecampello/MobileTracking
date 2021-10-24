@@ -27,7 +27,7 @@ namespace MobileTracking.Core.Application
             return await this.databaseContext.Zones
                 .Include(query.IncludePositions, zone => zone.Positions)
                 .Include(query.IncludePositionsCalibrations, zone => zone.Positions!, positions => positions.Calibrations!)
-                .Include(query.IncludePositionsData, zone => zone.Positions!, position => position.PositionData!)
+                .Include(query.IncludePositionsData, zone => zone.Positions!, position => position.PositionSignalData!)
                 .FirstOrDefaultAsync(zone => zone.Id == zoneId)
                 ?? throw NotFoundException<Zone>.ById(zoneId);
         }
@@ -41,7 +41,7 @@ namespace MobileTracking.Core.Application
                 .Where(query.Floor, floor => zone => zone.Floor == floor)
                 .Include(query.IncludePositions, zone => zone.Positions)
                 .Include(query.IncludePositionsCalibrations, zone => zone.Positions!, positions => positions.Calibrations!)
-                .Include(query.IncludePositionsData, zone => zone.Positions!, position => position.PositionData!)
+                .Include(query.IncludePositionsData, zone => zone.Positions!, position => position.PositionSignalData!)
                 .ToListAsync();
         }
 

@@ -8,7 +8,7 @@ namespace MobileTracking.Charts
 {
     public class ChartsFactory
     {
-        public static SfChart CreatePositionDataScatterChart(
+        public static SfChart CreatePositionSignalDataScatterChart(
             string title,
             string yTitle,
             string xTitle,

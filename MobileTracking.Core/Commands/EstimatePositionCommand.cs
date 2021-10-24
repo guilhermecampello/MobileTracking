@@ -9,6 +9,8 @@ namespace MobileTracking.Core.Commands
     {
         public int LocaleId { get; set; }
 
+        public int N { get; set; }
+
         [MinLength(1)]
         public List<Measurement> Measurements { get; set; } = new List<Measurement>();
     }

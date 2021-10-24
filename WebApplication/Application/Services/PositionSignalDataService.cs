@@ -9,16 +9,16 @@ using WebApplication.Infrastructure;
 
 namespace WebApplication.Application.Services
 {
-    public class PositionDataService : IPositionDataService
+    public class PositionSignalDataService : IPositionSignalDataService
     {
         private readonly DatabaseContext databaseContext;
 
-        public PositionDataService(DatabaseContext databaseContext)
+        public PositionSignalDataService(DatabaseContext databaseContext)
         {
             this.databaseContext = databaseContext;
         }
 
-        public Task<List<PositionData>> GetPositionDatas(PositionDataQuery query)
+        public Task<List<PositionSignalData>> GetPositionSignalDatas(PositionSignalDataQuery query)
         {
             return this.databaseContext.PositionsData
                 .AsNoTracking()
@@ -33,7 +33,7 @@ namespace WebApplication.Application.Services
                 .ToListAsync();
         }
 
-        public async Task<bool> RecalculatePositionData(PositionDataQuery query)
+        public async Task<bool> RecalculatePositionSignalData(PositionSignalDataQuery query)
         {
             var positions = await this.databaseContext.Positions
                 .AsQueryable()
@@ -47,9 +47,9 @@ namespace WebApplication.Application.Services
             positions.ForEach(position =>
             {
                 this.RemoveOldData(position.Id);
-                var positionDatas = position.Calibrations!
+                var positionSignalDatas = position.Calibrations!
                 .GroupBy(calibration => new { calibration.SignalId, calibration.SignalType })
-                .Select(calibration => new PositionData()
+                .Select(calibration => new PositionSignalData()
                 {
                     PositionId = position.Id,
                     SignalId = calibration.Key.SignalId,
@@ -70,7 +70,7 @@ namespace WebApplication.Application.Services
                 })
                 .ToList();
 
-                positionDatas.ForEach(data =>
+                positionSignalDatas.ForEach(data =>
                 {
                     var calibrations = position.Calibrations!
                     .Where(calibration => calibration.SignalId == data.SignalId
@@ -95,8 +95,8 @@ namespace WebApplication.Application.Services
         {
             var data = this.databaseContext.PositionsData
                 .AsQueryable()
-                .Where(positionData =>
-                    positionData.PositionId == positionId)
+                .Where(positionSignalData =>
+                    positionSignalData.PositionId == positionId)
                 .ToList();
 
             this.databaseContext.PositionsData.RemoveRange(data);

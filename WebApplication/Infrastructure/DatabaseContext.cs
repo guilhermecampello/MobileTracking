@@ -16,7 +16,7 @@ namespace WebApplication.Infrastructure
 
         public DbSet<Position> Positions { get; set; } = null!;
 
-        public DbSet<PositionData> PositionsData { get; set; } = null!;
+        public DbSet<PositionSignalData> PositionsData { get; set; } = null!;
 
         public DbSet<Calibration> Calibrations { get; set; } = null!;
 

@@ -8,23 +8,23 @@ namespace WebApplication.Controllers
 {
     [ApiController]
     [Route("api/position-datas")]
-    public class PositionDatasController : ControllerBase
+    public class PositionSignalDatasController : ControllerBase
     {
 
         [HttpGet]
-        public async Task<ActionResult<List<PositionData>>> GetPositionDatas(
-            [FromServices] IPositionDataService positionDataService,
-            [FromQuery] PositionDataQuery query)
+        public async Task<ActionResult<List<PositionSignalData>>> GetPositionSignalDatas(
+            [FromServices] IPositionSignalDataService positionSignalDataService,
+            [FromQuery] PositionSignalDataQuery query)
         {
-            return await positionDataService.GetPositionDatas(query);
+            return await positionSignalDataService.GetPositionSignalDatas(query);
         }
 
         [HttpPut("recalculate")]
-        public async Task<ActionResult<bool>> RecalculatePositionData(
-            [FromServices] IPositionDataService positionDataService,
-            [FromRoute] PositionDataQuery positionDataQuery)
+        public async Task<ActionResult<bool>> RecalculatePositionSignalData(
+            [FromServices] IPositionSignalDataService positionSignalDataService,
+            [FromRoute] PositionSignalDataQuery positionSignalDataQuery)
         {
-            return await positionDataService.RecalculatePositionData(positionDataQuery);
+            return await positionSignalDataService.RecalculatePositionSignalData(positionSignalDataQuery);
         }
     }
 }

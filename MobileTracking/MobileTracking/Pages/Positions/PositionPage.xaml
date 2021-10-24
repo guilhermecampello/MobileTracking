@@ -81,10 +81,10 @@
             <ScrollView VerticalScrollBarVisibility="Never" HorizontalScrollBarVisibility="Never">
                 <StackLayout>
                     <ListView
-                    x:Name="PositionDataCollection"
+                    x:Name="PositionSignalDataCollection"
                     HasUnevenRows="True"
-                    ItemsSource="{Binding PositionDataCollection}"
-                    ItemTapped="PositionDataCollection_ItemTapped"
+                    ItemsSource="{Binding PositionSignalDataCollection}"
+                    ItemTapped="PositionSignalDataCollection_ItemTapped"
                     SelectionMode="None"
                     CachingStrategy="RecycleElement"
                     Margin="10,0,10,0"
