@@ -33,23 +33,30 @@ namespace MobileTracking.Pages.Locales
 
         private async void Button_Clicked(object sender, EventArgs e)
         {
-            var command = new CreateOrUpdatePositionCommand()
+            if (!activityIndicator.IsRunning)
             {
-                ZoneId = zone.Id,
-                Name = name.Text                
-            };
-            try
-            {
-                activityIndicator.IsRunning = true;
-                await positionsService.CreatePosition(command);
-                await localeProvider.RefreshLocale();
-                activityIndicator.IsRunning = false;
-                await Navigation.PopAsync();
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert(AppResources.Error, ex.Message, "OK");
-                activityIndicator.IsRunning = false;
+                var command = new CreateOrUpdatePositionCommand()
+                {
+                    ZoneId = zone.Id,
+                    Name = name.Text                
+                };
+                try
+                {
+                    activityIndicator.IsRunning = true;
+                    await positionsService.CreatePosition(command);
+                    await localeProvider.RefreshLocale();
+                    activityIndicator.IsRunning = false;
+                    await Navigation.PopAsync();
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlert(AppResources.Error, ex.Message, "OK");
+                    activityIndicator.IsRunning = false;
+                }
+                finally
+                {
+                    activityIndicator.IsRunning = false;
+                }
             }
         }
     }

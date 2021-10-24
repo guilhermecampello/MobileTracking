@@ -13,6 +13,7 @@
                    FontAttributes="Bold"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
+            
             <StackLayout Margin="10">
                 <Label Text="{x:Static resources:AppResources.Name}" FontSize="Medium" FontAttributes="Bold"/>
                 <Entry x:Name="name" Placeholder="{x:Static resources:AppResources.Name}" ReturnType="Next"/>

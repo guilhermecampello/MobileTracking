@@ -29,26 +29,32 @@ namespace MobileTracking.Pages.Locales
 
         private async void Button_Clicked(object sender, EventArgs e)
         {
-            try
+            if (!activityIndicator.IsRunning)
             {
-                var coordinates = await Xamarin.Essentials.Geolocation.GetLocationAsync();
-                var command = new CreateOrUpdateLocaleCommand()
-                {
-                    Name = name.Text,
-                    Description = description.Text,
-                    Latitude = coordinates.Latitude,
-                    Longitude = coordinates.Longitude
-                };
                 activityIndicator.IsRunning = true;
-                await localesService.CreateLocale(command);
-                await localeProvider.RefreshLocale();
-                activityIndicator.IsRunning = false;
-                await Navigation.PopAsync();
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert(AppResources.Error, ex.Message, "OK");
-                activityIndicator.IsRunning = false;
+                try
+                {
+                    var coordinates = await Xamarin.Essentials.Geolocation.GetLocationAsync();
+                    var command = new CreateOrUpdateLocaleCommand()
+                    {
+                        Name = name.Text,
+                        Description = description.Text,
+                        Latitude = coordinates.Latitude,
+                        Longitude = coordinates.Longitude
+                    };
+                    await localesService.CreateLocale(command);
+                    await localeProvider.RefreshLocale();
+                    await Navigation.PopAsync();
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlert(AppResources.Error, ex.Message, "OK");
+                    activityIndicator.IsRunning = false;
+                }
+                finally
+                {
+                    activityIndicator.IsRunning = false;
+                }
             }
         }
     }

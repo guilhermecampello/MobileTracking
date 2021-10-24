@@ -199,7 +199,10 @@ namespace MobileTracking.Pages
                 }
                 catch (Exception ex)
                 {
-                    await DisplayAlert(ex.Message, ex.InnerException.Message, "OK");
+                    await Device.InvokeOnMainThreadAsync(async () =>
+                    {
+                        await DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
+                    });
                 }
 
                 if (count > configuration.SamplesPerPosition)

@@ -10,9 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
-using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -55,6 +53,19 @@ namespace MobileTracking.Pages
             timer.Start();
         }
 
+        protected async override void OnAppearing()
+        {
+            base.OnAppearing();
+            try
+            {
+                StartDataAquisition();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
+            }
+        }
+
         public Locale Locale { get; set; }
 
         public ObservableCollection<CalibrationView> PositionData { get; set; } = new ObservableCollection<CalibrationView>();
@@ -62,7 +73,6 @@ namespace MobileTracking.Pages
         public ObservableCollection<PositionEstimationView> PositionEstimations { get; set; } = new ObservableCollection<PositionEstimationView>();
 
         public Configuration Configuration { get => this.configuration; }
-
      
         public void RefreshMeasurements(List<Measurement> measurements)
         {
@@ -179,9 +189,9 @@ namespace MobileTracking.Pages
                 }
                 catch (Exception ex)
                 {
-                    Device.BeginInvokeOnMainThread(() =>
+                    await Device.InvokeOnMainThreadAsync(async() =>
                     {
-                        DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
+                        await DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
                     });
                 }
             }
@@ -271,7 +281,6 @@ namespace MobileTracking.Pages
 
         public void StartDataAquisition()
         {
-            
             magneticFieldSensor.Start();           
             bluetoothConnector.StartScanning();
             wifiConnector.StartScanning();

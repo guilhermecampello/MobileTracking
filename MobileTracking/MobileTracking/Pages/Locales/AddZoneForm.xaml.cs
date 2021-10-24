@@ -37,18 +37,21 @@ namespace MobileTracking.Pages.Locales
                 Description = description.Text,
                 Floor = Convert.ToInt32(floor.Text)                
             };
-            try
+            if (!activityIndicator.IsRunning)
             {
-                activityIndicator.IsRunning = true;
-                await zonesService.CreateZone(command);
-                await localeProvider.RefreshLocale();
-                activityIndicator.IsRunning = false;
-                await Navigation.PopAsync();
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert(AppResources.Error, ex.Message, "OK");
-                activityIndicator.IsRunning = false;
+                try
+                {
+                    activityIndicator.IsRunning = true;
+                    await zonesService.CreateZone(command);
+                    await localeProvider.RefreshLocale();
+                    activityIndicator.IsRunning = false;
+                    await Navigation.PopAsync();
+                }
+                catch (Exception ex)
+                {
+                    activityIndicator.IsRunning = false;
+                    await DisplayAlert(AppResources.Error, ex.Message, "OK");
+                }
             }
         }
     }
