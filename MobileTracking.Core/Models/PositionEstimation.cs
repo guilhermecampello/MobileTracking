@@ -7,15 +7,23 @@ namespace MobileTracking.Core.Models
 {
     public class PositionEstimation
     {
-        public PositionEstimation(Position position)
+        public PositionEstimation(List<NeighbourPosition> neighbourPositions)
         {
-            Position = position;
+            NeighbourPositions = neighbourPositions.Where(position => position.Score > 0).ToList();
+            var totalScore = NeighbourPositions.Sum(neighbour => neighbour.Score);
+            neighbourPositions.ForEach(position =>
+            {
+                X += position.Position.X * position.Score;
+                Y += position.Position.Y * position.Score;
+            });
+            X = X / totalScore;
+            Y = Y / totalScore;
         }
 
-        public Position Position { get; set; } = null!;
+        public double X { get; set; } = 0;
 
-        public List<SignalScore> SignalScores { get; set; } = new List<SignalScore>();
+        public double Y { get; set; } = 0;
 
-        public double Score { get => SignalScores.Sum(signal => signal.Score); }
+        public List<NeighbourPosition> NeighbourPositions { get; set; }
     }
 }

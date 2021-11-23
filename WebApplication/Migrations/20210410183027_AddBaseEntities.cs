@@ -96,7 +96,7 @@ namespace WebApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PositionsData",
+                name: "PositionsSignalsData",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -113,9 +113,9 @@ namespace WebApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PositionsData", x => x.Id);
+                    table.PrimaryKey("PK_PositionsSignalsData", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PositionsData_Positions_PositionId",
+                        name: "FK_PositionsSignalsData_Positions_PositionId",
                         column: x => x.PositionId,
                         principalTable: "Positions",
                         principalColumn: "Id",
@@ -185,8 +185,8 @@ namespace WebApplication.Migrations
                 column: "ZoneId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PositionsData_PositionId",
-                table: "PositionsData",
+                name: "IX_PositionsSignalsData_PositionId",
+                table: "PositionsSignalsData",
                 column: "PositionId");
 
             migrationBuilder.CreateIndex(
@@ -209,7 +209,7 @@ namespace WebApplication.Migrations
                 name: "LocalizationMeasurements");
 
             migrationBuilder.DropTable(
-                name: "PositionsData");
+                name: "PositionsSignalsData");
 
             migrationBuilder.DropTable(
                 name: "UserLocalizations");

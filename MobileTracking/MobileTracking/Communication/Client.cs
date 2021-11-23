@@ -117,6 +117,8 @@ namespace MobileTracking.Communication
                 }
             }
 
+            queryString = queryString.Replace(",", ".");
+
             return queryString;
         }
 

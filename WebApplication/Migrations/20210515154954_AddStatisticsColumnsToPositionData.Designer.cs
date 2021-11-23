@@ -10,7 +10,7 @@ using WebApplication.Infrastructure;
 namespace WebApplication.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210515154954_AddStatisticsColumnsToPositionSignalData")]
+    [Migration("20210515154954_AddStatisticsColumnsToPositionData")]
     partial class AddStatisticsColumnsToPositionSignalData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -235,7 +235,7 @@ namespace WebApplication.Migrations
 
                     b.HasIndex("PositionId");
 
-                    b.ToTable("PositionsData");
+                    b.ToTable("PositionsSignalsData");
                 });
 
             modelBuilder.Entity("MobileTracking.Core.Models.UserLocalization", b =>

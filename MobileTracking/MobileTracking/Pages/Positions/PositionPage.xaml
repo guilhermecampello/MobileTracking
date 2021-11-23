@@ -62,7 +62,10 @@
                         </StackLayout>
                     </Grid>
                     <Button x:Name="calibrationButton" Text="{x:Static resources:AppResources.Start_calibration}" Clicked="Calibration_Button_Clicked"/>
-
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Usar como teste ?" />
+                        <Switch x:Name="testingSwitch" />
+                    </StackLayout>
 
                     <Label FontSize="Large" VerticalTextAlignment="Center" HorizontalOptions="Center" Margin="5">
                         <Label.FormattedText>

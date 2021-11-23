@@ -1,5 +1,6 @@
 ﻿using MobileTracking.Core;
 using MobileTracking.Core.Application;
+using MobileTracking.Core.Interfaces;
 using MobileTracking.Core.Models;
 using MobileTracking.Pages.Positions;
 using MobileTracking.Pages.Views;
@@ -29,6 +30,8 @@ namespace MobileTracking.Pages
 
         private readonly ICalibrationService calibrationsService;
 
+        private readonly IPositionEstimationService positionEstimationService;
+
         private readonly LocaleProvider localeProvider;
 
         private readonly Configuration configuration;
@@ -48,6 +51,7 @@ namespace MobileTracking.Pages
             this.magneticFieldSensor = serviceProvider.GetService<MagneticFieldSensor>();
             this.calibrationsService = serviceProvider.GetService<ICalibrationService>();
             this.positionSignalDataService = serviceProvider.GetService<IPositionSignalDataService>();
+            this.positionEstimationService = serviceProvider.GetService<IPositionEstimationService>();
             this.localeProvider = serviceProvider.GetService<LocaleProvider>();
             this.configuration = serviceProvider.GetService<Configuration>();
             this.Position = position;
@@ -195,6 +199,17 @@ namespace MobileTracking.Pages
                 try
                 {
                     await calibrationsService.CreateCalibrations(command);
+                    if (testingSwitch.IsToggled)
+                    {
+                        _ = positionEstimationService.EstimatePosition(new Core.Commands.EstimatePositionCommand()
+                        {
+                            LocaleId = localeProvider.Locale!.Id,
+                            Measurements = data,
+                            RealX = Position.X,
+                            RealY = Position.Y,
+                            Neighbours = configuration.K
+                        });
+                    }
                     count++;
                 }
                 catch (Exception ex)

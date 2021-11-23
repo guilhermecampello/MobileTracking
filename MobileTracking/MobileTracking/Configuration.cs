@@ -11,5 +11,7 @@ namespace MobileTracking
         public int SamplesPerPosition { get; set; } = 50;
 
         public int DataAquisitionInterval { get; set; } = 5;
+
+        public int K { get; set; } = 3;
     }
 }

@@ -23,7 +23,7 @@ namespace MobileTracking.Core.Application
                 .Include(query.IncludeZones, locale => locale.Zones)
                 .Include(query.IncludePositions, locale => locale.Zones!, zones => zones.Positions!)
                 .Include(query.IncludePositionsCalibrations, locale => locale.Zones!, zones => zones.Positions!, positions => positions.Calibrations!)
-                .Include(query.IncludePositionsData, locale => locale.Zones!, zones => zones.Positions!, positions => positions.PositionSignalData!)
+                .Include(query.IncludePositionsSignalsData, locale => locale.Zones!, zones => zones.Positions!, positions => positions.PositionSignalData!)
                 .ToListAsync();
         }
 
@@ -33,7 +33,7 @@ namespace MobileTracking.Core.Application
                 .Include(query?.IncludeZones, locale => locale.Zones)
                 .Include(query?.IncludePositions, locale => locale.Zones!, zones => zones.Positions!)
                 .Include(query?.IncludePositionsCalibrations, locale => locale.Zones!, zones => zones.Positions!, positions => positions.Calibrations!)
-                .Include(query?.IncludePositionsData, locale => locale.Zones!, zones => zones.Positions!, positions => positions.PositionSignalData!)
+                .Include(query?.IncludePositionsSignalsData, locale => locale.Zones!, zones => zones.Positions!, positions => positions.PositionSignalData!)
                 .FirstOrDefaultAsync(locale => locale.Id == localeId)
                 ?? throw NotFoundException<Locale>.ById(localeId);
         }

@@ -196,7 +196,7 @@ namespace WebApplication.Migrations
 
                     b.HasIndex("PositionId");
 
-                    b.ToTable("PositionsData");
+                    b.ToTable("PositionsSignalsData");
                 });
 
             modelBuilder.Entity("MobileTracking.Core.Models.UserLocalization", b =>

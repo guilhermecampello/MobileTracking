@@ -9,12 +9,26 @@ namespace MobileTracking.Core.Models
     {
         public Measurement() { }
 
-        public Measurement(string signalId, int strength, SignalType signalType, DateTime dateTime)
+        public Measurement(LocalizationMeasurement localizationMeasurement)
+        {
+            this.SignalType = localizationMeasurement.SignalType;
+            this.SignalId = localizationMeasurement.SignalId;
+            this.Strength = localizationMeasurement.Strength;
+            this.DateTime = localizationMeasurement.DateTime;
+            this.X = localizationMeasurement.X;
+            this.Y = localizationMeasurement.Y;
+            this.Z = localizationMeasurement.Z;
+        }
+
+        public Measurement(string signalId, int strength, SignalType signalType, DateTime dateTime, float x = 0, float y = 0, float z = 0)
         {
             this.SignalType = signalType;
             this.SignalId = signalId;
             this.Strength = strength;
             this.DateTime = dateTime;
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
         }
 
         public string SignalId { get; set; } = string.Empty;

@@ -6,14 +6,14 @@ namespace MobileTracking.Pages.Views
 {
     public class PositionEstimationView
     {
-        private readonly PositionEstimation positionEstimation;
+        private readonly NeighbourPosition positionEstimation;
 
-        public PositionEstimationView(PositionEstimation positionEstimation)
+        public PositionEstimationView(NeighbourPosition positionEstimation)
         {
             this.positionEstimation = positionEstimation;
         }
 
-        public PositionEstimation PositionEstimation { get => positionEstimation; }
+        public NeighbourPosition PositionEstimation { get => positionEstimation; }
 
         public string Name
         {

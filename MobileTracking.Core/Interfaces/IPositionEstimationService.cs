@@ -9,6 +9,6 @@ namespace MobileTracking.Core.Interfaces
 {
     public interface IPositionEstimationService
     {
-        Task<List<PositionEstimation>> EstimatePosition(EstimatePositionCommand command);
+        Task<PositionEstimation> EstimatePosition(EstimatePositionCommand command);
     }
 }

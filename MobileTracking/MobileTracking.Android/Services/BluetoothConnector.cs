@@ -84,7 +84,7 @@ namespace MobileTracking.Droid.Services
         {
             if (!bluetoothAdapter.IsEnabled)
             {
-                throw new Exception("Please enable Bluetooth");
+                bluetoothAdapter.Enable();
             }
             while (true)
             {

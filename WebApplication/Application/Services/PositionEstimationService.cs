@@ -20,43 +20,76 @@ namespace WebApplication.Application.Services
             this.databaseContext = databaseContext;
         }
 
-        public async Task<List<PositionEstimation>> EstimatePosition(EstimatePositionCommand command)
+        public async Task<PositionEstimation> EstimatePosition(EstimatePositionCommand command)
         {
             var signals = command.Measurements.ToDictionary(signal => signal.SignalId);
             var positionSignalDatas = await this.databaseContext.PositionsSignalsData
                 .Include(true, positionSignalData => positionSignalData.Position, position => position!.Zone)
                 .Where(positionSignalData => positionSignalData.Position!.Zone!.LocaleId == command.LocaleId)
-                .Where(positionSignalData => signals.Keys.Contains(positionSignalData.SignalId))
                 .ToListAsync();
 
-            var positionEstimations = new List<PositionEstimation>();
+            var neighbourPositions = new List<NeighbourPosition>();
+
+            if (command.UnmatchedSignalsWeight != null)
+            {
+                var unmatchedSignals = positionSignalDatas
+                    .Where(positionSignalData => !signals.ContainsKey(positionSignalData.SignalId))
+                    .ToList();
+                unmatchedSignals.ForEach(unmatchedSignal =>
+                {
+                    var neighbourPosition = neighbourPositions
+                    .FirstOrDefault(neighbourPosition => neighbourPosition.Position.Id == unmatchedSignal.PositionId);
+                    if (neighbourPosition == null)
+                    {
+                        neighbourPosition = new NeighbourPosition(unmatchedSignal.Position!);
+                        neighbourPositions.Add(neighbourPosition);
+                    }
+
+                    neighbourPosition.SignalScores.Add(new SignalScore(unmatchedSignal, command.UnmatchedSignalsWeight.Value));
+                });
+            }
+
             positionSignalDatas
+                .Where(positionSignalData => signals.ContainsKey(positionSignalData.SignalId))
                 .Where(positionSignalData => this.IsValidEstimation(positionSignalData, signals[positionSignalData.SignalId]))
                 .ToList()
                 .ForEach(data =>
             {
                 data.LastSeen = DateTime.Now;
                 var measurement = signals[data.SignalId];
-                var positionEstimation = positionEstimations
-                    .FirstOrDefault(positionEstimation => positionEstimation.Position.Id == data.PositionId);
-                if (positionEstimation == null)
+                var neighbourPosition = neighbourPositions
+                    .FirstOrDefault(neighbourPosition => neighbourPosition.Position.Id == data.PositionId);
+                if (neighbourPosition == null)
                 {
-                    positionEstimation = new PositionEstimation(data.Position!);
-                    positionEstimations.Add(positionEstimation);
+                    neighbourPosition = new NeighbourPosition(data.Position!);
+                    neighbourPositions.Add(neighbourPosition);
                 }
 
-                positionEstimation.SignalScores.Add(new SignalScore(data, measurement));
+                neighbourPosition.SignalScores.Add(new SignalScore(data, measurement));
             });
 
-            _ = this.databaseContext.SaveChangesAsync();
+            if (command.RealX != null && command.RealY != null)
+            {
+                this.databaseContext.Add(new UserLocalization()
+                {
+                    UserId = 1,
+                    LocaleId = command.LocaleId,
+                    DateTime = DateTime.Now,
+                    RealX = command.RealX,
+                    RealY = command.RealY,
+                    LocalizationMeasurements = command.Measurements.Select(measurement => new LocalizationMeasurement(measurement)).ToList()
+                });
 
-            return positionEstimations.OrderByDescending(estimation => estimation.Score).Take(5).ToList();
+                await this.databaseContext.SaveChangesAsync();
+            }
+
+            return new PositionEstimation(neighbourPositions.OrderByDescending(estimation => estimation.Score).Take(command.Neighbours).ToList());
         }
 
         private bool IsValidEstimation(PositionSignalData positionSignalData, Measurement measurement)
         {
             var magneticFieldTolerance = 0.5;
-            var rssiTolerance = -20;
+            var rssiTolerance = 20;
             return (positionSignalData.SignalType != SignalType.Magnetometer
                         && positionSignalData.Min - rssiTolerance <= measurement.Strength
                         && positionSignalData.Max + rssiTolerance >= measurement.Strength)

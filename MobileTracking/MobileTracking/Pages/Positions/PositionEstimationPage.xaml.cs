@@ -174,6 +174,7 @@ namespace MobileTracking.Pages
                 var command = new EstimatePositionCommand()
                 {
                     Measurements = data,
+                    Neighbours = configuration.K,
                     LocaleId = Locale.Id
                 };
                 try
@@ -182,8 +183,10 @@ namespace MobileTracking.Pages
                     var result = await positionEstimationService.EstimatePosition(command);
                     Device.BeginInvokeOnMainThread(() =>
                     {
+                        x.Text = result.X.ToString("0.00");
+                        y.Text = result.Y.ToString("0.00");
                         PositionEstimations.Clear();
-                        result.ForEach(position => PositionEstimations.Add(new PositionEstimationView(position)));
+                        result.NeighbourPositions.ForEach(position => PositionEstimations.Add(new PositionEstimationView(position)));
                     });
                     StopDataAquisition();
                 }

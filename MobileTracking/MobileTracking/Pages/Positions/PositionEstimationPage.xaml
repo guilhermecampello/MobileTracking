@@ -49,6 +49,26 @@
                     <Button x:Name="calibrationButton" Text="{x:Static resources:AppResources.Estimate_position}" Clicked="Calibration_Button_Clicked"/>
 
                     <ActivityIndicator x:Name="activity" />
+                    <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+                        <Label>
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="X" FontAttributes="Bold"/>
+                                    <Span Text=": " FontAttributes="Bold"/>
+                                    <Span x:Name="x" Text="" FontAttributes="Bold" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label>
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Y" FontAttributes="Bold"/>
+                                    <Span Text=": " FontAttributes="Bold"/>
+                                    <Span x:Name="y" Text="" FontAttributes="Bold" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </StackLayout>
                     <ListView x:Name="PositionEstimationsCollection"
                               HasUnevenRows="True"
                               ItemsSource="{Binding PositionEstimations}"

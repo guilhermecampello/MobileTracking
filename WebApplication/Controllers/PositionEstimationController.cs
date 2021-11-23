@@ -12,7 +12,7 @@ namespace WebApplication.Controllers
     public class PositionEstimationController : ControllerBase
     {
         [HttpPost]
-        public async Task<ActionResult<List<PositionEstimation>>> EstimatePosition(
+        public async Task<ActionResult<PositionEstimation>> EstimatePosition(
             [FromServices] IPositionEstimationService positionEstimationService,
             [FromBody] EstimatePositionCommand command)
         {

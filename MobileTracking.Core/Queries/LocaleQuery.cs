@@ -15,7 +15,7 @@ namespace MobileTracking.Core.Application
 
         public bool? IncludePositions { get; set; }
 
-        public bool? IncludePositionsData { get; set; }
+        public bool? IncludePositionsSignalsData { get; set; }
 
         public bool? IncludePositionsCalibrations { get; set; }
 

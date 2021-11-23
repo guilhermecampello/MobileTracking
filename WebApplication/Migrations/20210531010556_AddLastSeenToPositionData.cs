@@ -9,7 +9,7 @@ namespace WebApplication.Migrations
         {
             migrationBuilder.AddColumn<DateTime>(
                 name: "LastSeen",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "timestamp without time zone",
                 nullable: true);
         }
@@ -18,7 +18,7 @@ namespace WebApplication.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "LastSeen",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
         }
     }
 }

@@ -249,18 +249,19 @@ namespace WebApplication.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("CalculatedPositionId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<float?>("RealX")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("RealY")
+                        .HasColumnType("real");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CalculatedPositionId");
 
                     b.ToTable("UserLocalizations");
                 });
@@ -332,17 +333,6 @@ namespace WebApplication.Migrations
                         .IsRequired();
 
                     b.Navigation("Position");
-                });
-
-            modelBuilder.Entity("MobileTracking.Core.Models.UserLocalization", b =>
-                {
-                    b.HasOne("MobileTracking.Core.Models.Position", "CalculatedPosition")
-                        .WithMany()
-                        .HasForeignKey("CalculatedPositionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CalculatedPosition");
                 });
 
             modelBuilder.Entity("MobileTracking.Core.Models.Zone", b =>

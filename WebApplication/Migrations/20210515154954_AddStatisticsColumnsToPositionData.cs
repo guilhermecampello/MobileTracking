@@ -8,91 +8,91 @@ namespace WebApplication.Migrations
         {
             migrationBuilder.AddColumn<float>(
                 name: "Max",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "MaxX",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "MaxY",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "MaxZ",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "Min",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "MinX",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "MinY",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "MinZ",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<int>(
                 name: "Samples",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "integer",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<float>(
                 name: "StandardDeviation",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "StandardDeviationX",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "StandardDeviationY",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
 
             migrationBuilder.AddColumn<float>(
                 name: "StandardDeviationZ",
-                table: "PositionsData",
+                table: "PositionsSignalsData",
                 type: "real",
                 nullable: false,
                 defaultValue: 0f);
@@ -102,55 +102,55 @@ namespace WebApplication.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "Max",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "MaxX",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "MaxY",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "MaxZ",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "Min",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "MinX",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "MinY",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "MinZ",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "Samples",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "StandardDeviation",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "StandardDeviationX",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "StandardDeviationY",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
 
             migrationBuilder.DropColumn(
                 name: "StandardDeviationZ",
-                table: "PositionsData");
+                table: "PositionsSignalsData");
         }
     }
 }

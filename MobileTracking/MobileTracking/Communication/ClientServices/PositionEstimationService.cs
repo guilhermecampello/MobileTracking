@@ -19,9 +19,9 @@ namespace MobileTracking.Communication.ClientServices
             this.client = client;
         }
 
-        public Task<List<PositionEstimation>> EstimatePosition(EstimatePositionCommand command)
+        public Task<PositionEstimation> EstimatePosition(EstimatePositionCommand command)
         {
-            return client.Post<List<PositionEstimation>>(positionEstimationsController, command);
+            return client.Post<PositionEstimation>(positionEstimationsController, command);
         }
     }
 }

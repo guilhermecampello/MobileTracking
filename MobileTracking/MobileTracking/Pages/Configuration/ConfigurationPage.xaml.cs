@@ -133,6 +133,27 @@ namespace MobileTracking
             }
         }
 
+        private async void K_Button_Clicked(object sender, EventArgs e)
+        {
+            var result = await DisplayPromptAsync(
+                "ALTERAR K do KNN",
+                "Insira o valor de K desejado",
+                initialValue: configuration.K.ToString(),
+                placeholder: "3",
+                keyboard: Keyboard.Numeric);
+            if (int.TryParse(result, out int k) && k > 0)
+            {
+                this.configuration.K = k;
+                Device.BeginInvokeOnMainThread(() => {
+                    kNearestNeighbours.Text = result;
+                });
+            }
+            else
+            {
+                await DisplayAlert(AppResources.Value_must_be_a_positive_integer, string.Empty, "OK");
+            }
+        }
+
         private void Locales_Clicked(object sender, EventArgs e)
         {
             Navigation.PushAsync(Startup.ServiceProvider.GetService<LocalesPage>());

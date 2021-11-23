@@ -127,7 +127,7 @@ namespace MobileTracking
             try
             {
                 var localeService = Startup.ServiceProvider.GetService<ILocaleService>();
-                var query = new LocaleQuery() { IncludeZones = true, IncludePositions = true, IncludePositionsData = true };
+                var query = new LocaleQuery() { IncludeZones = true, IncludePositions = true, IncludePositionsSignalsData = true };
                 var locale = await localeService.FindLocaleById(localeProvider.Locale!.Id, query);
                 await Navigation.PushAsync(new LocaleExplorerPage(locale));
             }
