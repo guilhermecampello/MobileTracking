@@ -23,5 +23,7 @@ namespace WebApplication.Infrastructure
         public DbSet<UserLocalization> UserLocalizations { get; set; } = null!;
 
         public DbSet<LocalizationMeasurement> LocalizationMeasurements { get; set; } = null!;
+
+        public DbSet<LocaleParameters> LocaleParameters { get; set; } = null!;
     }
 }

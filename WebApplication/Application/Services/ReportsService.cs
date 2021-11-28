@@ -39,7 +39,10 @@ namespace WebApplication.Application.Services
                 {
                     LocaleId = localization.LocaleId,
                     Measurements = localization.LocalizationMeasurements!.Select(measurement => new Measurement(measurement)).ToList(),
-                    IgnoreNotDetectedSignals = query.IgnoreNotDetectedSignals,
+                    BleWeight = query.BleWeight,
+                    WifiWeight = query.WifiWeight,
+                    MagnetometerWeight = query.MagnetometerWeight,
+                    UnmatchedSignalsWeight = query.UnmatchedSignalsWeight,
                     Neighbours = query.Neighbours
                 };
 

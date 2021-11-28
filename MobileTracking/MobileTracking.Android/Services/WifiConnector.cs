@@ -83,10 +83,7 @@ namespace MobileTracking.Droid.Services
                         throw new Exception("Please enable wi-fi.");
                     }
 
-                    if (wifiManager.StartScan())
-                    {
-                        Console.WriteLine("Started scanning");
-                    }
+                    wifiManager.StartScan();                   
                 }
                 catch(Exception e)
                 {

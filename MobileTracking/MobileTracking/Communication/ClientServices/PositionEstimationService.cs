@@ -3,6 +3,7 @@ using MobileTracking.Core.Interfaces;
 using MobileTracking.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,7 @@ namespace MobileTracking.Communication.ClientServices
 
         public Task<PositionEstimation> EstimatePosition(EstimatePositionCommand command)
         {
+            
             return client.Post<PositionEstimation>(positionEstimationsController, command);
         }
     }

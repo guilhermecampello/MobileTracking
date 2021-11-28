@@ -31,18 +31,37 @@ namespace MobileTracking.Pages.Views
                     .ToList()
                     .ForEach(score =>
                     {
-                        if (score.Measurement.SignalType == SignalType.Magnetometer)
+                        if (score.Measurement != null)
                         {
-                            description += $"{AppResources.Magnetic_field}: " +
-                            $"Y:{score.PositionSignalData.Y.ToString("0.00")} " +
-                            $"Z:{score.Measurement.Z.ToString("0.00")} \n" +
-                            $"SCORE: {score.Score.ToString("0.00")}\n";
+                            if (score.Measurement.SignalType == SignalType.Magnetometer)
+                            {
+                                description += $"{AppResources.Magnetic_field}: " +
+                                $"Y:{score.PositionSignalData.Y.ToString("0.00")} " +
+                                $"Z:{score.PositionSignalData.Z.ToString("0.00")} \n" +
+                                $"SCORE: {score.Score.ToString("0.00")}\n";
+                            }
+                            else
+                            {
+                                description += $"{score.Measurement.SignalId}: " +
+                                $"{score.PositionSignalData.Strength.ToString("0.00")} \n" +
+                                $"SCORE: {score.Score.ToString("0.00")} \n";
+                            }
                         }
                         else
                         {
-                            description += $"{score.Measurement.SignalId}: " +
-                            $"{score.PositionSignalData.Strength.ToString("0.00")} \n" +
-                            $"SCORE: {score.Score.ToString("0.00")} \n";
+                            if (score.PositionSignalData.SignalType == SignalType.Magnetometer)
+                            {
+                                description += $"{AppResources.Magnetic_field}: " +
+                                $"Y:{score.PositionSignalData.Y.ToString("0.00")} " +
+                                $"Z:{score.PositionSignalData.Z.ToString("0.00")} \n" +
+                                $"SCORE: {score.Score.ToString("0.00")}\n";
+                            }
+                            else
+                            {
+                                description += $"{score.PositionSignalData.SignalId}: " +
+                                $"{score.PositionSignalData.Strength.ToString("0.00")} \n" +
+                                $"SCORE: {score.Score.ToString("0.00")} \n";
+                            }
                         }
                     });
                 return description;

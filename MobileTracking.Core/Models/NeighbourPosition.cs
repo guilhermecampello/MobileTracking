@@ -6,6 +6,8 @@ namespace MobileTracking.Core.Models
 {
     public class NeighbourPosition
     {
+        public NeighbourPosition() { }
+
         public NeighbourPosition(Position position)
         {
             Position = position;

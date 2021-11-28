@@ -7,17 +7,36 @@ namespace MobileTracking.Core.Models
 {
     public class PositionEstimation
     {
+        public PositionEstimation()
+        {
+
+        }
+
         public PositionEstimation(List<NeighbourPosition> neighbourPositions)
         {
             NeighbourPositions = neighbourPositions.Where(position => position.Score > 0).ToList();
-            var totalScore = NeighbourPositions.Sum(neighbour => neighbour.Score);
-            neighbourPositions.ForEach(position =>
+            var zonesScores = NeighbourPositions.GroupBy(neighbourPosition => neighbourPosition.Position.ZoneId)
+                .Select(group => new { ZoneId = group.Key, Weight = group.Count() })
+                .ToList();
+
+            if (NeighbourPositions.Count > 0)
             {
-                X += position.Position.X * position.Score;
-                Y += position.Position.Y * position.Score;
+                var totalScore = NeighbourPositions.Sum(neighbour => neighbour.Score * zonesScores.FirstOrDefault(zone => zone.ZoneId == neighbour.Position.ZoneId).Weight);
+                NeighbourPositions.ForEach(position =>
+                {
+                    X += position.Position.X * position.Score * zonesScores.FirstOrDefault(zone => zone.ZoneId == position.Position.ZoneId).Weight;
+                    Y += position.Position.Y * position.Score * zonesScores.FirstOrDefault(zone => zone.ZoneId == position.Position.ZoneId).Weight;
+                });
+                X = X / totalScore;
+                Y = Y / totalScore;
+            }
+
+            NeighbourPositions.ForEach(neighbour => {
+                neighbour.Position.Calibrations = null;
+                neighbour.Position.PositionSignalData = null;
+                neighbour.Position.Zone.Positions = null;
+                neighbour.Position.Zone.Locale = null;
             });
-            X = X / totalScore;
-            Y = Y / totalScore;
         }
 
         public double X { get; set; } = 0;

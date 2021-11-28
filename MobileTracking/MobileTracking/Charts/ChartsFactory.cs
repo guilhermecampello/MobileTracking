@@ -15,14 +15,18 @@ namespace MobileTracking.Charts
             object data,
             string xBindingPath,
             string yBindingPath,
-            string errorXBindingPath,
-            string errorYBindingPath,
-            ErrorBarMode errorBarMode,
+            string errorXBindingPath = "",
+            string errorYBindingPath = "",
+            ErrorBarMode? errorBarMode = null,
             ChartAxis? primaryAxis = null,
-            RangeAxisBase? secondaryAxis = null
+            RangeAxisBase? secondaryAxis = null,
+            bool showError = true,
+            List<ScatterSeries>? secondarySeries = null,
+            string markerLabel = "PositionId",
+            double height = 800
             )
         {
-            var chart = new SfChart() { VerticalOptions = LayoutOptions.FillAndExpand, HorizontalOptions = LayoutOptions.FillAndExpand, HeightRequest = 800 };
+            var chart = new SfChart() { VerticalOptions = LayoutOptions.FillAndExpand, HorizontalOptions = LayoutOptions.FillAndExpand, MinimumHeightRequest = 400, HeightRequest = height };
             chart.ChartBehaviors.Add(new ChartZoomPanBehavior());
             chart.Title = new ChartTitle() { Text = title };
             chart.PrimaryAxis = primaryAxis ?? new NumericalAxis() { Title = new ChartAxisTitle() { Text = xTitle } };
@@ -46,32 +50,40 @@ namespace MobileTracking.Charts
                             VerticalTextAlignment = TextAlignment.Center,
                             FontSize = 13
                         };
-                        label.SetBinding(Label.TextProperty, "PositionId");
+                        label.SetBinding(Label.TextProperty, markerLabel);
                         return label;
-                    })
+                    }),
                 }
             };
             scatterSeries.ColorModel.Palette = ChartColorPalette.Natural;
             scatterSeries.EnableDataPointSelection = true;
-            var errorSeries = new ErrorBarSeries()
-            {
-                ItemsSource = data,
-                XBindingPath = xBindingPath,
-                YBindingPath = yBindingPath,
-                Type = ErrorBarType.Custom,
-                Mode = errorBarMode,
-                HorizontalCapLineStyle = new ErrorBarCapLineStyle() { StrokeColor = Color.Black.MultiplyAlpha(0.4) },
-                VerticalCapLineStyle = new ErrorBarCapLineStyle() { StrokeColor = Color.Black.MultiplyAlpha(0.4) },
-                HorizontalLineStyle = new ErrorBarLineStyle() { StrokeColor = Color.Black.MultiplyAlpha(0.4) },
-                VerticalLineStyle = new ErrorBarLineStyle() { StrokeColor = Color.Black.MultiplyAlpha(0.4) },
-                HorizontalErrorPath = errorXBindingPath,
-                VerticalErrorPath = errorYBindingPath
-            };
             chart.Series.Add(scatterSeries);
-            chart.Series.Add(errorSeries);
 
-            chart.Legend = new ChartLegend()
+            if (secondarySeries != null)
             {
+                secondarySeries.ForEach(series => chart.Series.Add(series));               
+            }
+            
+            if (showError)
+            {
+                var errorSeries = new ErrorBarSeries()
+                {
+                    ItemsSource = data,
+                    XBindingPath = xBindingPath,
+                    YBindingPath = yBindingPath,
+                    Type = ErrorBarType.Custom,
+                    Mode = errorBarMode!.Value,
+                    HorizontalCapLineStyle = new ErrorBarCapLineStyle() { StrokeColor = Color.Black.MultiplyAlpha(0.4) },
+                    VerticalCapLineStyle = new ErrorBarCapLineStyle() { StrokeColor = Color.Black.MultiplyAlpha(0.4) },
+                    HorizontalLineStyle = new ErrorBarLineStyle() { StrokeColor = Color.Black.MultiplyAlpha(0.4) },
+                    VerticalLineStyle = new ErrorBarLineStyle() { StrokeColor = Color.Black.MultiplyAlpha(0.4) },
+                    HorizontalErrorPath = errorXBindingPath,
+                    VerticalErrorPath = errorYBindingPath
+                };
+                chart.Series.Add(errorSeries);
+            }
+            chart.Legend = new ChartLegend()
+            {  
                 Series = scatterSeries,
                 OverflowMode = ChartLegendOverflowMode.Wrap,
                 DockPosition = LegendPlacement.Bottom,
@@ -98,7 +110,7 @@ namespace MobileTracking.Charts
                         VerticalTextAlignment = TextAlignment.Center,
                         FontSize = 13
                     };
-                    id.SetBinding(Label.TextProperty, "DataPoint.PositionId");
+                    id.SetBinding(Label.TextProperty, "DataPoint." + markerLabel);
                     Label dashLabel = new Label()
                     {
                         VerticalTextAlignment = TextAlignment.Center,

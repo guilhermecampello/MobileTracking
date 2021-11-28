@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +21,32 @@ namespace WebApplication.Application.Services
             this.databaseContext = databaseContext;
         }
 
+        List<PositionSignalData>? cachedPositionSignalData;
+
         public async Task<PositionEstimation> EstimatePosition(EstimatePositionCommand command)
         {
+            if (command.UseBestParameters)
+            {
+                var localeParameters = await this.databaseContext.LocaleParameters
+                    .OrderBy(parameters => parameters.Missings)
+                    .ThenBy(parameter => parameter.MeanError)
+                    .FirstOrDefaultAsync(parameter => parameter.LocaleId == command.LocaleId && parameter.IsActive);
+                command.BleWeight = localeParameters.BleWeight;
+                command.MagnetometerWeight = localeParameters.MagnetometerWeight;
+                command.Neighbours = localeParameters.Neighbours;
+                command.UnmatchedSignalsWeight = localeParameters.UnmatchedSignalsWeight;
+                command.WifiWeight = localeParameters.WifiWeight;
+            }
+
             var signals = command.Measurements.ToDictionary(signal => signal.SignalId);
-            var positionSignalDatas = await this.databaseContext.PositionsSignalsData
+            var positionSignalDatas = cachedPositionSignalData ?? await this.databaseContext.PositionsSignalsData
                 .Include(true, positionSignalData => positionSignalData.Position, position => position!.Zone)
                 .Where(positionSignalData => positionSignalData.Position!.Zone!.LocaleId == command.LocaleId)
+                .Where(positionSignalData => positionSignalData.LastSeen.AddDays(30) > command.Measurements.First().DateTime &&
+                    positionSignalData.LastSeen.AddDays(-30) < command.Measurements.First().DateTime)
                 .ToListAsync();
+
+            cachedPositionSignalData = positionSignalDatas;
 
             var neighbourPositions = new List<NeighbourPosition>();
 
@@ -55,7 +75,7 @@ namespace WebApplication.Application.Services
                 .ToList()
                 .ForEach(data =>
             {
-                data.LastSeen = DateTime.Now;
+                data.LastSeen = DateTime.UtcNow;
                 var measurement = signals[data.SignalId];
                 var neighbourPosition = neighbourPositions
                     .FirstOrDefault(neighbourPosition => neighbourPosition.Position.Id == data.PositionId);
@@ -74,7 +94,7 @@ namespace WebApplication.Application.Services
                 {
                     UserId = 1,
                     LocaleId = command.LocaleId,
-                    DateTime = DateTime.Now,
+                    DateTime = DateTime.UtcNow,
                     RealX = command.RealX,
                     RealY = command.RealY,
                     LocalizationMeasurements = command.Measurements.Select(measurement => new LocalizationMeasurement(measurement)).ToList()
@@ -83,7 +103,27 @@ namespace WebApplication.Application.Services
                 await this.databaseContext.SaveChangesAsync();
             }
 
-            return new PositionEstimation(neighbourPositions.OrderByDescending(estimation => estimation.Score).Take(command.Neighbours).ToList());
+            this.ApplyWeights(neighbourPositions, command);
+
+            var nearestNeighbours = neighbourPositions.OrderByDescending(estimation => estimation.Score).Take(command.Neighbours).ToList();
+            int i = 0;
+            while (nearestNeighbours.Any(neighbour => neighbour.Score < 0) && i < 40)
+            {
+                neighbourPositions.ForEach(neighbour =>
+                {
+                    neighbour.SignalScores.ForEach(signalScore =>
+                    {
+                        if (signalScore.Score < 0)
+                        {
+                            signalScore.Score *= 0.8;
+                        }
+                    });
+                });
+                nearestNeighbours = neighbourPositions.OrderByDescending(estimation => estimation.Score).Take(command.Neighbours).ToList();
+                i++;
+            }
+
+            return new PositionEstimation(nearestNeighbours);
         }
 
         private bool IsValidEstimation(PositionSignalData positionSignalData, Measurement measurement)
@@ -99,6 +139,28 @@ namespace WebApplication.Application.Services
                         && positionSignalData.MaxY + magneticFieldTolerance >= measurement.Y
                         && positionSignalData.MinZ - magneticFieldTolerance <= measurement.Z
                         && positionSignalData.MaxZ + magneticFieldTolerance >= measurement.Z);
+        }
+
+        private void ApplyWeights(List<NeighbourPosition> neighbourPositions, EstimatePositionCommand estimatePositionCommand)
+        {
+            neighbourPositions.ForEach(neighbour =>
+            {
+                neighbour.SignalScores.ForEach(signalScore =>
+                {
+                    if (signalScore.PositionSignalData.SignalType == SignalType.Wifi)
+                    {
+                        signalScore.Score *= estimatePositionCommand.WifiWeight;
+                    }
+                    else if (signalScore.PositionSignalData.SignalType == SignalType.Bluetooth)
+                    {
+                        signalScore.Score *= estimatePositionCommand.BleWeight;
+                    }
+                    else if (signalScore.PositionSignalData.SignalType == SignalType.Magnetometer)
+                    {
+                        signalScore.Score *= estimatePositionCommand.MagnetometerWeight;
+                    }
+                });
+            });
         }
     }
 }

@@ -6,6 +6,8 @@ namespace MobileTracking.Core.Models
 {
     public class PrecisionCalculation
     {
+        public PrecisionCalculation() { }
+
         public PrecisionCalculation(UserLocalization userLocalization, PositionEstimation positionEstimation)
         {
             LocaleId = userLocalization.LocaleId;

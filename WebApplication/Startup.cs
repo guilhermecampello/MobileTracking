@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using MobileTracking.Core.Application;
 using MobileTracking.Core.Application.Services;
 using MobileTracking.Core.Interfaces;
@@ -28,6 +29,14 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             this.AddDatabaseContext(services);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Mobile Localization",
+                    Version = "v1"
+                });
+            });
             services.AddCors();
             services.AddHealthChecks();
             services.AddControllers()
@@ -56,6 +65,8 @@ namespace WebApplication
             }
 
             //app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI();
             app.UseHsts();
             app.UseCors(builder =>
             {
@@ -84,6 +95,7 @@ namespace WebApplication
             services.AddScoped<ICalibrationService, CalibrationService>();
             services.AddScoped<IPositionSignalDataService, PositionSignalDataService>();
             services.AddScoped<IPositionEstimationService, PositionEstimationService>();
+            services.AddScoped<IReportsService, ReportsService>();
             services.AddHostedService<PositionSignalDataUpdater>();
         }
 

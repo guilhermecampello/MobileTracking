@@ -127,7 +127,8 @@ namespace MobileTracking.Pages.Locales
                     "StandardDeviation",
                     ErrorBarMode.Vertical,
                     primaryAxis,
-                    secondaryAxis);
+                    secondaryAxis,
+                    height: 400 + ((int)Math.Floor(signalData.Count / 2.0) * 30));
                 stackLayout.Children.Add(chart);
             });
         }

@@ -86,6 +86,50 @@ namespace WebApplication.Migrations
                     b.ToTable("Locales");
                 });
 
+            modelBuilder.Entity("MobileTracking.Core.Models.LocaleParameters", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<double>("BleWeight")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("LocaleId")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("MagnetometerWeight")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("MeanError")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Missings")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Neighbours")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("UnmatchedSignalsWeight")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("WifiWeight")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocaleId");
+
+                    b.ToTable("LocaleParameters");
+                });
+
             modelBuilder.Entity("MobileTracking.Core.Models.LocalizationMeasurement", b =>
                 {
                     b.Property<int>("Id")
@@ -252,6 +296,9 @@ namespace WebApplication.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("LocaleId")
+                        .HasColumnType("integer");
+
                     b.Property<float?>("RealX")
                         .HasColumnType("real");
 
@@ -302,6 +349,15 @@ namespace WebApplication.Migrations
                         .IsRequired();
 
                     b.Navigation("Position");
+                });
+
+            modelBuilder.Entity("MobileTracking.Core.Models.LocaleParameters", b =>
+                {
+                    b.HasOne("MobileTracking.Core.Models.Locale", "Locale")
+                        .WithMany()
+                        .HasForeignKey("LocaleId");
+
+                    b.Navigation("Locale");
                 });
 
             modelBuilder.Entity("MobileTracking.Core.Models.LocalizationMeasurement", b =>

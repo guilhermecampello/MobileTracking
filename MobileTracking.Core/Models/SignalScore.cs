@@ -4,6 +4,8 @@ namespace MobileTracking.Core.Models
 {
     public class SignalScore
     {
+        public SignalScore() { }
+
         public SignalScore(PositionSignalData positionSignalData, Measurement measurement)
         {
             PositionSignalData = positionSignalData;
@@ -32,7 +34,7 @@ namespace MobileTracking.Core.Models
             }
             else
             {
-                Score = Math.Min(1 / Math.Abs(PositionSignalData.Strength - Measurement.Strength), 3);
+                Score = Math.Min(1 / Math.Abs(PositionSignalData.Strength - Measurement.Strength), 1);
             }
         }
 

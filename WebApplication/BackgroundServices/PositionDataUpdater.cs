@@ -28,7 +28,7 @@ namespace WebApplication.BackgroundServices
                         NeedsUpdate = true
                     };
                     await positionSignalDataService.RecalculatePositionSignalData(query);
-                    await Task.Delay(30000);
+                    await Task.Delay(300000);
                 }
             }
         }

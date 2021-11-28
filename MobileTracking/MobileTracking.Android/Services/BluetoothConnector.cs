@@ -43,6 +43,7 @@ namespace MobileTracking.Droid.Services
             bluetoothScanner = bluetoothManager.Adapter.BluetoothLeScanner;
             bluetoothReceiver = new BluetoothReceiver(devicesResults, macAddressMapping);
             context.RegisterReceiver(bluetoothReceiver, new IntentFilter(BluetoothDevice.ActionFound));
+            context.RegisterReceiver(bluetoothReceiver, new IntentFilter(BluetoothDevice.ExtraRssi));
             this.scanThread = new Thread(Scan);
             this.scanCallback = new BluetoothScanCallback(devicesResults, macAddressMapping);
         }
@@ -92,7 +93,7 @@ namespace MobileTracking.Droid.Services
                 {
                     bluetoothAdapter.StartDiscovery();
                     bluetoothScanner.StartScan(scanCallback);
-                    Task.Delay(3000).Wait();
+                    Task.Delay(10000).Wait();
                     bluetoothScanner.StopScan(scanCallback);
                     bluetoothAdapter.CancelDiscovery();
                 }
@@ -122,7 +123,7 @@ namespace MobileTracking.Droid.Services
                 try
                 {
                     var action = intent.Action;            
-                    if (action == BluetoothDevice.ActionFound)
+                    if (action == BluetoothDevice.ActionFound || action == BluetoothDevice.ExtraRssi)
                     {
                         var device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
                         var rssi = intent.GetShortExtra(BluetoothDevice.ExtraRssi, 0);
@@ -188,7 +189,7 @@ namespace MobileTracking.Droid.Services
             {
                 Console.WriteLine("TxPower" + result.TxPower);
                 Console.WriteLine(result.ScanRecord.ManufacturerSpecificData);
-                Console.WriteLine("erviceData:"+ result.ScanRecord.ServiceData.Count);
+                Console.WriteLine("ServiceData:"+ result.ScanRecord.ServiceData.Count);
                 if (result.ScanRecord.ServiceSolicitationUuids != null)
                 {
                     foreach (var uuid in result.ScanRecord.ServiceSolicitationUuids)

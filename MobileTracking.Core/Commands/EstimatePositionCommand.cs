@@ -17,6 +17,14 @@ namespace MobileTracking.Core.Commands
 
         public double? UnmatchedSignalsWeight { get; set; }
 
+        public double BleWeight { get; set; } = 1;
+
+        public double WifiWeight { get; set; } = 1;
+
+        public double MagnetometerWeight { get; set; } = 1;
+
+        public bool UseBestParameters { get; set; }
+
         [MinLength(1)]
         public List<Measurement> Measurements { get; set; } = new List<Measurement>();
     }

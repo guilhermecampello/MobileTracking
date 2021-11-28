@@ -1,4 +1,5 @@
-﻿using MobileTracking.Core;
+﻿using MobileTracking.Charts;
+using MobileTracking.Core;
 using MobileTracking.Core.Application;
 using MobileTracking.Core.Commands;
 using MobileTracking.Core.Interfaces;
@@ -6,6 +7,7 @@ using MobileTracking.Core.Models;
 using MobileTracking.Pages.Views;
 using MobileTracking.Services;
 using MobileTracking.Services.MagneticField;
+using Syncfusion.SfChart.XForms;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,6 +35,8 @@ namespace MobileTracking.Pages
 
         private Timer timer;
 
+        private SfChart chart;
+
         public PositionEstimationPage(Locale locale)
         {
             InitializeComponent();
@@ -48,14 +52,20 @@ namespace MobileTracking.Pages
             PositionSignalDataCollection.ItemsSource = PositionSignalData;
 
             BindingContext = this;
-            timer = new Timer(5000);
+            timer = new Timer(configuration.DataAquisitionInterval * 1000);
             timer.Elapsed += UpdateMonitoringState;
             timer.Start();
+
+            var positions = new List<Position>();
+            Locale.Zones?.ForEach(zone => positions.AddRange(zone.Positions));
+            chart = ChartsFactory.CreatePositionSignalDataScatterChart(AppResources.Current_locale, "", "", positions, "X", "Y", showError: false, markerLabel: "Id", height: 1200 + ((int)Math.Floor(positions.Count / 2.0) * 30));
+            chartStack.Children.Add(chart);
         }
 
         protected async override void OnAppearing()
         {
             base.OnAppearing();
+
             try
             {
                 StartDataAquisition();
@@ -73,7 +83,7 @@ namespace MobileTracking.Pages
         public ObservableCollection<PositionEstimationView> PositionEstimations { get; set; } = new ObservableCollection<PositionEstimationView>();
 
         public Configuration Configuration { get => this.configuration; }
-     
+
         public void RefreshMeasurements(List<Measurement> measurements)
         {
             PositionSignalDataCollection.IsRefreshing = true;
@@ -158,7 +168,6 @@ namespace MobileTracking.Pages
 
         public async void UpdateMonitoringState(object sender, ElapsedEventArgs e)
         {
-            timer.Stop();
             Device.BeginInvokeOnMainThread(() =>
             {
                 wifiColor.BackgroundColor = WifiStateColor;
@@ -174,30 +183,105 @@ namespace MobileTracking.Pages
                 var command = new EstimatePositionCommand()
                 {
                     Measurements = data,
-                    Neighbours = configuration.K,
+                    UseBestParameters = true,
                     LocaleId = Locale.Id
                 };
                 try
                 {
-                    Device.BeginInvokeOnMainThread(() => RefreshMeasurements(data));
                     var result = await positionEstimationService.EstimatePosition(command);
                     Device.BeginInvokeOnMainThread(() =>
                     {
+                        RefreshMeasurements(data);
                         x.Text = result.X.ToString("0.00");
                         y.Text = result.Y.ToString("0.00");
                         PositionEstimations.Clear();
                         result.NeighbourPositions.ForEach(position => PositionEstimations.Add(new PositionEstimationView(position)));
+                        UpdateChart(result);
                     });
-                    StopDataAquisition();
+                    // StopDataAquisition();
+                }
+                catch (System.Threading.Tasks.TaskCanceledException)
+                {
                 }
                 catch (Exception ex)
                 {
-                    await Device.InvokeOnMainThreadAsync(async() =>
+                    await Device.InvokeOnMainThreadAsync(async () =>
                     {
                         await DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
                     });
                 }
             }
+        }
+
+        private void UpdateChart(PositionEstimation positionEstimation)
+        {
+            chart.SuspendSeriesNotification();
+            var secondarySeries = new List<ScatterSeries>();
+            var neighboursSeries = new ScatterSeries()
+            {
+                ItemsSource = positionEstimation.NeighbourPositions.Select(neighbour => new { Score = neighbour.Score.ToString("0.00"), X = neighbour.Position.X, Y = neighbour.Position.Y, Name = neighbour.Position.Name }),
+                ScatterHeight = 15,
+                ScatterWidth = 15,
+                ShapeType = ChartScatterShapeType.Triangle,
+                XBindingPath = "X",
+                YBindingPath = "Y",
+                DataMarker = new ChartDataMarker()
+                {
+                    ShowLabel = true,
+                    LabelStyle = new DataMarkerLabelStyle() { LabelPosition = DataMarkerLabelPosition.Inner },
+                    LabelTemplate = new DataTemplate(() =>
+                    {
+                        var label = new Label()
+                        {
+                            VerticalTextAlignment = TextAlignment.Center,
+                            FontSize = 13
+                        };
+                        label.SetBinding(Label.TextProperty, "Score");
+                        return label;
+                    }),
+                }
+            };
+
+            var calculatedPositionSeries = new ScatterSeries()
+            {
+                ItemsSource = new List<object>() { new { X = positionEstimation.X, Y = positionEstimation.Y, } },
+                ScatterHeight = 18,
+                ScatterWidth = 18,
+                ShapeType = ChartScatterShapeType.Cross,
+                XBindingPath = "X",
+                YBindingPath = "Y",
+                DataMarker = new ChartDataMarker()
+                {
+                    ShowLabel = true,
+                    MarkerHeight = 18,
+                    MarkerWidth = 18,
+                    MarkerColor = Color.Red,
+                    LabelStyle = new DataMarkerLabelStyle() { LabelPosition = DataMarkerLabelPosition.Inner },
+                    LabelTemplate = new DataTemplate(() =>
+                    {
+                        var label = new Label()
+                        {
+                            VerticalTextAlignment = TextAlignment.Center,
+                            FontAttributes = FontAttributes.Bold,
+                            FontSize = 13,
+                            Text = "VOCÊ"
+                        };
+                        return label;
+                    }),
+                }
+            };
+
+            secondarySeries.Add(neighboursSeries);
+            secondarySeries.Add(calculatedPositionSeries);
+
+            while (chart.Series.Count > 1)
+            {
+                chart.Series.RemoveAt(1);
+            }
+
+            chart.Series.Add(neighboursSeries);
+            chart.Series.Add(calculatedPositionSeries);
+            chart.ResumeSeriesNotification();
         }
 
         private bool _isCollecting;
@@ -284,7 +368,7 @@ namespace MobileTracking.Pages
 
         public void StartDataAquisition()
         {
-            magneticFieldSensor.Start();           
+            magneticFieldSensor.Start();
             bluetoothConnector.StartScanning();
             wifiConnector.StartScanning();
             IsCollecting = true;
@@ -305,7 +389,7 @@ namespace MobileTracking.Pages
                 var position = await positionsService.FindPositionById(positionId, query);
                 await Navigation.PushAsync(new PositionPage(position));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await DisplayAlert(ex.Message, ex.InnerException?.Message, "OK");
             }

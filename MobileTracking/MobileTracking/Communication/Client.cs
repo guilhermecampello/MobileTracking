@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace MobileTracking.Communication
 
             this._httpClient = new HttpClient(new HttpClientHandler()
             {
+                MaxConnectionsPerServer = 100,
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
                 {
                     return true;
