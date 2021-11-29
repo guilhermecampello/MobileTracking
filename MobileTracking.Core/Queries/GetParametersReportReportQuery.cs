@@ -41,5 +41,7 @@ namespace MobileTracking.Core.Queries
         public DateTime? AfterDate { get; set; }
 
         public DateTime? BeforeDate { get; set; }
+
+        public bool ReplaceActiveParameters { get; set; }
     }
 }

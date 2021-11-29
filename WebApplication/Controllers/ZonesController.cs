@@ -8,7 +8,7 @@ namespace WebApplication.Controllers
 {
     [ApiController]
     [Route("api/zones")]
-    public class ZoneesController : ControllerBase
+    public class ZonesController : ControllerBase
     {
         [HttpGet("{zoneId}")]
         public async Task<ActionResult<Zone>> GetZoneById(

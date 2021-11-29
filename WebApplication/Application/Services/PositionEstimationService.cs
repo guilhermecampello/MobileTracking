@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +15,12 @@ namespace WebApplication.Application.Services
     {
         private readonly DatabaseContext databaseContext;
 
+        private List<PositionSignalData>? cachedPositionSignalData;
+
         public PositionEstimationService(DatabaseContext databaseContext)
         {
             this.databaseContext = databaseContext;
         }
-
-        List<PositionSignalData>? cachedPositionSignalData;
 
         public async Task<PositionEstimation> EstimatePosition(EstimatePositionCommand command)
         {
@@ -31,22 +30,35 @@ namespace WebApplication.Application.Services
                     .OrderBy(parameters => parameters.Missings)
                     .ThenBy(parameter => parameter.MeanError)
                     .FirstOrDefaultAsync(parameter => parameter.LocaleId == command.LocaleId && parameter.IsActive);
-                command.BleWeight = localeParameters.BleWeight;
-                command.MagnetometerWeight = localeParameters.MagnetometerWeight;
-                command.Neighbours = localeParameters.Neighbours;
-                command.UnmatchedSignalsWeight = localeParameters.UnmatchedSignalsWeight;
-                command.WifiWeight = localeParameters.WifiWeight;
+
+                if (localeParameters == null)
+                {
+                    localeParameters = await this.databaseContext.LocaleParameters
+                    .OrderBy(parameters => parameters.Missings)
+                    .ThenBy(parameter => parameter.MeanError)
+                    .FirstOrDefaultAsync(parameter => parameter.LocaleId == command.LocaleId);
+                }
+
+                if (localeParameters != null)
+                {
+                    command.BleWeight = localeParameters.BleWeight;
+                    command.MagnetometerWeight = localeParameters.MagnetometerWeight;
+                    command.Neighbours = localeParameters.Neighbours;
+                    command.UnmatchedSignalsWeight = localeParameters.UnmatchedSignalsWeight;
+                    command.WifiWeight = localeParameters.WifiWeight;
+                }
             }
 
             var signals = command.Measurements.ToDictionary(signal => signal.SignalId);
-            var positionSignalDatas = cachedPositionSignalData ?? await this.databaseContext.PositionsSignalsData
+            var positionSignalDatas = this.cachedPositionSignalData ?? await this.databaseContext.PositionsSignalsData
+                .AsNoTracking()
                 .Include(true, positionSignalData => positionSignalData.Position, position => position!.Zone)
                 .Where(positionSignalData => positionSignalData.Position!.Zone!.LocaleId == command.LocaleId)
                 .Where(positionSignalData => positionSignalData.LastSeen.AddDays(30) > command.Measurements.First().DateTime &&
                     positionSignalData.LastSeen.AddDays(-30) < command.Measurements.First().DateTime)
                 .ToListAsync();
 
-            cachedPositionSignalData = positionSignalDatas;
+            this.cachedPositionSignalData = positionSignalDatas;
 
             var neighbourPositions = new List<NeighbourPosition>();
 
@@ -75,7 +87,6 @@ namespace WebApplication.Application.Services
                 .ToList()
                 .ForEach(data =>
             {
-                data.LastSeen = DateTime.UtcNow;
                 var measurement = signals[data.SignalId];
                 var neighbourPosition = neighbourPositions
                     .FirstOrDefault(neighbourPosition => neighbourPosition.Position.Id == data.PositionId);

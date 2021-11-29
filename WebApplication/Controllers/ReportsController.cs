@@ -4,11 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
-using MobileTracking.Core.Commands;
 using MobileTracking.Core.Interfaces;
 using MobileTracking.Core.Models;
 using MobileTracking.Core.Queries;
@@ -87,8 +85,51 @@ namespace WebApplication.Controllers
             [FromServices] DatabaseContext databaseContext,
             [FromQuery] GetParametersReportQuery query)
         {
-            var report = new List<LocaleParameters>();
+            var report = this.EnumerateParametersReport(reportsService, databaseContext, query);
 
+            var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                IgnoreReferences = true
+            };
+
+            var formattedDate = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            var formattedFilename = $"ParametersAnalysis-{query.LocaleId}-_{formattedDate}.csv";
+
+            this.HttpContext.Response.StatusCode = 200;
+            this.HttpContext.Response.Headers.Add("Content-Type", "text/csv");
+            this.HttpContext.Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{formattedFilename}\"");
+
+            var streamWriter = new StreamWriter(
+                this.HttpContext.Response.BodyWriter.AsStream());
+
+            using var csvWriter = new CsvWriter(streamWriter, csvConfiguration);
+
+            csvWriter.WriteRecords(report);
+            report.OrderBy(parameter => parameter.MeanError);
+
+            var bestParameters = databaseContext.LocaleParameters
+                .OrderBy(parameters => parameters.Missings)
+                .ThenBy(parameter => parameter.MeanError)
+                .FirstOrDefault(param => param.LocaleId == query.LocaleId && param.CreatedAt > DateTime.Now.AddDays(-30));
+
+            if (bestParameters != null && query.ReplaceActiveParameters)
+            {
+                var oldActiveParameters = databaseContext.LocaleParameters.Where(param => param.LocaleId == query.LocaleId && param.IsActive).ToList();
+                if (oldActiveParameters != null)
+                {
+                    oldActiveParameters.ForEach(param => param.IsActive = false);
+                }
+
+                bestParameters.IsActive = true;
+                databaseContext.SaveChanges();
+            }
+        }
+
+        private IEnumerable<LocaleParameters> EnumerateParametersReport(
+           IReportsService reportsService,
+           DatabaseContext databaseContext,
+           GetParametersReportQuery query)
+        {
             for (int neighbours = query.MinNeighbours; neighbours <= query.MaxNeighbours; neighbours += query.NeighboursStep)
             {
                 for (double wifiWeight = query.MinWifiWeight; wifiWeight <= query.MaxWifiWeight; wifiWeight += query.WifiWeightStep)
@@ -134,10 +175,11 @@ namespace WebApplication.Controllers
                                     UnmatchedSignalsWeight = command.UnmatchedSignalsWeight,
                                     Missings = missings
                                 };
-                                report.Add(parametersAnalysis);
 
                                 databaseContext.Add(parametersAnalysis);
                                 Console.WriteLine(JsonSerializer.Serialize(parametersAnalysis));
+
+                                yield return parametersAnalysis;
                             }
                         }
                     }
@@ -145,27 +187,6 @@ namespace WebApplication.Controllers
 
                 databaseContext.SaveChanges();
             }
-
-            report.OrderBy(parameter => parameter.MeanError);
-
-            var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                IgnoreReferences = true
-            };
-
-            var formattedDate = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            var formattedFilename = $"ParametersAnalysis-{query.LocaleId}-_{formattedDate}.csv";
-
-            this.HttpContext.Response.StatusCode = 200;
-            this.HttpContext.Response.Headers.Add("Content-Type", "text/csv");
-            this.HttpContext.Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{formattedFilename}\"");
-
-            var streamWriter = new StreamWriter(
-                this.HttpContext.Response.BodyWriter.AsStream());
-
-            using var csvWriter = new CsvWriter(streamWriter, csvConfiguration);
-
-            csvWriter.WriteRecords(report);
         }
     }
 }

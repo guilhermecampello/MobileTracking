@@ -1,13 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using MobileTracking.Core.Application;
 using MobileTracking.Core.Commands;
 using MobileTracking.Core.Interfaces;
 using MobileTracking.Core.Models;
 using MobileTracking.Core.Queries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebApplication.Infrastructure;
 
 namespace WebApplication.Application.Services
