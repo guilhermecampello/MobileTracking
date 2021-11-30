@@ -16,9 +16,15 @@ namespace MobileTracking.Core.Queries
 
         public double MinUnmatchedSignalsWeight { get; set; } = 0;
 
-        public double MaxUnmatchedSignalsWeight { get; set; } = 20;
+        public double MaxUnmatchedSignalsWeight { get; set; } = 2;
 
-        public double UnmatchedSignalsWeightStep { get; set; } = 2;
+        public double UnmatchedSignalsWeightStep { get; set; } = 0.2;
+
+        public double MinStandardDeviationFactor { get; set; } = 0;
+
+        public double MaxStandardDeviationFactor { get; set; } = 2;
+
+        public double StandardDeviationFactorStep { get; set; } = 0.33;
 
         public double MinBleWeight { get; set; } = 1;
 
@@ -43,5 +49,7 @@ namespace MobileTracking.Core.Queries
         public DateTime? BeforeDate { get; set; }
 
         public bool ReplaceActiveParameters { get; set; }
+
+        public bool UseDistance { get; set; }
     }
 }

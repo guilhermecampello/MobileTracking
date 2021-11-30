@@ -2,7 +2,6 @@
 using MobileTracking.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MobileTracking.Communication.ClientServices
@@ -47,6 +46,11 @@ namespace MobileTracking.Communication.ClientServices
         }
 
         public Task<Locale> UpdateLocale(int localeId, CreateOrUpdateLocaleCommand command)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<LocaleParameters>> GetLocaleParameters(int localeId)
         {
             throw new NotImplementedException();
         }

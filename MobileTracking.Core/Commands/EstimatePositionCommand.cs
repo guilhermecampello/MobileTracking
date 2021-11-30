@@ -25,6 +25,10 @@ namespace MobileTracking.Core.Commands
 
         public bool UseBestParameters { get; set; }
 
+        public bool UseDistance { get; set; }
+
+        public double StandardDeviationFactor { get; set; } = 0;
+
         [MinLength(1)]
         public List<Measurement> Measurements { get; set; } = new List<Measurement>();
     }

@@ -77,7 +77,7 @@ namespace WebApplication.Application.Services
                         neighbourPositions.Add(neighbourPosition);
                     }
 
-                    neighbourPosition.SignalScores.Add(new SignalScore(unmatchedSignal, command.UnmatchedSignalsWeight.Value));
+                    neighbourPosition.SignalScores.Add(new SignalScore(unmatchedSignal, command.UnmatchedSignalsWeight.Value, command.StandardDeviationFactor));
                 });
             }
 
@@ -96,7 +96,7 @@ namespace WebApplication.Application.Services
                     neighbourPositions.Add(neighbourPosition);
                 }
 
-                neighbourPosition.SignalScores.Add(new SignalScore(data, measurement));
+                neighbourPosition.SignalScores.Add(new SignalScore(data, measurement, command.StandardDeviationFactor));
             });
 
             if (command.RealX != null && command.RealY != null)
@@ -116,25 +116,31 @@ namespace WebApplication.Application.Services
 
             this.ApplyWeights(neighbourPositions, command);
 
-            var nearestNeighbours = neighbourPositions.OrderByDescending(estimation => estimation.Score).Take(command.Neighbours).ToList();
-            int i = 0;
-            while (nearestNeighbours.Any(neighbour => neighbour.Score < 0) && i < 40)
+            var nearestNeighbours = !command.UseDistance
+                    ? neighbourPositions.OrderByDescending(estimation => estimation.Score).Take(command.Neighbours).ToList()
+                    : neighbourPositions.OrderBy(estimation => estimation.Distance).Take(command.Neighbours).ToList();
+
+            if (!command.UseDistance)
             {
-                neighbourPositions.ForEach(neighbour =>
+                int i = 0;
+                while (nearestNeighbours.Any(neighbour => neighbour.Score < 0) && i < 40)
                 {
-                    neighbour.SignalScores.ForEach(signalScore =>
+                    neighbourPositions.ForEach(neighbour =>
                     {
-                        if (signalScore.Score < 0)
+                        neighbour.SignalScores.ForEach(signalScore =>
                         {
-                            signalScore.Score *= 0.8;
-                        }
+                            if (signalScore.Score < 0)
+                            {
+                                signalScore.Score *= 0.8;
+                            }
+                        });
                     });
-                });
-                nearestNeighbours = neighbourPositions.OrderByDescending(estimation => estimation.Score).Take(command.Neighbours).ToList();
-                i++;
+                    nearestNeighbours = neighbourPositions.OrderByDescending(estimation => estimation.Score).Take(command.Neighbours).ToList();
+                    i++;
+                }
             }
 
-            return new PositionEstimation(nearestNeighbours);
+            return new PositionEstimation(nearestNeighbours, command.UseDistance);
         }
 
         private bool IsValidEstimation(PositionSignalData positionSignalData, Measurement measurement)
@@ -161,14 +167,17 @@ namespace WebApplication.Application.Services
                     if (signalScore.PositionSignalData.SignalType == SignalType.Wifi)
                     {
                         signalScore.Score *= estimatePositionCommand.WifiWeight;
+                        signalScore.Distance /= estimatePositionCommand.WifiWeight;
                     }
                     else if (signalScore.PositionSignalData.SignalType == SignalType.Bluetooth)
                     {
                         signalScore.Score *= estimatePositionCommand.BleWeight;
+                        signalScore.Distance /= estimatePositionCommand.BleWeight;
                     }
                     else if (signalScore.PositionSignalData.SignalType == SignalType.Magnetometer)
                     {
                         signalScore.Score *= estimatePositionCommand.MagnetometerWeight;
+                        signalScore.Distance /= estimatePositionCommand.MagnetometerWeight;
                     }
                 });
             });

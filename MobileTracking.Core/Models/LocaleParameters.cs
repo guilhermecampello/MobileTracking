@@ -24,7 +24,11 @@ namespace MobileTracking.Core.Models
 
         public double MagnetometerWeight { get; set; } = 1;
 
+        public double StandardDeviationFactor { get; set; } = 0;
+
         public bool IsActive { get; set; }
+
+        public bool UseDistance { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

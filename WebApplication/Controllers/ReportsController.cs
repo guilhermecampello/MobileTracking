@@ -105,7 +105,6 @@ namespace WebApplication.Controllers
             using var csvWriter = new CsvWriter(streamWriter, csvConfiguration);
 
             csvWriter.WriteRecords(report);
-            report.OrderBy(parameter => parameter.MeanError);
 
             var bestParameters = databaseContext.LocaleParameters
                 .OrderBy(parameters => parameters.Missings)
@@ -134,52 +133,59 @@ namespace WebApplication.Controllers
             {
                 for (double wifiWeight = query.MinWifiWeight; wifiWeight <= query.MaxWifiWeight; wifiWeight += query.WifiWeightStep)
                 {
-                    for (double bleWeight = query.MinBleWeight; bleWeight <= query.MaxWifiWeight; bleWeight += query.BleWeightStep)
+                    for (double bleWeight = query.MinBleWeight; bleWeight <= query.MaxBleWeight; bleWeight += query.BleWeightStep)
                     {
                         for (double magnetometerWeight = query.MinMagnetometerWeight; magnetometerWeight <= query.MaxMagnetometerWeight; magnetometerWeight += query.MagnetometerWeightStep)
                         {
                             for (double unmatchedSignalsWeight = query.MinUnmatchedSignalsWeight; unmatchedSignalsWeight <= query.MaxUnmatchedSignalsWeight; unmatchedSignalsWeight += query.UnmatchedSignalsWeightStep)
                             {
-                                var command = new GetPrecisionReportQuery();
-                                command.LocaleId = query.LocaleId;
-                                command.UnmatchedSignalsWeight = unmatchedSignalsWeight;
-                                command.BleWeight = bleWeight;
-                                command.WifiWeight = wifiWeight;
-                                command.Neighbours = neighbours;
-                                command.MagnetometerWeight = magnetometerWeight;
-                                var data = reportsService.GetPrecisionReport(command);
-                                var error = 0.0;
-                                var n = 0;
-                                var missings = 0;
-                                foreach (var estimation in data)
+                                for (double standardDeviationFactor = query.MinStandardDeviationFactor; standardDeviationFactor <= query.MaxStandardDeviationFactor; standardDeviationFactor += query.StandardDeviationFactorStep)
                                 {
-                                    if (estimation.CalculatedX != 0 && estimation.CalculatedY != 0)
+                                    var command = new GetPrecisionReportQuery();
+                                    command.LocaleId = query.LocaleId;
+                                    command.UnmatchedSignalsWeight = unmatchedSignalsWeight;
+                                    command.BleWeight = bleWeight;
+                                    command.WifiWeight = wifiWeight;
+                                    command.Neighbours = neighbours;
+                                    command.MagnetometerWeight = magnetometerWeight;
+                                    command.UseDistance = query.UseDistance;
+                                    command.StandardDeviationFactor = standardDeviationFactor;
+                                    var data = reportsService.GetPrecisionReport(command);
+                                    var error = 0.0;
+                                    var n = 0;
+                                    var missings = 0;
+                                    foreach (var estimation in data)
                                     {
-                                        error += estimation.Error;
-                                        n++;
+                                        if (estimation.CalculatedX != 0 && estimation.CalculatedY != 0)
+                                        {
+                                            error += estimation.Error;
+                                            n++;
+                                        }
+                                        else
+                                        {
+                                            missings++;
+                                        }
                                     }
-                                    else
+
+                                    var parametersAnalysis = new LocaleParameters()
                                     {
-                                        missings++;
-                                    }
+                                        LocaleId = command.LocaleId,
+                                        BleWeight = command.BleWeight,
+                                        WifiWeight = command.WifiWeight,
+                                        MagnetometerWeight = command.MagnetometerWeight,
+                                        MeanError = error / n,
+                                        Neighbours = command.Neighbours,
+                                        UnmatchedSignalsWeight = command.UnmatchedSignalsWeight,
+                                        StandardDeviationFactor = command.StandardDeviationFactor,
+                                        Missings = missings,
+                                        UseDistance = command.UseDistance
+                                    };
+
+                                    databaseContext.Add(parametersAnalysis);
+                                    Console.WriteLine(JsonSerializer.Serialize(parametersAnalysis));
+
+                                    yield return parametersAnalysis;
                                 }
-
-                                var parametersAnalysis = new LocaleParameters()
-                                {
-                                    LocaleId = command.LocaleId,
-                                    BleWeight = command.BleWeight,
-                                    WifiWeight = command.WifiWeight,
-                                    MagnetometerWeight = command.MagnetometerWeight,
-                                    MeanError = error / n,
-                                    Neighbours = command.Neighbours,
-                                    UnmatchedSignalsWeight = command.UnmatchedSignalsWeight,
-                                    Missings = missings
-                                };
-
-                                databaseContext.Add(parametersAnalysis);
-                                Console.WriteLine(JsonSerializer.Serialize(parametersAnalysis));
-
-                                yield return parametersAnalysis;
                             }
                         }
                     }

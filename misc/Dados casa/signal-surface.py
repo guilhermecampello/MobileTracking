@@ -13,15 +13,15 @@ def normalize(vector):
     result = (vector - min_value) / (max_value - min_value)
     return result
 
-dados = pd.read_csv('mag.csv')
+dados = pd.read_csv('ble_max_strength.csv')
 print(dados)
-pot_mW = 10**(dados['StrengthZ']/10)
+pot_mW = 10**(dados['max']/10)
 normalizado = normalize(pot_mW)
 print(normalizado)
 
 
 # Convert from pandas dataframes to numpy arrays
-X, Y, Z, = dados['X'], dados['Y'], normalizado
+X, Y, Z, = dados['X'], dados['Y'], 100+dados['max']
 print(X)
 print(Y)
 print(Z)
@@ -38,7 +38,7 @@ fig = plt.figure(num=1, clear=True)
 ax = fig.add_subplot(1, 1, 1, projection='3d')
 
 ax.plot_surface(xi, yi, zi, cmap=cm.coolwarm)
-ax.set(xlabel='x', ylabel='y', zlabel='z', title='Campo Magnético Z')
+ax.set(xlabel='x', ylabel='y', zlabel='z', title='Bluetooth')
 
 plt.show()
 

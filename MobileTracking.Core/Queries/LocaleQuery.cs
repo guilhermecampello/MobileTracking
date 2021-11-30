@@ -19,6 +19,8 @@ namespace MobileTracking.Core.Application
 
         public bool? IncludePositionsCalibrations { get; set; }
 
+        public bool? IncludeLocaleParameters { get; set; }
+
         public LocaleQuery() { }
 
         public LocaleQuery(double latitude, double longitude)

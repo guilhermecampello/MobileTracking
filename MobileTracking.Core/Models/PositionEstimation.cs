@@ -12,23 +12,46 @@ namespace MobileTracking.Core.Models
 
         }
 
-        public PositionEstimation(List<NeighbourPosition> neighbourPositions)
+        public PositionEstimation(List<NeighbourPosition> neighbourPositions, bool useDistance)
         {
-            NeighbourPositions = neighbourPositions.Where(position => position.Score > 0).ToList();
-            var zonesScores = NeighbourPositions.GroupBy(neighbourPosition => neighbourPosition.Position.ZoneId)
-                .Select(group => new { ZoneId = group.Key, Weight = group.Count() })
-                .ToList();
-
-            if (NeighbourPositions.Count > 0)
+            if (!useDistance)
             {
-                var totalScore = NeighbourPositions.Sum(neighbour => neighbour.Score * zonesScores.FirstOrDefault(zone => zone.ZoneId == neighbour.Position.ZoneId).Weight);
-                NeighbourPositions.ForEach(position =>
+                NeighbourPositions = neighbourPositions.Where(position => position.Score > 0).ToList();
+                var zonesScores = NeighbourPositions.GroupBy(neighbourPosition => neighbourPosition.Position.ZoneId)
+                    .Select(group => new { ZoneId = group.Key, Weight = group.Count() })
+                    .ToList();
+
+                if (NeighbourPositions.Count > 0)
                 {
-                    X += position.Position.X * position.Score * zonesScores.FirstOrDefault(zone => zone.ZoneId == position.Position.ZoneId).Weight;
-                    Y += position.Position.Y * position.Score * zonesScores.FirstOrDefault(zone => zone.ZoneId == position.Position.ZoneId).Weight;
-                });
-                X = X / totalScore;
-                Y = Y / totalScore;
+                    var totalScore = NeighbourPositions.Sum(neighbour => neighbour.Score * zonesScores.FirstOrDefault(zone => zone.ZoneId == neighbour.Position.ZoneId).Weight);
+                    NeighbourPositions.ForEach(position =>
+                    {
+                        X += position.Position.X * position.Score * zonesScores.FirstOrDefault(zone => zone.ZoneId == position.Position.ZoneId).Weight;
+                        Y += position.Position.Y * position.Score * zonesScores.FirstOrDefault(zone => zone.ZoneId == position.Position.ZoneId).Weight;
+                    });
+                    X = X / totalScore;
+                    Y = Y / totalScore;
+                }
+
+            }
+            else
+            {
+                NeighbourPositions = neighbourPositions;
+                var zonesScores = neighbourPositions.GroupBy(neighbourPosition => neighbourPosition.Position.ZoneId)
+                    .Select(group => new { ZoneId = group.Key, Weight = group.Count() })
+                    .ToList();
+
+                if (NeighbourPositions.Count > 0)
+                {
+                    var totalScore = NeighbourPositions.Sum(neighbour => 1 / neighbour.Distance * zonesScores.FirstOrDefault(zone => zone.ZoneId == neighbour.Position.ZoneId).Weight);
+                    NeighbourPositions.ForEach(position =>
+                    {
+                        X += position.Position.X * 1 / position.Distance * zonesScores.FirstOrDefault(zone => zone.ZoneId == position.Position.ZoneId).Weight;
+                        Y += position.Position.Y * 1 /  position.Distance * zonesScores.FirstOrDefault(zone => zone.ZoneId == position.Position.ZoneId).Weight;
+                    });
+                    X = X / totalScore;
+                    Y = Y / totalScore;
+                }
             }
 
             NeighbourPositions.ForEach(neighbour => {

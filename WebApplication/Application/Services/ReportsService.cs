@@ -35,12 +35,14 @@ namespace WebApplication.Application.Services
             {
                 var command = new EstimatePositionCommand()
                 {
+                    UseDistance = query.UseDistance,
                     LocaleId = localization.LocaleId,
                     Measurements = localization.LocalizationMeasurements!.Select(measurement => new Measurement(measurement)).ToList(),
                     BleWeight = query.BleWeight,
                     WifiWeight = query.WifiWeight,
                     MagnetometerWeight = query.MagnetometerWeight,
                     UnmatchedSignalsWeight = query.UnmatchedSignalsWeight,
+                    StandardDeviationFactor = query.StandardDeviationFactor,
                     Neighbours = query.Neighbours
                 };
 

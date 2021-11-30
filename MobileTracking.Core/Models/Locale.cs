@@ -28,5 +28,7 @@ namespace MobileTracking.Core.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public List<Zone>? Zones { get; set; }
+
+        public List<LocaleParameters>? Parameters { get;set; }
     }
 }

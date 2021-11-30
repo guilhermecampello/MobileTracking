@@ -18,8 +18,12 @@ namespace MobileTracking.Core.Queries
 
         public double MagnetometerWeight { get; set; } = 1;
 
+        public double StandardDeviationFactor { get; set; } = 0;
+
         public DateTime? AfterDate { get; set; }
 
         public DateTime? BeforeDate { get; set; }
+
+        public bool UseDistance { get; set; }
     }
 }

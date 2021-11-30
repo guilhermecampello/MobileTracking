@@ -35,6 +35,14 @@ namespace WebApplication.Controllers
             return await localeService.FindLocaleById(localeId, query);
         }
 
+        [HttpGet("{localeId}/parameters")]
+        public async Task<ActionResult<List<LocaleParameters>>> GetLocaleParameters(
+            [FromServices] ILocaleService localeService,
+            [FromRoute] int localeId)
+        {
+            return await localeService.GetLocaleParameters(localeId);
+        }
+
         [HttpDelete("{localeId}")]
         public async Task<ActionResult<bool>> DeleteLocale(
             [FromServices] ILocaleService localeService,

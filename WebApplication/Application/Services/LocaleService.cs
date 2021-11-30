@@ -34,6 +34,7 @@ namespace MobileTracking.Core.Application
                 .Include(query?.IncludePositions, locale => locale.Zones!, zones => zones.Positions!)
                 .Include(query?.IncludePositionsCalibrations, locale => locale.Zones!, zones => zones.Positions!, positions => positions.Calibrations!)
                 .Include(query?.IncludePositionsSignalsData, locale => locale.Zones!, zones => zones.Positions!, positions => positions.PositionSignalData!)
+                .Include(query?.IncludeLocaleParameters, locale => locale.Parameters)
                 .FirstOrDefaultAsync(locale => locale.Id == localeId)
                 ?? throw NotFoundException<Locale>.ById(localeId);
         }
@@ -98,6 +99,11 @@ namespace MobileTracking.Core.Application
             await this.databaseContext.SaveChangesAsync();
 
             return locale;
+        }
+
+        public Task<List<LocaleParameters>> GetLocaleParameters(int localeId)
+        {
+            return this.databaseContext.LocaleParameters.Where(param => param.LocaleId == localeId).ToListAsync();
         }
     }
 }
